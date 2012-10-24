@@ -94,7 +94,7 @@ curl -XDELETE "https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRD
 ```
 **Python**
 ```python
-test
+
 ```
 ### Contact
 Definitions
