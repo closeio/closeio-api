@@ -15,6 +15,7 @@ import requests, json, base64
 
 api_key = 'yourapikey'
 data = {'name': 'test lead'}
+url = 'https://app.close.io/api/v1/lead/'
 
 response = requests.post(url, data=json.dumps(data), headers={'Authorization' : 'Basic %s' % (base64.b64encode('%s:' % api_key), ), 'Content-Type': 'application/json'})
 
