@@ -93,10 +93,7 @@ Delete
 ```shell
 curl -XDELETE "https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRDIBun6klQCyR05Bnh/"
 ```
-**Python**
-```python
 
-```
 ### Contact
 Definitions
 ```python
