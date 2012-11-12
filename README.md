@@ -114,7 +114,6 @@ class Contact(DocumentBase, RandomPKDocument):
     phones = ListField(EmbeddedDocumentField(ContactPhone))
 ```
 ### Activity
-* Comment
 * Call
 * Email
 * Note
