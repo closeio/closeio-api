@@ -1,8 +1,6 @@
-# Close.io API
-
 This page describes how developers can use the API for [Close.io](https://close.io/). For any questions or issues, please contact engineering(at)elasticsales(dot)com.
 
-## Authentication
+# Authentication
 HTTP Basic authentication. The API key acts as the username. API keys are per-organization and can be generated and deleted in the Settings page.
 
 Curl:
@@ -24,9 +22,9 @@ response = requests.post(url, data=json.dumps(data), auth=(api_key, ''), headers
 print response, response.text
 ```
 
-## Endpoints
+# Endpoints
 
-### Me
+## Me
 Fetch. 
 Provides user-specific information for the currently logged in user (of the api key provided).
 
@@ -56,7 +54,7 @@ Response:
 }
 ```
 
-### Lead
+## Lead
 Definition
 ```python
 class Lead(DocumentBase, RandomPKDocument):
@@ -97,8 +95,8 @@ Curl:
 curl -XDELETE "https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRDIBun6klQCyR05Bnh/"
 ```
 
-### Contact
-Definitions
+## Contact
+Definition
 ```python
 class ContactPhone(EmbeddedDocument):
     type = TrimmedStringField()
@@ -117,7 +115,7 @@ class Contact(DocumentBase, RandomPKDocument):
     phones = ListField(EmbeddedDocumentField(ContactPhone))
 ```
 
-### Opportunity
+## Opportunity
 Definition
 ```python
 class Opportunity(DocumentBase, RandomPKDocument):
@@ -133,7 +131,7 @@ class Opportunity(DocumentBase, RandomPKDocument):
     note = TrimmedStringField()
 ```
 
-### Activity
+## Activity
 * Call
 * Email
 * Note
