@@ -29,19 +29,21 @@
       <section>
         <h1>Close.io API</h1>
 
+<p>This page describes how developers can use the API for <a href="https://close.io/">Close.io</a>. For any questions or issues, please contact engineering(at)elasticsales(dot)com.</p>
+
 <h2>Authentication</h2>
 
-<p>HTTP Basic authentication.  The ApiKey acts as the username.  ApiKeys are per-organization and can be generated and deleted in the Settings page.</p>
+<p>HTTP Basic authentication. The API key acts as the username. API keys are per-organization and can be generated and deleted in the Settings page.</p>
 
-<p><strong>Curl</strong></p>
+<p>Curl:</p>
 
 <div class="highlight"><pre>curl -XPOST <span class="s2">"https://app.close.io/api/v1/lead/"</span> -d <span class="s1">'{"name":"test lead"}'</span> -u yourapikey:
-<span class="c">#notice the ':' at the end of the apikey.  this is used because the key is sent as the username with a blank password.</span>
+<span class="c">#notice the ':' at the end of the api key.  this is used because the key is sent as the username with a blank password.</span>
 </pre></div>
 
-<p><strong>Python</strong></p>
+<p>Python:</p>
 
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">base64</span>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
 
 <span class="n">api_key</span> <span class="o">=</span> <span class="s">'yourapikey'</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'test lead'</span><span class="p">}</span>
@@ -57,35 +59,34 @@
 <h3>Me</h3>
 
 <p>Fetch. 
-Provides user-specific information for the currently logged in user (of the apikey provided).</p>
+Provides user-specific information for the currently logged in user (of the api key provided).</p>
 
-<p><strong>Curl</strong></p>
+<p>Curl:</p>
 
 <div class="highlight"><pre>curl -XGET <span class="s2">"https://app.close.io/api/v1/me/"</span> -u yourapikey:
-<span class="o">{</span><span class="s2">"organizations"</span>: <span class="o">[{</span><span class="s2">"id"</span>: <span class="s2">"orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ"</span>, <span class="s2">"name"</span>: <span class="s2">"NPI"</span><span class="o">}</span>, <span class="o">{</span><span class="s2">"id"</span>: <span class="s2">"orga_K7g2Oj6JEGBROdYg6Y2eQHErQMUbUrUcHpFSoamdoMa"</span>, <span class="s2">"name"</span>: <span class="s2">"Elastic"</span><span class="o">}]</span>, <span class="s2">"first_name"</span>: <span class="s2">"Admin"</span>, <span class="s2">"last_name"</span>: <span class="s2">"Admin"</span>, <span class="s2">"email"</span>: <span class="s2">"admin@elasticsales.com"</span>, <span class="s2">"sip_numbers"</span>: <span class="o">[{</span><span class="s2">"organization_id"</span>: <span class="s2">"orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ"</span>, <span class="s2">"number"</span>: <span class="s2">"19192838789"</span><span class="o">}</span>, <span class="o">{</span><span class="s2">"organization_id"</span>: <span class="s2">"orga_K7g2Oj6JEGBROdYg6Y2eQHErQMUbUrUcHpFSoamdoMa"</span>, <span class="s2">"number"</span>: <span class="s2">"12246005120"</span><span class="o">}]</span>, <span class="s2">"sip_user"</span>: <span class="o">{</span><span class="s2">"username"</span>: <span class="s2">"closeio8119"</span>, <span class="s2">"secret"</span>: <span class="s2">"bkeoDs2ZyNXNmMLAMjigQN9HCjBqEAeT"</span>, <span class="s2">"server"</span>: <span class="s2">"phone.plivo.com"</span><span class="o">}</span>, <span class="s2">"id"</span>: <span class="s2">"user_H7vK6LZMChjkOvvgsj08argnBiFeIpPmM6crmOMQ8rS"</span><span class="o">}</span>
 </pre></div>
 
-<p><strong>Python</strong></p>
+<p>Python:</p>
 
 <div class="highlight"><pre><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'https://app.close.io/api/v1/me/'</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="s">''</span><span class="p">))</span>
+<span class="k">print</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span>
 </pre></div>
 
-<h3>Opportunity</h3>
+<p>Response:</p>
 
-<p>Definition</p>
-
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Opportunity</span><span class="p">(</span><span class="n">DocumentBase</span><span class="p">,</span> <span class="n">RandomPKDocument</span><span class="p">):</span>
-    <span class="n">organization</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="n">Organization</span><span class="p">)</span>
-    <span class="n">lead</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="n">Lead</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
-
-    <span class="n">status</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">OpportunityStatus</span><span class="o">.</span><span class="n">choices</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="n">OpportunityStatus</span><span class="o">.</span><span class="n">Active</span><span class="p">)</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c"># in cents</span>
-    <span class="n">value_period</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">OpportunityValuePeriod</span><span class="o">.</span><span class="n">choices</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="n">OpportunityValuePeriod</span><span class="o">.</span><span class="n">OneTime</span><span class="p">)</span>
-    <span class="n">confidence</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-    <span class="n">date_won</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">()</span> <span class="c"># date only</span>
-    <span class="n">note</span> <span class="o">=</span> <span class="n">TrimmedStringField</span><span class="p">()</span>
-</pre></div>
+<pre><code>{
+    "id": "user_H7vK6LZMChjkOvvgsj08argnBiFeIpPmM6crmOMQ8rS",
+    "organizations": [
+        {
+            "id": "orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ",
+            "name": "My Organization"
+        }
+    ],
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john@example.com"
+}
+</code></pre>
 
 <h3>Lead</h3>
 
@@ -103,7 +104,7 @@ Provides user-specific information for the currently logged in user (of the apik
 </pre></div>
 
 <p>Fetch
-<strong>Curl</strong></p>
+Curl:</p>
 
 <div class="highlight"><pre>curl -XGET <span class="s2">"https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRDIBun6klQCyR05Bnh/"</span> -u yourapikey:
 
@@ -111,7 +112,7 @@ Provides user-specific information for the currently logged in user (of the apik
 </pre></div>
 
 <p>Update
-<strong>Curl</strong></p>
+Curl:</p>
 
 <div class="highlight"><pre>curl -XPUT <span class="s2">"https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRDIBun6klQCyR05Bnh/"</span> -d <span class="s1">'{"name":"test"}'</span> -u yourapikey: -H <span class="s1">'Content-Type: application/json'</span>
 
@@ -119,7 +120,7 @@ Provides user-specific information for the currently logged in user (of the apik
 </pre></div>
 
 <p>Create
-<strong>Curl</strong></p>
+Curl:</p>
 
 <div class="highlight"><pre>curl -XPOST <span class="s2">"https://app.close.io/api/v1/lead/"</span> -d <span class="s1">'{"name":"Nemitz Co", "contacts": [{"name":"Anthony Nemitz", "title":"CEO", "phones":[{"phone":"7632225552", "type":"mobile"}], "emails":[{"email": "anemitz@gmail.com","type":"home"}]}]}'</span> -u yourapikey: -H <span class="s1">'Content-Type: application/json'</span>
 
@@ -127,7 +128,7 @@ Provides user-specific information for the currently logged in user (of the apik
 </pre></div>
 
 <p>Delete
-<strong>Curl</strong></p>
+Curl:</p>
 
 <div class="highlight"><pre>curl -XDELETE <span class="s2">"https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRDIBun6klQCyR05Bnh/"</span>
 </pre></div>
@@ -151,6 +152,23 @@ Provides user-specific information for the currently logged in user (of the apik
     <span class="n">title</span> <span class="o">=</span> <span class="n">TrimmedStringField</span><span class="p">()</span>
     <span class="n">emails</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">ContactEmail</span><span class="p">))</span>
     <span class="n">phones</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">ContactPhone</span><span class="p">))</span>
+</pre></div>
+
+<h3>Opportunity</h3>
+
+<p>Definition</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Opportunity</span><span class="p">(</span><span class="n">DocumentBase</span><span class="p">,</span> <span class="n">RandomPKDocument</span><span class="p">):</span>
+    <span class="n">organization</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="n">Organization</span><span class="p">)</span>
+    <span class="n">lead</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="n">Lead</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">OpportunityStatus</span><span class="o">.</span><span class="n">choices</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="n">OpportunityStatus</span><span class="o">.</span><span class="n">Active</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c"># in cents</span>
+    <span class="n">value_period</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">OpportunityValuePeriod</span><span class="o">.</span><span class="n">choices</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="n">OpportunityValuePeriod</span><span class="o">.</span><span class="n">OneTime</span><span class="p">)</span>
+    <span class="n">confidence</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">date_won</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">()</span> <span class="c"># date only</span>
+    <span class="n">note</span> <span class="o">=</span> <span class="n">TrimmedStringField</span><span class="p">()</span>
 </pre></div>
 
 <h3>Activity</h3>
