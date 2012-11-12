@@ -27,11 +27,9 @@
         </ul>
       </header>
       <section>
-        <h1>Close.io API</h1>
+        <p>This page describes how developers can use the API for <a href="https://close.io/">Close.io</a>. For any questions or issues, please contact engineering(at)elasticsales(dot)com.</p>
 
-<p>This page describes how developers can use the API for <a href="https://close.io/">Close.io</a>. For any questions or issues, please contact engineering(at)elasticsales(dot)com.</p>
-
-<h2>Authentication</h2>
+<h1>Authentication</h1>
 
 <p>HTTP Basic authentication. The API key acts as the username. API keys are per-organization and can be generated and deleted in the Settings page.</p>
 
@@ -54,9 +52,9 @@
 <span class="k">print</span> <span class="n">response</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
 </pre></div>
 
-<h2>Endpoints</h2>
+<h1>Endpoints</h1>
 
-<h3>Me</h3>
+<h2>Me</h2>
 
 <p>Fetch. 
 Provides user-specific information for the currently logged in user (of the api key provided).</p>
@@ -88,7 +86,7 @@ Provides user-specific information for the currently logged in user (of the api 
 }
 </code></pre>
 
-<h3>Lead</h3>
+<h2>Lead</h2>
 
 <p>Definition</p>
 
@@ -133,9 +131,9 @@ Curl:</p>
 <div class="highlight"><pre>curl -XDELETE <span class="s2">"https://app.close.io/api/v1/lead/lead_5ISwLcsJWlr1ISL935eFoS2okRDIBun6klQCyR05Bnh/"</span>
 </pre></div>
 
-<h3>Contact</h3>
+<h2>Contact</h2>
 
-<p>Definitions</p>
+<p>Definition</p>
 
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">ContactPhone</span><span class="p">(</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="nb">type</span> <span class="o">=</span> <span class="n">TrimmedStringField</span><span class="p">()</span>
@@ -154,7 +152,7 @@ Curl:</p>
     <span class="n">phones</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">ContactPhone</span><span class="p">))</span>
 </pre></div>
 
-<h3>Opportunity</h3>
+<h2>Opportunity</h2>
 
 <p>Definition</p>
 
@@ -171,7 +169,7 @@ Curl:</p>
     <span class="n">note</span> <span class="o">=</span> <span class="n">TrimmedStringField</span><span class="p">()</span>
 </pre></div>
 
-<h3>Activity</h3>
+<h2>Activity</h2>
 
 <ul>
 <li>Call</li>
