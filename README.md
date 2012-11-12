@@ -17,7 +17,7 @@ api_key = 'yourapikey'
 data = {'name': 'test lead'}
 url = 'https://app.close.io/api/v1/lead/'
 
-response = requests.post(url, data=json.dumps(data), headers={'Authorization' : 'Basic %s' % (base64.b64encode('%s:' % api_key), ), 'Content-Type': 'application/json'})
+response = requests.post(url, data=json.dumps(data), auth=(api_key, ''), headers={'Content-Type': 'application/json'})
 
 print response, response.text
 ```
@@ -30,12 +30,12 @@ Provides user-specific information for the currently logged in user (of the apik
 
 **Curl**
 ```shell
-curl -XGET "https://api.close.io/api/v1/me/" -u yourapikey:
+curl -XGET "https://app.close.io/api/v1/me/" -u yourapikey:
 {"organizations": [{"id": "orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ", "name": "NPI"}, {"id": "orga_K7g2Oj6JEGBROdYg6Y2eQHErQMUbUrUcHpFSoamdoMa", "name": "Elastic"}], "first_name": "Admin", "last_name": "Admin", "email": "admin@elasticsales.com", "sip_numbers": [{"organization_id": "orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ", "number": "19192838789"}, {"organization_id": "orga_K7g2Oj6JEGBROdYg6Y2eQHErQMUbUrUcHpFSoamdoMa", "number": "12246005120"}], "sip_user": {"username": "closeio8119", "secret": "bkeoDs2ZyNXNmMLAMjigQN9HCjBqEAeT", "server": "phone.plivo.com"}, "id": "user_H7vK6LZMChjkOvvgsj08argnBiFeIpPmM6crmOMQ8rS"}
 ```
 **Python**
 ```python
-response = requests.get('https://app.close.io/api/v1/me/', headers={'Authorization' : 'Basic %s' % (base64.b64encode('%s:' % api_key), ), 'Content-Type': 'application/json'})
+response = requests.get('https://app.close.io/api/v1/me/', auth=(api_key, ''))
 ```
 
 ### Opportunity
