@@ -1,12 +1,14 @@
 # Close.io API
 
+This page describes how developers can use the API for [Close.io](https://close.io/). For any questions or issues, please contact engineering(at)elasticsales(dot)com.
+
 ## Authentication
-HTTP Basic authentication.  The ApiKey acts as the username.  ApiKeys are per-organization and can be generated and deleted in the Settings page.
+HTTP Basic authentication. The API key acts as the username. API keys are per-organization and can be generated and deleted in the Settings page.
 
 **Curl**
 ```shell
 curl -XPOST "https://app.close.io/api/v1/lead/" -d '{"name":"test lead"}' -u yourapikey:
-#notice the ':' at the end of the apikey.  this is used because the key is sent as the username with a blank password.
+#notice the ':' at the end of the api key.  this is used because the key is sent as the username with a blank password.
 ```
 
 **Python**
@@ -31,11 +33,26 @@ Provides user-specific information for the currently logged in user (of the apik
 **Curl**
 ```shell
 curl -XGET "https://app.close.io/api/v1/me/" -u yourapikey:
-{"organizations": [{"id": "orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ", "name": "NPI"}, {"id": "orga_K7g2Oj6JEGBROdYg6Y2eQHErQMUbUrUcHpFSoamdoMa", "name": "Elastic"}], "first_name": "Admin", "last_name": "Admin", "email": "admin@elasticsales.com", "sip_numbers": [{"organization_id": "orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ", "number": "19192838789"}, {"organization_id": "orga_K7g2Oj6JEGBROdYg6Y2eQHErQMUbUrUcHpFSoamdoMa", "number": "12246005120"}], "sip_user": {"username": "closeio8119", "secret": "bkeoDs2ZyNXNmMLAMjigQN9HCjBqEAeT", "server": "phone.plivo.com"}, "id": "user_H7vK6LZMChjkOvvgsj08argnBiFeIpPmM6crmOMQ8rS"}
 ```
 **Python**
 ```python
 response = requests.get('https://app.close.io/api/v1/me/', auth=(api_key, ''))
+print response.json
+```
+
+```
+{
+    "id": "user_H7vK6LZMChjkOvvgsj08argnBiFeIpPmM6crmOMQ8rS",
+    "organizations": [
+        {
+            "id": "orga_NAOdGogArgYOLvYbsaLyLG9AbK8CscWiIIp2lD4LXbZ",
+            "name": "My Organization"
+        }
+    ],
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john@example.com"
+}
 ```
 
 ### Opportunity
