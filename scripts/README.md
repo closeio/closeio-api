@@ -14,7 +14,7 @@ Setup
 
 How to run the CSV importing script
 -----
-1. Make sure your CSV has all of these columns, _in this order_. The column names in the CSV do not matter, they just must be in the correct order.
+Make sure your CSV has all of these columns, _in this order_. The column names in the CSV do not matter, they just must be in the correct order.
 
 ```
 company_name
