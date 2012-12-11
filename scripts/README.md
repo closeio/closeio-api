@@ -35,6 +35,6 @@ All fields are optional (can be blank), but you must have all of these columns.
 
 2. Make sure (if you haven't already in Setup) you're in the `closeio-api/scripts` directory and you have activated your virtual environment by running `. venv/bin/activate`.
 
-3. Run the import script: `./csv_to_cio.py --api_key YOUR_API_KEY_HERE ~/path/to/your/leads.csv
+3. Run the import script: `./csv_to_cio.py --api_key YOUR_API_KEY_HERE ~/path/to/your/leads.csv`
 
 You can generate an API Key from Settings in Close.io.
