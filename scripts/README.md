@@ -33,6 +33,8 @@ country (2 letter abbreviation)
 ```
 All fields are optional (can be blank), but you must have all of these columns.
 
+Multiple contacts will be grouped in the same lead if multiple rows have the same value in the first column (company_name).
+
 2. Make sure (if you haven't already in Setup) you're in the `closeio-api/scripts` directory and you have activated your virtual environment by running `. venv/bin/activate`.
 
 3. Run the import script: `./csv_to_cio.py --api_key YOUR_API_KEY_HERE ~/path/to/your/leads.csv`
