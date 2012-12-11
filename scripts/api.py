@@ -20,7 +20,7 @@ class API(object):
             self.requests = requests.session()
 
     def dispatch(self, method_name, endpoint, data=None):
-        method = getattr(self.requests, method_name)
+        method = getattr(requests, method_name)
 
         print self.api_key
         print self.base_url
