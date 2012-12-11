@@ -18,10 +18,10 @@ Make sure your CSV has all of these columns, _in this order_. The column names i
 
 ```
 company_name
-url
+url (must start with http:// or https://)
 status
-email
-phone
+email (must be a valid email address)
+phone (must be a valid phone number, and must start with a "+" if it's a non-US number)
 contact_name
 contact_title
 street_address
