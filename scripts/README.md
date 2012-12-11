@@ -26,11 +26,12 @@ contact_name
 contact_title
 address
 city
-state
+state (2 letter abbreviation)
 zip
-country
+country (2 letter abbreviation)
 (any additional fields will be added as custom fields)
 ```
+All fields are optional (can be blank), but you must have all of these columns.
 
 2. Make sure (if you haven't already in step 1) you're in the `closeio-api/scripts` directory and you have activated your virtual environment by running `. venv/bin/activate`.
 
