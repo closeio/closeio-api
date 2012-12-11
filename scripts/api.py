@@ -22,9 +22,6 @@ class API(object):
     def dispatch(self, method_name, endpoint, data=None):
         method = getattr(requests, method_name)
 
-        print self.api_key
-        print self.base_url
-
         response = method(
             self.base_url+endpoint,
             data=data != None and json.dumps(data),
