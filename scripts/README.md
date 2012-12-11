@@ -24,7 +24,7 @@ email
 phone
 contact_name
 contact_title
-address
+street_address
 city
 state (2 letter abbreviation)
 zip
