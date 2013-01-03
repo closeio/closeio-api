@@ -14,26 +14,26 @@ Setup
 
 How to run the CSV importing script
 -----
-Make sure your CSV has all of these columns, _in this order_. The column names in the CSV do not matter, they just must be in the correct order.
+The script will look for your CSV to have specific column names (case insensitive). All columns are optional. All columns not listed below will be imported as custom fields.
 
+- `company` (multiple contacts will be grouped if rows have the same company
+- `url` (must start with http:// or https://)
+- `status` (defaults to "potential")
+- `contact` (full name of contact)
+- `title` (job title of contact)
+- `email` (must be a valid email address)
+- `phone` (must be a valid phone number, and must start with a "+" if it's a non-US number)
+- `mobile_phone`
+- `fax`
+- `address` (street address)
+- `city`
+- `state` (2 letter abbreviation)
+- `zip`
+- `country` (2 letter abbreviation)
+- (any additional fields will be added as custom fields)
 ```
-company_name
-url (must start with http:// or https://)
-status
-email (must be a valid email address)
-phone (must be a valid phone number, and must start with a "+" if it's a non-US number)
-contact_name
-contact_title
-street_address
-city
-state (2 letter abbreviation)
-zip
-country (2 letter abbreviation)
-(any additional fields will be added as custom fields)
-```
-All fields are optional (can be blank), but you must have all of these columns.
 
-Multiple contacts will be grouped in the same lead if multiple rows have the same value in the first column (company_name).
+Multiple contacts will be grouped in the same lead if multiple rows have the same value in the "company" column.
 
 2. Make sure (if you haven't already in Setup) you're in the `closeio-api/scripts` directory and you have activated your virtual environment by running `. venv/bin/activate`.
 
