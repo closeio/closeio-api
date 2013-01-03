@@ -43,6 +43,7 @@ expected_headers = (
     'state',
     'zip',
     'country',
+    'phonea','phoneb'
 )
 
 # remove trailing empty column headers
@@ -126,6 +127,15 @@ def lead_from_row(row):
     if value_in_row(row, 'phone'):
         phones.append({
             'phone': value_in_row(row, 'phone'),
+            'type': 'office'
+        })
+    elif value_in_row(row, 'phonea'):
+        if value_in_row(row, 'phonea') and value_in_row(row, 'phoneb'):
+            phone = '%s x%s' % (value_in_row(row, 'phonea'), value_in_row(row, 'phoneb'))
+        else:
+            phone = value_in_row(row, 'phonea')
+        phones.append({
+            'phone': phone,
             'type': 'office'
         })
     if value_in_row(row, 'mobile_phone'):
