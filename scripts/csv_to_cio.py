@@ -57,10 +57,15 @@ normalized_headers = [slugify(col) for col in header]
 # build a map of header names -> index in actual header row
 header_indices   = { col: i for (i, col) in enumerate(normalized_headers) }
 expected_headers = [ col for col in normalized_headers if col in expected_headers ]
-custom_headers = list(set(normalized_headers) - set(expected_headers))
+custom_headers = list(set(normalized_headers) - set(expected_headers)) # non-recognized fields in slug-ed format
+
+# restore original version (capitalization) to custom fields
+custom_headers = [ header[header_indices[normalized_col]] for normalized_col in custom_headers ]
+# include original version of custom fields in header_indices
+header_indices.update({ col: i for (i, col) in enumerate(custom_headers) })
 
 print "\nRecognized these column names:"
-print '> %s' % ', '.join(header_indices.keys())
+print '> %s' % ', '.join(expected_headers)
 if len(custom_headers):
     print "\nThe following column names weren't recognized, and will be imported as custom fields:"
     print '> %s' % ', '.join(custom_headers)
@@ -85,10 +90,12 @@ def lead_from_row(row):
     lead = {
         'name': value_in_row(row, 'company'),
         'url': value_in_row(row, 'url'),
-        'status': value_in_row(row, 'status') or 'potential',
         'contacts': [],
         'custom': {}
     }
+
+    if value_in_row(row, 'status'):
+        lead['status'] = value_in_row(row, 'status')
 
     if lead['url'] and '://' not in lead['url']:
         lead['url'] = 'http://%s' % lead['url']
