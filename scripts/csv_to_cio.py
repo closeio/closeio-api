@@ -54,15 +54,17 @@ if len(set(header)) != len(header):
 
 normalized_headers = [slugify(col) for col in header]
 
+if len(set(normalized_headers)) != len(normalized_headers):
+    raise Exception('After column header names were normalized there were duplicate column header names')
+
 # build a map of header names -> index in actual header row
-header_indices   = { col: i for (i, col) in enumerate(normalized_headers) }
+header_indices   = { col: i for (i, col) in enumerate(normalized_headers) } # normalized columns as keys
+header_indices.update({ col: i for (i, col) in enumerate(header) }) # add in original column names as keys
 expected_headers = [ col for col in normalized_headers if col in expected_headers ]
 custom_headers = list(set(normalized_headers) - set(expected_headers)) # non-recognized fields in slug-ed format
 
 # restore original version (capitalization) to custom fields
 custom_headers = [ header[header_indices[normalized_col]] for normalized_col in custom_headers ]
-# include original version of custom fields in header_indices
-header_indices.update({ col: i for (i, col) in enumerate(custom_headers) })
 
 print "\nRecognized these column names:"
 print '> %s' % ', '.join(expected_headers)
