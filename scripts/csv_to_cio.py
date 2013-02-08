@@ -9,6 +9,7 @@ from utils import CsvReader, count_lines, title_case, uncamel
 
 parser = argparse.ArgumentParser(description='Import leads from CSV file')
 parser.add_argument('--api_key', '-k', required=True, help='API Key')
+parser.add_argument('--skip_duplicates', action='store_true', help='Skip leads that are already present in Close.io (determined by company name).')
 parser.add_argument('--development', action='store_true', help='Use a development server rather than production.')
 parser.add_argument('file', help='Path to the csv file')
 args = parser.parse_args()
@@ -91,15 +92,17 @@ def lead_from_row(row):
 
     lead = {
         'name': value_in_row(row, 'company'),
-        'url': value_in_row(row, 'url'),
         'contacts': [],
         'custom': {}
     }
 
+    if value_in_row(row, 'url'):
+        lead['url'] = value_in_row(row, 'url')
+
     if value_in_row(row, 'status'):
         lead['status'] = value_in_row(row, 'status')
 
-    if lead['url'] and '://' not in lead['url']:
+    if lead.get('url') and '://' not in lead['url']:
         lead['url'] = 'http://%s' % lead['url']
 
     # custom fields
@@ -195,9 +198,45 @@ api = CloseIO_API(args.api_key, development=args.development)
 progress_widgets = ['Importing %d rows: ' % import_count, Percentage(), ' ', Bar(), ' ', ETA(), ' ', FileTransferSpeed()]
 pbar = ProgressBar(widgets=progress_widgets, maxval=import_count).start()
 
+dupes_cnt = 0
+
 for key, val in unique_leads.items():
     retries = 5
+
+    # check if it's a duplicate
+    dupe = False
+    if args.skip_duplicates and val.get('name'):
+
+        # get the org id necessary for search
+        org_id = api.get('api_key')['data'][0]['organization_id']
+
+        # get all the search results for given lead name
+        search_results = []
+        filters = {
+            'organization_id': org_id,
+            'query': 'name:"%s"' % key,
+        }
+        skip = 0
+        limit = 100
+        while True:
+            filters['_skip'] = skip
+            filters['_limit'] = skip + limit
+            results = api.get('lead', data=filters)['data']
+            search_results.extend(results)
+            if len(results) < limit:
+                break
+            skip += limit
+        for result in search_results:
+            if result['display_name'] == val['name']:
+                dupe = True
+                break
+
     while retries > 0:
+        if dupe:
+            dupes_cnt += 1
+            print 'Duplicate - not importing: %s' % val['name']
+            break
+
         try:
             retries -= 1
             api.post('lead', val)
@@ -222,4 +261,6 @@ for key, val in unique_leads.items():
 pbar.finish()
 
 print 'Successful responses: %d of %d' % (success_cnt, len(unique_leads))
+if args.skip_duplicates:
+    print 'Duplicates: %d' % dupes_cnt
 
