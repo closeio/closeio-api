@@ -1,0 +1,2161 @@
+--- Close.io ---
+
+--- 
+
+Welcome to the Close.io REST API specification. 
+
+
+**Authentication**
+
+HTTP Basic authentication. The API key acts as the username. API keys are per-organization and can be generated and deleted in the Settings page.
+
+Example cURL request with an api key.
+```curl "https://app.close.io/api/v1/me/" -u yourapikey:```
+notice the ':' at the end of the api key.  This is used because the key is sent as the username with a blank password.
+---
+
+
+--
+Leads
+--
+
+List or search for leads.
+
+*allowed orderings*: date_updated, -date_updated
+GET /lead/{?query, _order_by}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "total_results": 1,
+    "data": [
+        {
+            "status": "potential",
+            "activities": [],
+            "tasks": [],
+            "display_name": "Wayne Enterprises (Sample Lead)",
+            "addresses": [],
+            "contacts": [
+                {
+                    "name": "Bruce Wayne",
+                    "title": "The Dark Knight",
+                    "date_updated": "2013-02-06T20:53:01.954000+00:00",
+                    "phones": [
+                        {
+                            "phone": "+1234",
+                            "phone_formatted": "+1 234",
+                            "type": "office"
+                        }
+                    ],
+                    "created_by": null,
+                    "id": "cont_o0kP3Nqyq0wxr5DLWIEm8mVr6ZpI0AhonKLDG0V5Qjh",
+                    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+                    "date_created": "2013-02-01T00:54:51.331000+00:00",
+                    "emails": [
+                        {
+                            "type": "office",
+                            "email_lower": "thedarkknight@close.io",
+                            "email": "thedarkknight@close.io"
+                        }
+                    ],
+                    "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+                }
+            ],
+            "date_updated": "2013-02-06T20:53:01.977000+00:00",
+            "description": "",
+            "html_url": "https://app.close.io/lead/lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O/",
+            "created_by": null,
+            "custom": {},
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "url": null,
+            "opportunities": [
+                {
+                    "status": "active",
+                    "date_won": null,
+                    "confidence": 75,
+                    "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+                    "updated_by": null,
+                    "date_updated": "2013-02-01T00:54:51.337000+00:00",
+                    "value_period": "one_time",
+                    "created_by": null,
+                    "note": "Bruce needs new software for the Bat Cave.",
+                    "value": 50000,
+                    "lead_name": "Wayne Enterprises (Sample Lead)",
+                    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+                    "date_created": "2013-02-01T00:54:51.337000+00:00",
+                    "user_name": "P F",
+                    "id": "oppo_8eB77gAdf8FMy6GsNHEy84f7uoeEWv55slvUjKQZpJt",
+                    "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "date_created": "2013-02-01T00:54:51.333000+00:00",
+            "id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O",
+            "name": "Wayne Enterprises (Sample Lead)"
+        }
+    ]
+}
+
+Retrieve a single lead.
+GET /lead/{lead_id}/
+< 200
+< Content-Type: application/json
+{
+    "status": "potential",
+    "activities": [],
+    "tasks": [],
+    "display_name": "Wayne Enterprises (Sample Lead)",
+    "addresses": [],
+    "name": "Wayne Enterprises (Sample Lead)",
+    "contacts": [
+        {
+            "name": "Bruce Wayne",
+            "title": "The Dark Knight",
+            "date_updated": "2013-02-06T20:53:01.954000+00:00",
+            "phones": [
+                {
+                    "phone": "+1234",
+                    "phone_formatted": "+1 234",
+                    "type": "office"
+                }
+            ],
+            "created_by": null,
+            "id": "cont_o0kP3Nqyq0wxr5DLWIEm8mVr6ZpI0AhonKLDG0V5Qjh",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.331000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "thedarkknight@close.io",
+                    "email": "thedarkknight@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        }
+    ],
+    "date_updated": "2013-02-06T20:53:01.977000+00:00",
+    "html_url": "https://app.close.io/lead/lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O/",
+    "created_by": null,
+    "custom": {},
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "url": null,
+    "opportunities": [
+        {
+            "status": "active",
+            "date_won": null,
+            "confidence": 75,
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "updated_by": null,
+            "date_updated": "2013-02-01T00:54:51.337000+00:00",
+            "value_period": "one_time",
+            "created_by": null,
+            "note": "Bruce needs new software for the Bat Cave.",
+            "value": 50000,
+            "lead_name": "Wayne Enterprises (Sample Lead)",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.337000+00:00",
+            "user_name": "P F",
+            "id": "oppo_8eB77gAdf8FMy6GsNHEy84f7uoeEWv55slvUjKQZpJt",
+            "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O"
+        }
+    ],
+    "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+    "date_created": "2013-02-01T00:54:51.333000+00:00",
+    "id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O",
+    "description": ""
+}
+
+Create a new lead.
+POST /lead/
+> Content-Type: application/json
+{
+    "name": "Bluth Company",
+    "url": "http://foxnews.com",
+    "description": "Best. Show. Ever.",
+    "contacts": [
+        {
+            "name": "Gob",
+            "title": "sr. vice president",
+            "emails": [
+                {
+                    "type": "office",
+                    "email": "gob@example.com"
+                }
+            ],
+            "phones": [
+                {
+                    "type": "office",
+                    "phone": "8004445555"
+                }
+            ]
+        }
+    ]
+}
+< 200
+< Content-Type: application/json
+{
+    "status": "potential",
+    "activities": [
+        {
+            "search_attributes": {
+                "source": "api",
+                "created_by": [
+                    "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+                    "Anthony Nemitz"
+                ]
+            },
+            "_type": "Created",
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T05:30:24.870000+00:00",
+            "is_new": false,
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "source": "api",
+            "search_full_text": "",
+            "contact_id": null,
+            "date_created": "2013-02-20T05:30:24.854000+00:00",
+            "id": "acti_0wDacWkNoKKVn7I8wCuEc1XbQ7lGQxCgZ9WNQn71P8j",
+            "lead_id": "lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty"
+        }
+    ],
+    "tasks": [],
+    "display_name": "Bluth Company",
+    "addresses": [],
+    "name": "Bluth Company",
+    "contacts": [
+        {
+            "name": "Gob",
+            "title": "sr. vice president",
+            "date_updated": "2013-02-20T05:30:24.844000+00:00",
+            "phones": [
+                {
+                    "phone": "+18004445555",
+                    "phone_formatted": "+1 800-444-5555",
+                    "type": "office"
+                }
+            ],
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "id": "cont_qpjDKxbN3WWsuhaJjg2Qr9pkqHqe1yviZ5BS0dEyz05",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-20T05:30:24.844000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "gob@example.com",
+                    "email": "gob@example.com"
+                }
+            ],
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+        }
+    ],
+    "date_updated": "2013-02-20T05:30:24.854000+00:00",
+    "html_url": "https://app.close.io/lead/lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty/",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "custom": {},
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "url": "http://foxnews.com",
+    "opportunities": [],
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_created": "2013-02-20T05:30:24.854000+00:00",
+    "id": "lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty",
+    "description": "Best. Show. Ever."
+}
+
+Update an existing lead.  Supports non-destructive patches.
+PUT /lead/{lead_id}/
+> Content-Type: application/json
+{"description": "Best show ever canceled.  Sad."}   
+< 200
+< Content-Type: application/json
+{
+    "status": "potential",
+    "activities": [
+        {
+            "search_attributes": {
+                "source": "api",
+                "created_by": [
+                    "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+                    "Anthony Nemitz"
+                ]
+            },
+            "_type": "Created",
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T05:30:24.870000+00:00",
+            "is_new": false,
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "source": "api",
+            "search_full_text": "",
+            "contact_id": null,
+            "date_created": "2013-02-20T05:30:24.854000+00:00",
+            "id": "acti_0wDacWkNoKKVn7I8wCuEc1XbQ7lGQxCgZ9WNQn71P8j",
+            "lead_id": "lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty"
+        }
+    ],
+    "tasks": [],
+    "display_name": "Bluth Company",
+    "addresses": [],
+    "name": "Bluth Company",
+    "contacts": [
+        {
+            "name": "Gob",
+            "title": "sr. vice president",
+            "date_updated": "2013-02-20T05:43:41.611000+00:00",
+            "phones": [
+                {
+                    "phone": "+18004445555",
+                    "phone_formatted": "+1 800-444-5555",
+                    "type": "office"
+                }
+            ],
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "id": "cont_qpjDKxbN3WWsuhaJjg2Qr9pkqHqe1yviZ5BS0dEyz05",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-20T05:30:24.844000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "gob@example.com",
+                    "email": "gob@example.com"
+                }
+            ],
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+        }
+    ],
+    "date_updated": "2013-02-20T05:43:41.622000+00:00",
+    "html_url": "https://app.close.io/lead/lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty/",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "custom": {},
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "url": "http://foxnews.com",
+    "opportunities": [],
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_created": "2013-02-20T05:30:24.854000+00:00",
+    "id": "lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty",
+    "description": "Best show ever canceled.  Sad."
+}
+
+Delete a lead
+DELETE /lead/{lead_id}/
+< 200
+< Content-Type: application/json
+{}
+
+--
+Contacts
+--
+List contacts.
+
+GET /contact/
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "name": "Tobias Fünke",
+            "title": "Blue Man Group (Understudy)",
+            "date_updated": "2013-02-06T20:53:09.334000+00:00",
+            "phones": [
+                {
+                    "phone": "+123",
+                    "phone_formatted": "+1 23",
+                    "type": "office"
+                }
+            ],
+            "created_by": null,
+            "id": "cont_q4xYmlGhA3060dEl0NDJuHRxPMuVjqLn30AFSzh1fRk",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.300000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "tobiasfunke@close.io",
+                    "email": "tobiasfunke@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        },
+        {
+            "name": "Bruce Wayne",
+            "title": "The Dark Knight",
+            "date_updated": "2013-02-06T20:53:01.954000+00:00",
+            "phones": [
+                {
+                    "phone": "+1234",
+                    "phone_formatted": "+1 234",
+                    "type": "office"
+                }
+            ],
+            "created_by": null,
+            "id": "cont_o0kP3Nqyq0wxr5DLWIEm8mVr6ZpI0AhonKLDG0V5Qjh",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.331000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "thedarkknight@close.io",
+                    "email": "thedarkknight@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        },
+        {
+            "name": "Gob Bluth",
+            "title": "Magician",
+            "date_updated": "2013-02-06T20:48:55.240000+00:00",
+            "phones": [],
+            "created_by": null,
+            "id": "cont_E7dYM0ecRoFQosxiPFz8IxazhN4k11uW8Sh1UsXjNjo",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.298000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "bluth@close.io",
+                    "email": "bluth@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        },
+        {
+            "name": "Close.io Support",
+            "title": null,
+            "date_updated": "2013-02-01T00:59:33.689000+00:00",
+            "phones": [
+                {
+                    "phone": "+18552567346",
+                    "phone_formatted": "+1 855-256-7346",
+                    "type": "office"
+                }
+            ],
+            "created_by": null,
+            "id": "cont_uw6ONU4iBcQg4TyqOKAwl0F1amULG9ZZsY57kHHdJNE",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.203000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "support@close.io",
+                    "email": "support@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        },
+        {
+            "name": "Nick Persico",
+            "title": "Account Manager",
+            "date_updated": "2013-02-01T00:59:33.678000+00:00",
+            "phones": [
+                {
+                    "phone": "+14152753398",
+                    "phone_formatted": "+1 415-275-3398",
+                    "type": "office"
+                }
+            ],
+            "created_by": null,
+            "id": "cont_8NNOJnVwmHQEYuVOgJ4B4zU7g9RUxYH4JnPjza5Vr6t",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.197000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "nick@close.io",
+                    "email": "nick@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        },
+        {
+            "name": "phil",
+            "title": "",
+            "date_updated": "2013-02-08T05:02:39.552000+00:00",
+            "phones": [],
+            "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "id": "cont_eXZwc2SVL4G3xSR85jnfPny2ykvoAQndSyi1Doa2YLO",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-08T05:02:39.552000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "phil@close.io",
+                    "email": "phil@close.io"
+                }
+            ],
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI"
+        },
+        {
+            "name": "Gob",
+            "title": "sr. vice president",
+            "date_updated": "2013-02-20T05:44:14.700000+00:00",
+            "phones": [
+                {
+                    "phone": "+18004445555",
+                    "phone_formatted": "+1 800-444-5555",
+                    "type": "office"
+                }
+            ],
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "id": "cont_qpjDKxbN3WWsuhaJjg2Qr9pkqHqe1yviZ5BS0dEyz05",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-20T05:30:24.844000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "gob@example.com",
+                    "email": "gob@example.com"
+                }
+            ],
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+        },
+        {
+            "name": "Gob",
+            "title": "sr. vice president",
+            "date_updated": "2013-02-20T05:44:31.929000+00:00",
+            "phones": [
+                {
+                    "phone": "+18004445555",
+                    "phone_formatted": "+1 800-444-5555",
+                    "type": "office"
+                }
+            ],
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "id": "cont_kfaRMPzwQ9yAOn96gVGUxKRKqsYv6QJStoLhlDEpquY",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-20T05:44:31.929000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "gob@example.com",
+                    "email": "gob@example.com"
+                }
+            ],
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+        },
+        {
+            "name": "Gob",
+            "title": "sr. vice president",
+            "date_updated": "2013-02-20T05:44:35.625000+00:00",
+            "phones": [
+                {
+                    "phone": "+18004445555",
+                    "phone_formatted": "+1 800-444-5555",
+                    "type": "office"
+                }
+            ],
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "id": "cont_3lUrUYmceYjzeqrIqF5jpSppZemyxvgquE8Oq1kM6p0",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-20T05:44:35.625000+00:00",
+            "emails": [
+                {
+                    "type": "office",
+                    "email_lower": "gob@example.com",
+                    "email": "gob@example.com"
+                }
+            ],
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+        }
+    ]
+}
+
+Fetch a single contact
+GET /contact/{contact_id}/
+< 200
+< Content-Type: application/json
+{
+    "name": "Gob",
+    "title": "sr. vice president",
+    "date_updated": "2013-02-20T05:44:35.625000+00:00",
+    "phones": [
+        {
+            "phone": "+18004445555",
+            "phone_formatted": "+1 800-444-5555",
+            "type": "office"
+        }
+    ],
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "emails": [
+        {
+            "type": "office",
+            "email_lower": "gob@example.com",
+            "email": "gob@example.com"
+        }
+    ],
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "date_created": "2013-02-20T05:44:35.625000+00:00",
+    "id": "cont_3lUrUYmceYjzeqrIqF5jpSppZemyxvgquE8Oq1kM6p0",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+}
+
+
+Delete a contact
+DELETE /contact/{contact_id}/
+< 200
+< Content-Type: application/json
+{}
+
+
+--
+Activities
+--
+
+List or filter all activity types.
+
+GET /activity/{?lead_id, user_id, date_created, date_created__gt, date_created__lt}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "search_attributes": {
+                "source": "api",
+                "created_by": [
+                    "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+                    "Anthony Nemitz"
+                ]
+            },
+            "_type": "Created",
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T05:44:35.667000+00:00",
+            "is_new": false,
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "source": "api",
+            "search_full_text": "",
+            "contact_id": null,
+            "date_created": "2013-02-20T05:44:35.636000+00:00",
+            "id": "acti_ICUkwteuKAaJvhNqF1QBoVOWKQuSbFuOYoZxGeWQAeg",
+            "lead_id": "lead_pqXrF8figcDHN7HvaXmb4wTjpxnxpmqheEyjTYPfdi5"
+        },
+        {
+            "search_attributes": {
+                "source": "api",
+                "created_by": [
+                    "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+                    "Anthony Nemitz"
+                ]
+            },
+            "_type": "Created",
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T05:44:31.955000+00:00",
+            "is_new": false,
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "source": "api",
+            "search_full_text": "",
+            "contact_id": null,
+            "date_created": "2013-02-20T05:44:31.940000+00:00",
+            "id": "acti_k8u1xLU5G9L0YLkxLqAHEZFB84oB7fN9vqjCgljfcFN",
+            "lead_id": "lead_6SY1tPBB1EnQneopPGSLsAmXVkTRf4P0r6Y6ntdPowL"
+        },
+        {
+            "search_attributes": {
+                "source": "api",
+                "created_by": [
+                    "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+                    "Anthony Nemitz"
+                ]
+            },
+            "_type": "Created",
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T05:30:24.870000+00:00",
+            "is_new": false,
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "source": "api",
+            "search_full_text": "",
+            "contact_id": null,
+            "date_created": "2013-02-20T05:30:24.854000+00:00",
+            "id": "acti_0wDacWkNoKKVn7I8wCuEc1XbQ7lGQxCgZ9WNQn71P8j",
+            "lead_id": "lead_70jZ5hiVt5X31MZ3vJ0R0GJMqJEihkoF7TtSVFbN2ty"
+        },
+        {
+            "attachments": [],
+            "body_text": "Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+            "date_updated": "2013-02-08T05:03:16.281000+00:00",
+            "direction": "outgoing",
+            "contact_id": "cont_eXZwc2SVL4G3xSR85jnfPny2ykvoAQndSyi1Doa2YLO",
+            "id": "acti_C4DFcBED1FwLSDqn853hjc979h7DIuH2vwABzGWhRAO",
+            "need_smtp_credentials": false,
+            "user_id": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "to": [
+                "phil@close.io"
+            ],
+            "subject": "Testing testing!!!!",
+            "opens": [],
+            "status": "sent",
+            "search_attributes": {
+                "body": "Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+                "to": [
+                    "phil@close.io"
+                ],
+                "sender": "phil@close.io",
+                "cc": [],
+                "subject": "Testing testing!!!!",
+                "email_opened": [],
+                "bcc": []
+            },
+            "_type": "Email",
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "envelope": {
+                "from": [
+                    {
+                        "email": "phil@close.io",
+                        "name": "Phil Freo"
+                    }
+                ],
+                "sender": [
+                    {
+                        "email": "phil@close.io",
+                        "name": "Phil Freo"
+                    }
+                ],
+                "to": [
+                    {
+                        "email": "phil@close.io",
+                        "name": ""
+                    }
+                ],
+                "cc": [],
+                "bcc": [],
+                "reply_to": [],
+                "date": "Fri, 08 Feb 2013 05:03:15 +0000",
+                "in_reply_to": null,
+                "message_id": "<20130208050314.11553.33819@ec2-54-245-86-79.us-west-2.compute.amazonaws.com>",
+                "subject": "Testing testing!!!!"
+            },
+            "body_html": "Cool!<br>\n<br>\nThis is rad. &lt;3<br>\n<br><br>______________________________________________<br>Sent via <a href='http://close.io/?utm_source=signature&utm_medium=email&utm_campaign=signature'>Close.io</a> &ndash; sales communication made simple",
+            "is_new": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "body_text_quoted": [
+                {
+                    "text": "Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+                    "expand": true
+                }
+            ],
+            "send_attempts": [],
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h",
+            "sender": "phil@close.io",
+            "bcc": [],
+            "search_full_text": "Testing testing!!!! Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+            "date_created": "2013-02-08T05:02:42.050000+00:00",
+            "template_id": null,
+            "cc": []
+        },
+        {
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "search_attributes": {
+                "note": "Welcome to Close.io! Get started by:\n\n1. Import your leads! Use our \"Bulk CSV Upload\" tool by clicking your name in the top right. Add leads manually by clicking \"New Lead\" in the lower left.\n\n2. Invite your co-workers!\n\n3. Setup two-way syncing of your emails by going to Settings -> Email Settings.",
+                "note_by": "Phil Freo"
+            },
+            "_type": "Note",
+            "user_id": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "date_updated": "2013-02-01T01:06:35.668000+00:00",
+            "is_new": false,
+            "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "note": "Welcome to Close.io! Get started by:\n\n1. Import your leads! Use our \"Bulk CSV Upload\" tool by clicking your name in the top right. Add leads manually by clicking \"New Lead\" in the lower left.\n\n2. Invite your co-workers!\n\n3. Setup two-way syncing of your emails by going to Settings -> Email Settings.",
+            "search_full_text": "Welcome to Close.io! Get started by:\n\n1. Import your leads! Use our \"Bulk CSV Upload\" tool by clicking your name in the top right. Add leads manually by clicking \"New Lead\" in the lower left.\n\n2. Invite your co-workers!\n\n3. Setup two-way syncing of your emails by going to Settings -> Email Settings.",
+            "contact_id": null,
+            "date_created": "2013-02-01T01:05:04.070000+00:00",
+            "id": "acti_XOyG7jURMfsLgKuYGqbQ4Qp7L5a16pQOcDfTgotqDak",
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h"
+        },
+        {
+            "attachments": [],
+            "body_text": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+            "date_updated": "2013-02-01T00:56:04.184000+00:00",
+            "direction": "incoming",
+            "contact_id": "cont_8NNOJnVwmHQEYuVOgJ4B4zU7g9RUxYH4JnPjza5Vr6t",
+            "id": "acti_WuIVvTT9b3zLmOOWalxK0OrqtdkxEEdu4mNr1TPGb2o",
+            "need_smtp_credentials": false,
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "created_by": null,
+            "to": [
+                "phil+sample@close.io"
+            ],
+            "subject": "Welcome to Close.io!",
+            "opens": [],
+            "status": "inbox",
+            "search_attributes": {
+                "body": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+                "to": [
+                    "phil+sample@close.io"
+                ],
+                "sender": "nick@close.io",
+                "cc": [],
+                "subject": "Welcome to Close.io!",
+                "email_opened": [],
+                "bcc": []
+            },
+            "_type": "Email",
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "envelope": {
+                "from": [
+                    {
+                        "email": "nick@close.io",
+                        "name": ""
+                    }
+                ],
+                "sender": [
+                    {
+                        "email": "nick@close.io",
+                        "name": ""
+                    }
+                ],
+                "to": [
+                    {
+                        "email": "phil+sample@close.io",
+                        "name": ""
+                    }
+                ],
+                "cc": [],
+                "bcc": [],
+                "reply_to": [],
+                "date": "Fri, 01 Feb 2013 00:54:51 +0000",
+                "in_reply_to": null,
+                "message_id": "<20130201005451.14369.20369@ec2-54-245-86-79.us-west-2.compute.amazonaws.com>",
+                "subject": "Welcome to Close.io!"
+            },
+            "body_html": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+            "is_new": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "body_text_quoted": [
+                {
+                    "text": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+                    "expand": true
+                }
+            ],
+            "send_attempts": [],
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h",
+            "sender": "nick@close.io",
+            "bcc": [],
+            "search_full_text": "Welcome to Close.io! Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+            "date_created": "2013-02-01T00:54:51.274000+00:00",
+            "template_id": null,
+            "cc": []
+        }
+    ]
+}
+
+List or filter all Note activities.
+GET /activity/note/{?lead_id, user_id, date_created, date_created__gt, date_created__lt}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "search_attributes": {
+                "note": "Welcome to Close.io! Get started by:\n\n1. Import your leads! Use our \"Bulk CSV Upload\" tool by clicking your name in the top right. Add leads manually by clicking \"New Lead\" in the lower left.\n\n2. Invite your co-workers!\n\n3. Setup two-way syncing of your emails by going to Settings -> Email Settings.",
+                "note_by": "Phil Freo"
+            },
+            "_type": "Note",
+            "user_id": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "date_updated": "2013-02-01T01:06:35.668000+00:00",
+            "is_new": false,
+            "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "note": "Welcome to Close.io! Get started by:\n\n1. Import your leads! Use our \"Bulk CSV Upload\" tool by clicking your name in the top right. Add leads manually by clicking \"New Lead\" in the lower left.\n\n2. Invite your co-workers!\n\n3. Setup two-way syncing of your emails by going to Settings -> Email Settings.",
+            "search_full_text": "Welcome to Close.io! Get started by:\n\n1. Import your leads! Use our \"Bulk CSV Upload\" tool by clicking your name in the top right. Add leads manually by clicking \"New Lead\" in the lower left.\n\n2. Invite your co-workers!\n\n3. Setup two-way syncing of your emails by going to Settings -> Email Settings.",
+            "contact_id": null,
+            "date_created": "2013-02-01T01:05:04.070000+00:00",
+            "id": "acti_XOyG7jURMfsLgKuYGqbQ4Qp7L5a16pQOcDfTgotqDak",
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h"
+        }
+    ]
+}
+
+
+Create a Note activity.
+POST /activity/note/
+> Content-Type: application/json
+{"note": "this is a test note.", "lead_id": "lead_s6vHFTK1TSRoH6otXOexWDO9jM4xyb1kELHDoU7Fdsp"}
+< 200
+< Content-Type: application/json
+{
+    "search_attributes": {
+        "note": "this is a test note.",
+        "note_by": "Anthony Nemitz"
+    },
+    "_type": "Note",
+    "note": "this is a test note.",
+    "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_updated": "2013-02-20T06:39:57.266000+00:00",
+    "is_new": false,
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "search_full_text": "this is a test note.",
+    "contact_id": null,
+    "date_created": "2013-02-20T06:39:57.266000+00:00",
+    "id": "acti_kwWA3rOfy4BnaZ8QQk3RIIAz51dU9ayiluy1s961Oiw",
+    "lead_id": "lead_s6vHFTK1TSRoH6otXOexWDO9jM4xyb1kELHDoU7Fdsp"
+}
+
+
+Update an existing Note activity.
+PUT /activity/note/
+> Content-Type: application/json
+{"note": "this is an update to my existing note."}
+< 200
+< Content-Type: application/json
+{
+    "search_attributes": {
+        "note": "this is an update to my existing note.",
+        "note_by": "Anthony Nemitz"
+    },
+    "_type": "Note",
+    "note": "this is an update to my existing note.",
+    "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_updated": "2013-02-20T06:41:59.846000+00:00",
+    "is_new": false,
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "search_full_text": "this is an update to my existing note.",
+    "contact_id": null,
+    "date_created": "2013-02-20T06:39:57.266000+00:00",
+    "id": "acti_kwWA3rOfy4BnaZ8QQk3RIIAz51dU9ayiluy1s961Oiw",
+    "lead_id": "lead_s6vHFTK1TSRoH6otXOexWDO9jM4xyb1kELHDoU7Fdsp"
+}
+
+
+
+List or filter all Email activities.
+
+GET /activity/email/{?lead_id, user_id, date_created, date_created__gt, date_created__lt}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "attachments": [],
+            "body_text": "Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+            "date_updated": "2013-02-08T05:03:16.281000+00:00",
+            "direction": "outgoing",
+            "contact_id": "cont_eXZwc2SVL4G3xSR85jnfPny2ykvoAQndSyi1Doa2YLO",
+            "id": "acti_C4DFcBED1FwLSDqn853hjc979h7DIuH2vwABzGWhRAO",
+            "need_smtp_credentials": false,
+            "user_id": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "to": [
+                "phil@close.io"
+            ],
+            "subject": "Testing testing!!!!",
+            "opens": [],
+            "status": "sent",
+            "search_attributes": {
+                "body": "Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+                "to": [
+                    "phil@close.io"
+                ],
+                "sender": "phil@close.io",
+                "cc": [],
+                "subject": "Testing testing!!!!",
+                "email_opened": [],
+                "bcc": []
+            },
+            "_type": "Email",
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "envelope": {
+                "from": [
+                    {
+                        "email": "phil@close.io",
+                        "name": "Phil Freo"
+                    }
+                ],
+                "sender": [
+                    {
+                        "email": "phil@close.io",
+                        "name": "Phil Freo"
+                    }
+                ],
+                "to": [
+                    {
+                        "email": "phil@close.io",
+                        "name": ""
+                    }
+                ],
+                "cc": [],
+                "bcc": [],
+                "reply_to": [],
+                "date": "Fri, 08 Feb 2013 05:03:15 +0000",
+                "in_reply_to": null,
+                "message_id": "<20130208050314.11553.33819@ec2-54-245-86-79.us-west-2.compute.amazonaws.com>",
+                "subject": "Testing testing!!!!"
+            },
+            "body_html": "Cool!<br>\n<br>\nThis is rad. &lt;3<br>\n<br><br>______________________________________________<br>Sent via <a href='http://close.io/?utm_source=signature&utm_medium=email&utm_campaign=signature'>Close.io</a> &ndash; sales communication made simple",
+            "is_new": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "body_text_quoted": [
+                {
+                    "text": "Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+                    "expand": true
+                }
+            ],
+            "send_attempts": [],
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h",
+            "sender": "phil@close.io",
+            "bcc": [],
+            "search_full_text": "Testing testing!!!! Cool!\n\nThis is rad. <3\n\n\n______________________________________________\nSent via http://close.io/ - sales communication made simple",
+            "date_created": "2013-02-08T05:02:42.050000+00:00",
+            "template_id": null,
+            "cc": []
+        },
+        {
+            "attachments": [],
+            "body_text": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+            "date_updated": "2013-02-01T00:56:04.184000+00:00",
+            "direction": "incoming",
+            "contact_id": "cont_8NNOJnVwmHQEYuVOgJ4B4zU7g9RUxYH4JnPjza5Vr6t",
+            "id": "acti_WuIVvTT9b3zLmOOWalxK0OrqtdkxEEdu4mNr1TPGb2o",
+            "need_smtp_credentials": false,
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "created_by": null,
+            "to": [
+                "phil+sample@close.io"
+            ],
+            "subject": "Welcome to Close.io!",
+            "opens": [],
+            "status": "inbox",
+            "search_attributes": {
+                "body": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+                "to": [
+                    "phil+sample@close.io"
+                ],
+                "sender": "nick@close.io",
+                "cc": [],
+                "subject": "Welcome to Close.io!",
+                "email_opened": [],
+                "bcc": []
+            },
+            "_type": "Email",
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "envelope": {
+                "from": [
+                    {
+                        "email": "nick@close.io",
+                        "name": ""
+                    }
+                ],
+                "sender": [
+                    {
+                        "email": "nick@close.io",
+                        "name": ""
+                    }
+                ],
+                "to": [
+                    {
+                        "email": "phil+sample@close.io",
+                        "name": ""
+                    }
+                ],
+                "cc": [],
+                "bcc": [],
+                "reply_to": [],
+                "date": "Fri, 01 Feb 2013 00:54:51 +0000",
+                "in_reply_to": null,
+                "message_id": "<20130201005451.14369.20369@ec2-54-245-86-79.us-west-2.compute.amazonaws.com>",
+                "subject": "Welcome to Close.io!"
+            },
+            "body_html": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+            "is_new": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "body_text_quoted": [
+                {
+                    "text": "Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+                    "expand": true
+                }
+            ],
+            "send_attempts": [],
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h",
+            "sender": "nick@close.io",
+            "bcc": [],
+            "search_full_text": "Welcome to Close.io! Hi! My name is Nick and I'm your Account Manager. I'm here to get your team set up and help with anything you may need as you evaluate our platform. Please don't hesitate to reach out to me with any questions!",
+            "date_created": "2013-02-01T00:54:51.274000+00:00",
+            "template_id": null,
+            "cc": []
+        }
+    ]
+}
+
+Create an Email activity.
+POST /activity/email/
+> Content-Type: application/json
+{}
+< 200
+< Content-Type: application/json
+{}
+
+Update an Email activity.  This can be used to modify a draft or send it once the draft is complete.
+PUT /activity/email/{email_id}/
+> Content-Type: application/json
+{}
+< 200
+< Content-Type: application/json
+{}
+
+
+List or filter all Call activities.
+
+GET /activity/call/{?lead_id, user_id, date_created, date_created__gt, date_created__lt}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "search_attributes": {
+                "called_by": "Anthony Nemitz"
+            },
+            "_type": "Call",
+            "voicemail_url": null,
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T06:34:35.656000+00:00",
+            "recording_url": null,
+            "voicemail_duration": null,
+            "direction": "outbound",
+            "is_new": false,
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "note": "",
+            "phone": "+123",
+            "search_full_text": "",
+            "contact_id": "cont_q4xYmlGhA3060dEl0NDJuHRxPMuVjqLn30AFSzh1fRk",
+            "date_created": "2013-02-20T06:34:33.637000+00:00",
+            "duration": 0,
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "quality_info": "  [DISCONNCTD] To: sip:123@phone.plivo.com;tag=v7970ZraSKBBe\r\n    Call time: 00h:00m:00s, 1st res in 206 ms, conn in 0ms\n    SRTP status: Not active Crypto-suite: (null)\n    #0 G722 @16KHz, sendrecv, peer=50.97.165.4:20268\n       RX pt=9, stat last update: 00h:00m:00.518s ago\n          total 33pkt 10.5KB (11.8KB +IP hdr) @avg=82.4Kbps/92.7Kbps\n          pkt loss=0 (0.0%), discrd=0 (0.0%), dup=0 (0.0%), reord=0 (0.0%)\n                (msec)    min     avg     max     last    dev\n          loss period:   0.000   0.000   0.000   0.000   0.000\n          jitter     :   0.000   0.083   0.125   0.125   0.058\n       TX pt=9, ptime=20ms, stat last update: never\n          total 31pkt 4.9KB (6.2KB +IP hdr) @avg 38.7Kbps/48.3Kbps\n          pkt loss=0 (0.0%), dup=0 (0.0%), reorder=0 (0.0%)\n                (msec)    min     avg     max     last    dev \n          loss period:   0.000   0.000   0.000   0.000   0.000\n          jitter     :   0.000   0.000   0.000   0.000   0.000\n      RTT msec       :   0.000   0.000   0.000   0.000   0.000\n",
+            "id": "acti_Ay0QqN91HKAHVQUesISYV8QlhDobGfWb1Ui3TE75pJR",
+            "lead_id": "lead_s6vHFTK1TSRoH6otXOexWDO9jM4xyb1kELHDoU7Fdsp"
+        }
+    ]
+}
+
+Delete an activity.
+DELETE /activity/{id}/
+< 200
+< Content-Type: application/json
+{}
+
+--
+Opportunities
+--
+List or filter opportunities.
+
+*allowed orderings*: date_won, -date_won, date_updated, -date_updated
+GET /opportunity/{?lead_id, user_id, status, _order_by}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "status": "active",
+            "date_won": null,
+            "confidence": 75,
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "updated_by": null,
+            "date_updated": "2013-02-01T00:54:51.321000+00:00",
+            "value_period": "one_time",
+            "created_by": null,
+            "note": "Gob's ready to buy a $3,000 suit.",
+            "value": 300000,
+            "lead_name": "Bluth Company (Sample Lead)",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.321000+00:00",
+            "user_name": "P F",
+            "id": "oppo_KXyJj2PT74U1wOPvhBDO37jCC89mmrnoW0DylcDDWrL",
+            "lead_id": "lead_s6vHFTK1TSRoH6otXOexWDO9jM4xyb1kELHDoU7Fdsp"
+        },
+        {
+            "status": "active",
+            "date_won": null,
+            "confidence": 75,
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "updated_by": null,
+            "date_updated": "2013-02-01T00:54:51.337000+00:00",
+            "value_period": "one_time",
+            "created_by": null,
+            "note": "Bruce needs new software for the Bat Cave.",
+            "value": 50000,
+            "lead_name": "Wayne Enterprises (Sample Lead)",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-01T00:54:51.337000+00:00",
+            "user_name": "P F",
+            "id": "oppo_8eB77gAdf8FMy6GsNHEy84f7uoeEWv55slvUjKQZpJt",
+            "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O"
+        }
+    ]
+}
+
+
+Retrieve an opportunity
+
+GET /opportunity/{opportunity_id}/
+< 200
+< Content-Type: application/json
+{
+    "status": "active",
+    "date_won": null,
+    "confidence": 75,
+    "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+    "updated_by": null,
+    "date_updated": "2013-02-01T00:54:51.337000+00:00",
+    "created_by": null,
+    "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O",
+    "note": "Bruce needs new software for the Bat Cave.",
+    "value": 50000,
+    "date_created": "2013-02-01T00:54:51.337000+00:00",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "lead_name": "Wayne Enterprises (Sample Lead)",
+    "user_name": "P F",
+    "id": "oppo_8eB77gAdf8FMy6GsNHEy84f7uoeEWv55slvUjKQZpJt",
+    "value_period": "one_time"
+}
+
+
+Create an opportunity.
+POST /opportunity/
+> Content-Type: application/json
+{"note": "i hope this deal closes...", "confidence": 90, "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O", "status": "active"}
+< 200
+< Content-Type: application/json
+{
+    "status": "active",
+    "date_won": null,
+    "confidence": 90,
+    "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_updated": "2013-02-20T10:11:50.520000+00:00",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O",
+    "note": "i hope this deal closes...",
+    "value": null,
+    "date_created": "2013-02-20T10:11:50.520000+00:00",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "lead_name": "Wayne Enterprises (Sample Lead)",
+    "user_name": "Anthony Nemitz",
+    "id": "oppo_bJoqD4QX21AfA2fAGX5HmPQ1EgGoWBannvLj4khIfPH",
+    "value_period": "one_time"
+}
+
+Update an opportunity.  If you don't set the date_won and that status is changed to won it will be set to now().
+PUT /opportunity/{opportunity_id}/
+> Content-Type: application/json
+{"status": "won"}
+< 200
+< Content-Type: application/json
+{
+    "status": "won",
+    "date_won": "2013-02-20T10:06:25.246000+00:00",
+    "confidence": 75,
+    "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_updated": "2013-02-20T10:06:25.248000+00:00",
+    "created_by": null,
+    "lead_id": "lead_IIDHIStmFcFQZZP0BRe99V1MCoXWz2PGCm6EDmR9v2O",
+    "note": "Bruce needs new software for the Bat Cave.",
+    "value": 50000,
+    "date_created": "2013-02-01T00:54:51.337000+00:00",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "lead_name": "Wayne Enterprises (Sample Lead)",
+    "user_name": "P F",
+    "id": "oppo_8eB77gAdf8FMy6GsNHEy84f7uoeEWv55slvUjKQZpJt",
+    "value_period": "one_time"
+}
+
+Delete an opportunity.
+DELETE /opportunity/{opportunity_id}/
+< 200
+< Content-Type: application/json
+{}
+
+
+--
+Tasks
+--
+List or filter tasks.
+
+*allowed orderings*: due_date
+GET /task/{?lead_id, assigned_to, due_date, due_date__gt, due_date__lt, due_date__gte, due_date__lte, is_complete, _order_by}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "due_date": "2013-02-06",
+            "updated_by": null,
+            "date_updated": "2013-02-01T00:54:51.216000+00:00",
+            "text": "Connect with Account Manager",
+            "created_by": null,
+            "is_complete": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "assigned_to_name": "P F",
+            "assigned_to": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "date_created": "2013-02-01T00:54:51.216000+00:00",
+            "lead_name": "Close.io",
+            "id": "task_OyXdxOKMVYIDTPeh5zQOIfN6ONQEqCxRwWdZQdUtAxY",
+            "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h"
+        }
+    ]
+}
+
+Fetch a task's details.
+GET /task/{task_id}/
+< 200
+< Content-Type: application/json
+{
+    "due_date": "2013-02-06",
+    "updated_by": null,
+    "date_updated": "2013-02-01T00:54:51.216000+00:00",
+    "text": "Connect with Account Manager",
+    "created_by": null,
+    "id": "task_OyXdxOKMVYIDTPeh5zQOIfN6ONQEqCxRwWdZQdUtAxY",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "assigned_to_name": "P F",
+    "assigned_to": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+    "date_created": "2013-02-01T00:54:51.216000+00:00",
+    "lead_name": "Close.io",
+    "is_complete": false,
+    "lead_id": "lead_KwD00BYbXCHiPWj68LxFkxaeWuULpZ7awzm6LqeFs0h"
+}
+
+Delete a task.
+DELETE /task/{task_id}/
+< 200
+< Content-Type: application/json
+{}
+
+
+--
+Api Keys
+--
+
+List all your api keys.
+GET /api_key/
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "date_updated": "2013-02-20T04:38:36.204000+00:00",
+            "date_created": "2013-02-20T04:38:36.204000+00:00",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "user": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "key": "topsecret"
+        }
+    ]
+}
+
+Get details about an api key.
+GET /api_key/{key}/
+< 200
+< Content-Type: application/json
+{
+    "date_updated": "2013-02-20T04:38:36.204000+00:00",
+    "date_created": "2013-02-20T04:38:36.204000+00:00",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "user": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "key": "topsecret"
+}
+
+Generate a new api key.
+POST /api_key/
+> Content-Type: application/jso
+{}
+< 200
+< Content-Type: application/json
+{
+    "date_updated": "2013-02-20T04:38:36.204000+00:00",
+    "date_created": "2013-02-20T04:38:36.204000+00:00",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "user": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "key": "topsecret"
+}
+
+Delete an api key.
+DELETE /api_key/{key}/
+< 200
+< Content-Type: application/json
+{}
+
+
+--
+Users
+--
+Special instance of user/{your_user_id}/.
+GET /me/
+< 200
+< Content-Type: application/json
+{
+    "email_accounts": [
+        {
+            "receive_attempts_count": 0,
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "smtp": {
+                "username": "anthony@close.io",
+                "use_ssl": true,
+                "host": "smtp.gmail.com",
+                "port": 465
+            },
+            "imap": {
+                "username": "anthony@close.io",
+                "use_ssl": true,
+                "host": "imap.gmail.com",
+                "port": 993
+            },
+            "organization_id": "orga_3ZdiZqcSIkoGVnNOyxiEY58eTGQmFNG3LPlEVQ4V7Nk",
+            "identities": [],
+            "id": "emailacct_qG1RuJuy5baiXvVbIc2VelooJwGcKeIrQLNtTd9p6RO"
+        }
+    ],
+    "first_name": "Anthony",
+    "last_name": "Nemitz",
+    "memberships": [
+        {
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "plan_type": "pro",
+            "is_free": false,
+            "record_calls": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_I4Tx9tZwz5npqdGtd0baWtjjlpeFf45OBlkAAKcF3Gc"
+        },
+    ],
+    "organizations": [
+        {
+            "status": "free",
+            "user_count": 3,
+            "name": "Sample Data",
+            "lead_statuses": [
+                {
+                    "slug": "potential",
+                    "label": "Potential"
+                },
+                {
+                    "slug": "bad_fit",
+                    "label": "Bad Fit"
+                },
+                {
+                    "slug": "qualified",
+                    "label": "Qualified"
+                }
+            ],
+            "opportunity_statuses": [
+                {
+                    "slug": "active",
+                    "label": "Active"
+                },
+                {
+                    "slug": "won",
+                    "label": "Won"
+                },
+                {
+                    "slug": "lost",
+                    "label": "Lost"
+                },
+                {
+                    "slug": "on_hold",
+                    "label": "On hold"
+                }
+            ],
+            "created_by": null,
+            "billable_user_count": 3,
+            "date_updated": "2013-02-20T04:38:01.961000+00:00",
+            "trial_ends": "2013-02-15T00:54:51.097000+00:00",
+            "date_created": "2013-02-01T00:54:51.097000+00:00",
+            "stripe_customer_id": null,
+            "id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "updated_by": null
+        },
+    ],
+    "date_updated": "2013-02-08T06:17:00.583000+00:00",
+    "image": "https://secure.gravatar.com/avatar/0ff7116c35caeba6d174affd45730cfd",
+    "email": "anthony@close.io",
+    "sip_numbers": [
+        {
+            "date_updated": "2013-02-01T01:09:43.539000+00:00",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "number": "16502822249",
+            "date_created": "2013-02-01T01:09:43.539000+00:00"
+        }
+    ],
+    "phone": null,
+    "sip_user": {
+        "username": "kasjfdioashfausfsljdf",
+        "date_updated": "2012-08-29T13:46:32.601000+00:00",
+        "secret": "ierhunflqwfnqfqfqfq3fq2f",
+        "server": "phone.plivo.com",
+        "date_created": "2012-08-29T13:46:32.601000+00:00"
+    },
+    "date_created": "2012-08-29T13:46:31.870000+00:00",
+    "id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+}
+
+
+List users.
+
+*allowed orderings*: 'last_name,first_name', 'first_name,last_name'
+GET /user/
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "organizations": [
+                "orga_3ZdiZqcSIkoGVnNOyxiEY58eTGQmFNG3LPlEVQ4V7Nk",
+                "orga_QH587V0DxdpGlcHUgI35J26oFyIolFT7U5XGYRtTrLq",
+                "orga_CzOv25gWDyF6IkWk3LHzAPfYeQMXGWS3hlXzwnjYswS",
+                "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+                "orga_IpQXUOdfxmmcflRx0kIUpFLRw5WwZ7LWjBc1Ls3JkmW",
+                "orga_clOG3Sa1JD8zOKozZR5HCPUWIyt6Z3WqRO08rwkFRtw",
+                "orga_XbVPt5fFbKlYTz9PW5Ih0XDhViV10YihIaEfMEb6fVW",
+                "orga_YB6zDvv1kqPY0veXLaJWUkoBsHbkVOKistq4eFqYmH0",
+                "orga_s2SYrFJS0rufGBoEusU7v80rWOrEF3b41JPYDHNfs1k",
+                "orga_vcRwTulknqWighEwdblBN6by3dgRWCZyp2DXPqToCdf",
+                "orga_jrXgXkfJB0dZY2v0aKrdjTSxEfyXKl4Em2aQGDh282L",
+                "orga_oMk3E4wjZG2iGkaQHoF3KfYB0mUq8AUeBpZE5LvarFK",
+                "orga_QQJjJpBoNSVMqQmbIe0gcrLiV9wgaQlkCs8wl99hqaK"
+            ],
+            "first_name": "Anthony",
+            "last_name": "Nemitz",
+            "date_updated": "2013-02-08T06:17:00.583000+00:00",
+            "image": "https://secure.gravatar.com/avatar/0ff7116c35caeba6d174affd45730cfd",
+            "email": "anthony@close.io",
+            "date_created": "2012-08-29T13:46:31.870000+00:00",
+            "id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+        },
+        {
+            "organizations": [
+                "orga_3ZdiZqcSIkoGVnNOyxiEY58eTGQmFNG3LPlEVQ4V7Nk",
+                "orga_QH587V0DxdpGlcHUgI35J26oFyIolFT7U5XGYRtTrLq",
+                "orga_CzOv25gWDyF6IkWk3LHzAPfYeQMXGWS3hlXzwnjYswS",
+                "orga_IpQXUOdfxmmcflRx0kIUpFLRw5WwZ7LWjBc1Ls3JkmW",
+                "orga_XbVPt5fFbKlYTz9PW5Ih0XDhViV10YihIaEfMEb6fVW",
+                "orga_YB6zDvv1kqPY0veXLaJWUkoBsHbkVOKistq4eFqYmH0",
+                "orga_jrXgXkfJB0dZY2v0aKrdjTSxEfyXKl4Em2aQGDh282L",
+                "orga_oMk3E4wjZG2iGkaQHoF3KfYB0mUq8AUeBpZE5LvarFK"
+            ],
+            "first_name": "Thomas",
+            "last_name": "Steinacher",
+            "date_updated": "2013-02-12T00:48:47.738000+00:00",
+            "image": "https://secure.gravatar.com/avatar/a688bb2d67da44b63e015352a818f2af",
+            "email": "thomas@elasticsales.com",
+            "date_created": "2012-09-19T20:57:53.563000+00:00",
+            "id": "user_RCOioHuk6t0OBhZBOxsqXR9cBp4e35Pyz0FBUPcg2F1"
+        }
+    ]
+}
+
+
+--
+Organizations
+--
+Get an organization's details.
+
+GET /organization/{organization_id}/
+< 200
+< Content-Type: application/json
+{
+    "status": "free",
+    "billable_user_count": 0,
+    "user_count": 3,
+    "name": "Sample Data",
+    "lead_statuses": [
+        {
+            "slug": "potential",
+            "label": "Potential"
+        },
+        {
+            "slug": "bad_fit",
+            "label": "Bad Fit"
+        },
+        {
+            "slug": "qualified",
+            "label": "Qualified"
+        }
+    ],
+    "opportunity_statuses": [
+        {
+            "slug": "active",
+            "label": "Active"
+        },
+        {
+            "slug": "won",
+            "label": "Won"
+        },
+        {
+            "slug": "lost",
+            "label": "Lost"
+        },
+        {
+            "slug": "on_hold",
+            "label": "On hold"
+        }
+    ],
+    "created_by": null,
+    "memberships": [
+        {
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "user_phone": "16502822245",
+            "user_first_name": "P",
+            "plan_type": "pro",
+            "is_free": false,
+            "user_full_name": "P F",
+            "user_last_name": "F",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_wLKueFux8M2u2jshQPichvA5V44hpECtoljWbJS1PeY",
+            "record_calls": false,
+            "user_email": "phil+sample@close.io"
+        },
+        {
+            "user_id": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "user_phone": "16502822248",
+            "user_first_name": "Phil",
+            "plan_type": "pro",
+            "is_free": false,
+            "user_full_name": "Phil Freo",
+            "user_last_name": "Freo",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_hLHF3LsUI6N7twH1derRHiHEKeE843ttSYmsun4xkCn",
+            "record_calls": false,
+            "user_email": "phil@close.io"
+        },
+        {
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "user_phone": "16502822249",
+            "user_first_name": "Anthony",
+            "plan_type": "pro",
+            "is_free": false,
+            "user_full_name": "Anthony Nemitz",
+            "user_last_name": "Nemitz",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_I4Tx9tZwz5npqdGtd0baWtjjlpeFf45OBlkAAKcF3Gc",
+            "record_calls": false,
+            "user_email": "anthony@close.io"
+        }
+    ],
+    "date_updated": "2013-02-20T04:38:01.961000+00:00",
+    "trial_ends": "2013-02-15T00:54:51.097000+00:00",
+    "date_created": "2013-02-01T00:54:51.097000+00:00",
+    "stripe_customer_id": null,
+    "id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "updated_by": null
+}
+
+Update an organization's lead_statuses or opportunity_statuses.
+
+PUT /organization/{organization_id}/
+> Content-Type: application/json
+"lead_statuses": [
+        {
+            "slug": "potential",
+            "label": "Potential"
+        },
+        {
+            "slug": "bad_fit",
+            "label": "Bad Fit"
+        },
+        {
+            "slug": "qualified",
+            "label": "Qualified"
+        },
+        {
+            "slug": "not_serious",
+            "label": "Not Serious"
+        }
+    ],
+< 200
+< Content-Type: application/json
+{
+    "status": "free",
+    "billable_user_count": 0,
+    "user_count": 3,
+    "name": "Sample Data",
+    "lead_statuses": [
+        {
+            "slug": "potential",
+            "label": "Potential"
+        },
+        {
+            "slug": "bad_fit",
+            "label": "Bad Fit"
+        },
+        {
+            "slug": "qualified",
+            "label": "Qualified"
+        },
+        {
+            "slug": "not_serious",
+            "label": "Not Serious"
+        }
+    ],
+    "opportunity_statuses": [
+        {
+            "slug": "active",
+            "label": "Active"
+        },
+        {
+            "slug": "won",
+            "label": "Won"
+        },
+        {
+            "slug": "lost",
+            "label": "Lost"
+        },
+        {
+            "slug": "on_hold",
+            "label": "On hold"
+        }
+    ],
+    "created_by": null,
+    "memberships": [
+        {
+            "user_id": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "user_phone": "16502822245",
+            "user_first_name": "P",
+            "plan_type": "pro",
+            "is_free": false,
+            "user_full_name": "P F",
+            "user_last_name": "F",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_wLKueFux8M2u2jshQPichvA5V44hpECtoljWbJS1PeY",
+            "record_calls": false,
+            "user_email": "phil+sample@close.io"
+        },
+        {
+            "user_id": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "user_phone": "16502822248",
+            "user_first_name": "Phil",
+            "plan_type": "pro",
+            "is_free": false,
+            "user_full_name": "Phil Freo",
+            "user_last_name": "Freo",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_hLHF3LsUI6N7twH1derRHiHEKeE843ttSYmsun4xkCn",
+            "record_calls": false,
+            "user_email": "phil@close.io"
+        },
+        {
+            "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "user_phone": "16502822249",
+            "user_first_name": "Anthony",
+            "plan_type": "pro",
+            "is_free": false,
+            "user_full_name": "Anthony Nemitz",
+            "user_last_name": "Nemitz",
+            "track_email_opens": true,
+            "role": "admin",
+            "marketing_email_signature": true,
+            "id": "memb_I4Tx9tZwz5npqdGtd0baWtjjlpeFf45OBlkAAKcF3Gc",
+            "record_calls": false,
+            "user_email": "anthony@close.io"
+        }
+    ],
+    "date_updated": "2013-02-20T04:38:01.961000+00:00",
+    "trial_ends": "2013-02-15T00:54:51.097000+00:00",
+    "date_created": "2013-02-01T00:54:51.097000+00:00",
+    "stripe_customer_id": null,
+    "id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "updated_by": null
+}
+
+
+--
+Email Templates
+--
+List email templates.
+
+GET /email_template/
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "body": "You should try Close.io.",
+            "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "date_updated": "2013-02-20T09:20:14.229000+00:00",
+            "attachments": [],
+            "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+            "name": "Cold 1",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "date_created": "2013-02-20T09:20:14.229000+00:00",
+            "subject": "I bet using other sales tool sucks",
+            "id": "tmpl_bTl0wRVLuzCpYkJnLX76KcbuYFpa4YEJVKNE19RGHUq",
+            "is_shared": true
+        }
+    ]
+}
+
+Fetch an email template.
+GET /email_template/{email_template_id}/
+< 200
+< Content-Type: application/json
+{
+    "body": "You should try Close.io.",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "name": "Cold 1",
+    "date_updated": "2013-02-20T09:20:14.229000+00:00",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "attachments": [],
+    "date_created": "2013-02-20T09:20:14.229000+00:00",
+    "subject": "I bet using other sales tool sucks",
+    "is_shared": true,
+    "id": "tmpl_bTl0wRVLuzCpYkJnLX76KcbuYFpa4YEJVKNE19RGHUq",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+}
+
+Create an email template.
+POST /email_template/
+> Content-Type: application/json
+{"name": "inbound 1", "subject": "test inbound subject", "body": "test inbound body of an email.", "is_shared": false}
+< 200
+< Content-Type: application/json
+{
+    "body": "test inbound body of an email.",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "name": "inbound 1",
+    "date_updated": "2013-02-20T09:24:27.774000+00:00",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "attachments": [],
+    "date_created": "2013-02-20T09:24:27.774000+00:00",
+    "subject": "test inbound subject",
+    "is_shared": false,
+    "id": "tmpl_R7q2HC1T1uVv6e1Y6MuTDaFvGXbOCOOtVJjWd0e62gA",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+}
+
+
+
+Update an email template.
+PUT /email_template/{email_template_id}/
+> Content-Type: application/json
+{"is_shared": true}
+< 200
+< Content-Type: application/json
+{
+    "body": "test inbound body of an email.",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "name": "inbound 1",
+    "date_updated": "2013-02-20T09:26:11.078000+00:00",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "attachments": [],
+    "date_created": "2013-02-20T09:24:27+00:00",
+    "subject": "test inbound subject",
+    "is_shared": true,
+    "id": "tmpl_R7q2HC1T1uVv6e1Y6MuTDaFvGXbOCOOtVJjWd0e62gA",
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
+}
+
+Delete an email template.
+DELETE /email_template/{email_template_id}/
+< 200
+< Content-Type: application/json
+{}
+
+--
+Invites
+--
+List invites sent to co-workers.
+GET /invite/?{used}
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "used": true,
+            "updated_by": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "date_updated": "2013-02-01T00:55:01.124000+00:00",
+            "plan_type": "pro",
+            "created_by": "user_scOgjLAQD6aBSJYBVhIeNr6FJDp8iDTug8Mv6VqYoFn",
+            "id": "invi_OR2Ka3tFdqjVnFai0JHEnnF26Hce0MhGOMPi2KhbAaR",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "role": "admin",
+            "email_lower": "phil@close.io",
+            "date_created": "2013-02-01T00:55:01.099000+00:00",
+            "email": "phil@close.io"
+        },
+        {
+            "used": true,
+            "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "date_updated": "2013-02-01T01:08:48.172000+00:00",
+            "plan_type": "pro",
+            "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+            "id": "invi_woSnwOEVFEhYkaqatZtYrPj4Zh7xjc14henqjXsIyxw",
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "role": "admin",
+            "email_lower": "anthony@close.io",
+            "date_created": "2013-02-01T01:08:48.140000+00:00",
+            "email": "anthony@close.io"
+        }
+    ]
+}
+
+
+Send an email invite to a co-worker.
+POST /invite/
+> Content-Type: application/json
+{"email": "anthony+test@close.io"}
+< 200
+< Content-Type: application/json
+{
+    "used": false,
+    "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "date_updated": "2013-02-20T09:18:11.126819",
+    "plan_type": "pro",
+    "created_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "email": "anthony+test@close.io",
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "role": "user",
+    "email_lower": "anthony+test@close.io",
+    "date_created": "2013-02-20T09:18:11.126819",
+    "id": "invi_Du5qlgReCwA5UdFLiQUxfmjETvInncXOcP4Wm4WnAm9"
+}
+
+
+Revoke an unused invite.  This does not remove someone from an organization if they have already accepted.
+DELETE /invite/{invite_id}/
+< 200
+< Content-Type: application/json
+{}
+
+
+--
+SmartViews
+--
+List smartviews.
+GET /saved_search/
+< 200
+< Content-Type: application/json
+{
+    "has_more": false,
+    "data": [
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": true,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "*",
+            "id": "save_wRlAku35U53xEV7PcNY3QodEHlgLPonBKkGFAxo9Ehb",
+            "name": "All Leads"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "notifications > 0",
+            "id": "save_MgqFqZarpbiR6QQLWhrfoW3eo92frDqS4DNZLtbSvgs",
+            "name": "Has Notifications"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "created <= 30 days ago",
+            "id": "save_MaDhSTaHGmIYLV9px97xqRzlR0DTOtW9rOBcB6OPxXZ",
+            "name": "Recently Created"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "updated <= 30 days ago",
+            "id": "save_ZoAxTuqNVjlMclOZ4LyG2va4KqhpZ3mYqCFzb7LWdxU",
+            "name": "Recently Updated"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "last_call <= 30 days ago",
+            "id": "save_qPIaAo1mWL3Bxt5RSegrVue33jAC931ixK9BQj58p4d",
+            "name": "Recently Called"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "last_email <= 30 days ago",
+            "id": "save_VPDZRlI7uDFPGT8bd9eyhz02s059i6iqbSZCSgtFoJ4",
+            "name": "Recently Emailed"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "calls = 0",
+            "id": "save_iYYUYTcdQlrIXOWPzoGYDJvbdyXI8HbAr6AkuD55Yht",
+            "name": "Never Called"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "emails = 0",
+            "id": "save_nlNapOed54ALqOrxz3YntHu6TIADqjcWygJBAhnJ6tK",
+            "name": "Never Emailed"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "status:potential",
+            "id": "save_OgRxITsFk25w8xoP5tVR96uoT1LsqBMyBkHDUR0g6It",
+            "name": "Status: Potential"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "status:bad_fit",
+            "id": "save_ZfRsDNxZIn0nAfLvaL1RRWWNoCkdnRuRebVfb0vnyYy",
+            "name": "Status: Bad Fit"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "status:qualified",
+            "id": "save_M4hSwbifKNEYs7KkL3TvHbZNMKKqZYPks85k76X5Xj9",
+            "name": "Status: Qualified"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "opportunity_user:me",
+            "id": "save_xt5NukhI1d45UWopOZAipq5XjaEXwen75sVfAVq1eT3",
+            "name": "Opportunities: Mine"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "opportunity:active",
+            "id": "save_UYRWiEaTUrUZqnVgjMl2YWHvSgS8Hu4By6aEj2JgQCS",
+            "name": "Opportunities: Active"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "opportunity:won",
+            "id": "save_ARQ8Pp2JdLYgXRREy8zJyP4n1JllkExGejrSf4kUfNm",
+            "name": "Opportunities: Won"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "opportunity:lost",
+            "id": "save_nBeX7rJ2Qtp0hCWxoeh1wPgHq1y5b139MIharZ0so9A",
+            "name": "Opportunities: Lost"
+        },
+        {
+            "user_id": null,
+            "is_shared": true,
+            "used_recently": false,
+            "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+            "query": "opportunity:on_hold",
+            "id": "save_9TmczTW1jMRepE35vcwFwc0MESQcTojRJbtq3VsasFN",
+            "name": "Opportunities: On hold"
+        }
+    ]
+}
+
+
+Get a single SmartView
+GET /saved_search/{saved_search_id}/
+< 200
+< Content-Type: application/json
+{
+    "user_id": null,
+    "is_shared": true,
+    "used_recently": false,
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "query": "*",
+    "id": "save_wRlAku35U53xEV7PcNY3QodEHlgLPonBKkGFAxo9Ehb",
+    "name": "All Leads"
+}
+
+Create a SmartView
+POST /saved_search/
+> Content-Type: application/json
+{"name": "every lead", "query": "called > 0 and email_opened < 10 mins ago"}
+< 200
+< Content-Type: application/json
+{
+    "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "is_shared": false,
+    "used_recently": true,
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "query": "called > 0 and email_opened < 10 mins ago",
+    "id": "save_Cin23B1CYKX83dbNnBB4Q5F5QXl9ucmgrqNf0esq1Ir",
+    "name": "every lead"
+}
+
+
+Update a SmartView
+PUT /saved_search/{saved_search_id}/
+> Content-Type: application/json
+{"name": "every lead"}
+< 200
+< Content-Type: application/json
+{
+    "user_id": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo",
+    "is_shared": false,
+    "used_recently": true,
+    "organization_id": "orga_bwwWG475zqWiQGur0thQshwVXo8rIYecQHDWFanqhen",
+    "query": "*",
+    "id": "save_wRlAku35U53xEV7PcNY3QodEHlgLPonBKkGFAxo9Ehb",
+    "name": "every lead"
+}
+
+Delete a SmartView
+DELETE /saved_search/{saved_search_id}/
+< 200
+< Content-Type: application/json
+{}
