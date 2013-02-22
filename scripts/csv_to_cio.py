@@ -4,8 +4,8 @@ import time, argparse, re, unidecode, sys, json
 from progressbar import ProgressBar
 from progressbar.widgets import Percentage, Bar, ETA, FileTransferSpeed
 from requests.models import ConnectionError
-from api import CloseIO_API, APIError
-from utils import CsvReader, count_lines, title_case, uncamel
+from client.api import CloseIO_API, APIError
+from client.utils import CsvReader, count_lines, title_case, uncamel
 
 parser = argparse.ArgumentParser(description='Import leads from CSV file')
 parser.add_argument('--api_key', '-k', required=True, help='API Key')
