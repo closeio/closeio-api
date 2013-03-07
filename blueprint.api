@@ -2,7 +2,9 @@
 
 --- 
 
-Welcome to the Close.io REST API specification. 
+Welcome to the [Close.io](http://close.io/) REST API specification. 
+
+See [our GitHub page](https://github.com/elasticsales/closeio-api) for a Python API client implementation and CSV upload script example.
 
 
 **Authentication**
@@ -590,6 +592,71 @@ GET /contact/{contact_id}/
     "updated_by": "user_MvDoAZA889UMrgsZbnXmHkJSomSi7qk2Iwc4JnGHTbo"
 }
 
+Create a new contact
+POST /contact/
+> Content-Type: application/json
+{
+    "lead_id":"lead_QyNaWw4fdSwxl5Mc5daMFf3Y27PpIcH0awPbC9l7uyo",
+    "name":"John Smith",
+    "title":"President",
+    "phones":[
+        {"phone":"9045551234","type":"mobile"}
+    ],
+    "emails":[
+        {"email":"john@example.com","type":"office"}
+    ],
+    "urls":[
+        {"url":"http://twitter.com/google/","type":"url"}
+    ]
+}
+< 201
+< Content-Type: application/json
+{
+    "id": "cont_sNIdBgngvbdTTEN1mspKgUqKAWfbul4IITvnWoRw1T7",
+    "name": "John Smith",
+    "title": "President",
+    "date_updated": "2013-03-07T23:23:21.495000+00:00",
+    "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+    "date_created": "2013-03-07T23:23:21.495000+00:00",
+    "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+    "phones":[
+        {"phone":"9045551234","type":"mobile"}
+    ],
+    "emails":[
+        {"email":"john@example.com","type":"office"}
+    ],
+    "urls":[
+        {"url":"http://twitter.com/google/","type":"url"}
+    ]
+}
+
+
+Update an existing contact
+PUT /contact/{contact_id}/
+> Content-Type: application/json
+{
+    "name":"Johnny Smith",
+}
+< 200
+< Content-Type: application/json
+{
+    "id": "cont_sNIdBgngvbdTTEN1mspKgUqKAWfbul4IITvnWoRw1T7",
+    "name": "Johnny Smith",
+    "title": "President",
+    "date_updated": "2013-03-08T13:13:21.495000+00:00",
+    "created_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+    "date_created": "2013-03-07T23:23:21.495000+00:00",
+    "updated_by": "user_04EJPREurd0b3KDozVFqXSRbt2uBjw3QfeYa7ZaGTwI",
+    "phones":[
+        {"phone":"9045551234","type":"mobile"}
+    ],
+    "emails":[
+        {"email":"john@example.com","type":"office"}
+    ],
+    "urls":[
+        {"url":"http://twitter.com/google/","type":"url"}
+    ]
+}
 
 Delete a contact
 DELETE /contact/{contact_id}/
