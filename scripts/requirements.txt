@@ -1,3 +1,0 @@
-requests==0.14.2
-progressbar==2.3
-unidecode
