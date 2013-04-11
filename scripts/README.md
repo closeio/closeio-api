@@ -7,7 +7,7 @@ Before you start, you should already have `git`, `python-2.7` and `virtualenv` i
 Setup
 -----
 1. `git clone git@github.com:elasticsales/closeio-api.git`
-1. `cd closeio-api/scripts`
+1. `cd closeio-api`
 1. `virtualenv-2.7 --distribute venv`
 1. `. venv/bin/activate`
 1. `pip install -U -r requirements.txt`
@@ -35,8 +35,8 @@ The script will look for your CSV to have specific column names (case insensitiv
 
 Multiple contacts will be grouped in the same lead if multiple rows have the same value in the "company" column.
 
-2. Make sure (if you haven't already in Setup) you're in the `closeio-api/scripts` directory and you have activated your virtual environment by running `. venv/bin/activate`.
+2. Make sure (if you haven't already in Setup) you're in the `closeio-api` directory and you have activated your virtual environment by running `. venv/bin/activate`.
 
-3. Run the import script: `./csv_to_cio.py --api_key YOUR_API_KEY_HERE ~/path/to/your/leads.csv`
+3. Run the import script: `./scripts/csv_to_cio.py --api_key YOUR_API_KEY_HERE ~/path/to/your/leads.csv`
 
 You can generate an API Key from Settings in Close.io.
