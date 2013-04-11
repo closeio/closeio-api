@@ -10,6 +10,7 @@ from client.utils import CsvReader, count_lines, title_case, uncamel
 parser = argparse.ArgumentParser(description='Import leads from CSV file')
 parser.add_argument('--api_key', '-k', required=True, help='API Key')
 parser.add_argument('--skip_duplicates', action='store_true', help='Skip leads that are already present in Close.io (determined by company name).')
+parser.add_argument('--no_grouping', action='store_true', help='Turn off the default group-by-company behavior.')
 parser.add_argument('--development', action='store_true', help='Use a development server rather than production.')
 parser.add_argument('file', help='Path to the csv file')
 args = parser.parse_args()
@@ -175,8 +176,11 @@ for i, row in enumerate(reader):
     if not lead:
         continue
 
-    # group by lead Name (company) if possible, otherwise put each row in its own lead
-    grouper = lead['name'] if lead['name'] else ('row-num-%s' % i)
+    if args.no_grouping:
+        grouper = 'row-num-%s' % i
+    else:
+        # group by lead Name (company) if possible, otherwise put each row in its own lead
+        grouper = lead['name'] if lead['name'] else ('row-num-%s' % i)
 
     if grouper not in unique_leads:
         unique_leads[grouper] = lead
