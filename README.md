@@ -5,7 +5,7 @@ HTTP Basic authentication. The API key acts as the username. API keys are per-or
 
 Curl:
 ```shell
-curl -XPOST "https://app.close.io/api/v1/lead/" -d '{"name":"test lead"}' -u yourapikey:
+curl -XPOST "https://app.close.io/api/v1/lead/" -H "Content-Type: application/json" -d '{"name":"test lead"}' -u yourapikey:
 #notice the ':' at the end of the api key.  this is used because the key is sent as the username with a blank password.
 ```
 
