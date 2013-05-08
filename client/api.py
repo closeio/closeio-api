@@ -52,6 +52,9 @@ class API(object):
     def put(self, endpoint, data):
         return self.dispatch('put', endpoint+'/', data)
 
+    def delete(self, endpoint):
+        return self.dispatch('delete', endpoint+'/')
+
     # Only for async requests
     def map(self, reqs, max_retries=5):
         # TODO
