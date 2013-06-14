@@ -38,7 +38,7 @@ class API(object):
             if response.ok:
                 return response.json()
             else:
-                raise APIError()
+                raise APIError(response.text)
 
     def get(self, endpoint, data=None):
         if data:
@@ -67,8 +67,7 @@ class API(object):
         if self.async:
             import grequests
             responses = [(
-                json.loads(response.content) if response.ok and response.content is not None
-                else APIError()
+                response.json() if response.ok else APIError()
             ) for response in grequests.map(reqs)]
             # retry the api calls that failed until they succeed or the max_retries limit is reached
             retries = 0
@@ -81,8 +80,7 @@ class API(object):
                 error_ids = [i for i, resp in enumerate(responses) if isinstance(responses[i], APIError)]
                 new_reqs = [reqs[i] for i in range(len(responses)) if i in error_ids]
                 new_resps = [(
-                    json.loads(response.content) if response.ok and response.content is not None
-                    else APIError()
+                    response.json() if response.ok else APIError()
                 ) for response in grequests.map(new_reqs)]
                 # update the responses that previously finished with errors
                 for i in range(len(error_ids)):
