@@ -32,15 +32,12 @@ class API(object):
             headers={'Content-Type': 'application/json'}
         )
 
-        print 'HISTORY', response.history
-
         if self.async:
             return response
         else:
             if response.ok:
                 return response.json()
             else:
-                print response
                 raise APIError()
 
     def get(self, endpoint, data=None):
