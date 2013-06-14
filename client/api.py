@@ -7,36 +7,40 @@ class APIError(Exception):
     pass
 
 class API(object):
-    def __init__(self, base_url, api_key, async=False, config={}):
+    def __init__(self, base_url, api_key, async=False):
         assert base_url
         self.base_url = base_url
         self.api_key = api_key
         self.async = async
-        self.config = config
         if async:
             import grequests
             self.requests = grequests
         else:
-            self.requests = requests.session()
+            self.requests = requests.Session()
 
     def dispatch(self, method_name, endpoint, data=None):
-        method = getattr(requests, method_name)
+        method = getattr(self.requests, method_name)
+
+        if not self.async:
+            # clear the cookies (use the API key, not the session key)
+            self.requests.cookies = requests.cookies.cookiejar_from_dict({})
 
         response = method(
             self.base_url+endpoint,
             data=data != None and json.dumps(data),
             auth=(self.api_key, ''),
-            headers={'Content-Type': 'application/json'},
-            config=self.config
+            headers={'Content-Type': 'application/json'}
         )
+
+        print 'HISTORY', response.history
 
         if self.async:
             return response
         else:
             if response.ok:
-                return json.loads(response.content)
+                return response.json()
             else:
-                print response, response.content
+                print response
                 raise APIError()
 
     def get(self, endpoint, data=None):
@@ -91,11 +95,11 @@ class API(object):
 
 
 class CloseIO_API(API):
-    def __init__(self, api_key, async=False, config={}, development=False):
+    def __init__(self, api_key, async=False, development=False):
         if development:
             base_url = 'http://local.close.io:5001/api/v1/'
         else:
             base_url = 'https://app.close.io/api/v1/'
-        super(CloseIO_API, self).__init__(base_url, api_key, async, config)
+        super(CloseIO_API, self).__init__(base_url, api_key, async)
 
 
