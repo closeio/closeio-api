@@ -92,7 +92,7 @@ class API(object):
 class CloseIO_API(API):
     def __init__(self, api_key, async=False, development=False):
         if development:
-            base_url = 'http://local.close.io:5001/api/v1/'
+            base_url = 'http://localhost:5001/api/v1/'
         else:
             base_url = 'https://app.close.io/api/v1/'
         super(CloseIO_API, self).__init__(base_url, api_key, async)
