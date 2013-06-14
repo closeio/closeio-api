@@ -3,7 +3,7 @@
 import time, argparse, re, unidecode, sys, json
 from progressbar import ProgressBar
 from progressbar.widgets import Percentage, Bar, ETA, FileTransferSpeed
-from requests.models import ConnectionError
+from requests.exceptions import ConnectionError
 from client.api import CloseIO_API, APIError
 from client.utils import CsvReader, count_lines, title_case, uncamel
 
