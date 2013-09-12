@@ -8,7 +8,7 @@ Setup
 -----
 1. `git clone git@github.com:elasticsales/closeio-api.git`
 1. `cd closeio-api`
-1. `virtualenv-2.7 --distribute venv`
+1. `virtualenv-2.7 venv`
 1. `. venv/bin/activate`
 1. `pip install -U -r requirements.txt`
 
