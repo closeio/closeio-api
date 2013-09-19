@@ -18,3 +18,10 @@ opportunities = api.get('opportunity', data={'_order_by': '-date_updated', '_lim
 ```
 
 Check out `scripts/` for more detailed examples.
+
+### Other Languages
+
+Thanks to our awesome users, other languages are supported, too:
+* Ruby: https://github.com/taylorbrooks/closeio
+* PHP: https://github.com/TheDeveloper/closeio-php-sdk
+* Node.js: https://github.com/wehriam/Close.io
