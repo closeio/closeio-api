@@ -1,3 +1,3 @@
 [submodule "scripts/flask-common"]
 	path = scripts/flask-common
-	url = git@github.com:elasticsales/flask-common.git
+	url = https://github.com/elasticsales/flask-common.git
