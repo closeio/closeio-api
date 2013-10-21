@@ -21,10 +21,6 @@ class API(object):
     def dispatch(self, method_name, endpoint, data=None):
         method = getattr(self.requests, method_name)
 
-        if not self.async:
-            # clear the cookies (use the API key, not the session key)
-            self.requests.cookies = requests.cookies.cookiejar_from_dict({})
-
         response = method(
             self.base_url+endpoint,
             data=data != None and json.dumps(data),
