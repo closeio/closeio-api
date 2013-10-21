@@ -1,6 +1,7 @@
-import csv
 import os
 import re
+import csv
+import time
 
 """
 Wrapper around csv reader that ignores non utf-8 chars and strips the record
@@ -52,3 +53,6 @@ def uncamel(text):
     s1 = re.sub('([a-z0-9])([A-Z])', r'\1 \2', s1)
     return s1.replace('  ', ' ')
 
+def local_tz_offset():
+    # http://stackoverflow.com/questions/1111056/get-tz-information-of-the-system-in-python 
+    return (time.timezone if (time.localtime().tm_isdst == 0) else time.altzone) / 60 / 60 * -1 

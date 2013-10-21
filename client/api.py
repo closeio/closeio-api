@@ -1,14 +1,16 @@
-import requests
 import json
 import time
 import urllib
+import requests
+from closeio_api.client.utils import local_tz_offset
 
 class APIError(Exception):
     pass
 
 class API(object):
-    def __init__(self, base_url, api_key, async=False):
+    def __init__(self, base_url, api_key, tz_offset=None, async=False):
         assert base_url
+        self.tz_offset = tz_offset or local_tz_offset()
         self.base_url = base_url
         self.api_key = api_key
         self.async = async
@@ -25,7 +27,7 @@ class API(object):
             self.base_url+endpoint,
             data=data != None and json.dumps(data),
             auth=(self.api_key, ''),
-            headers={'Content-Type': 'application/json'}
+            headers={'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset}
         )
 
         if self.async:
