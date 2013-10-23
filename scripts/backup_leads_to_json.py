@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import json
 import codecs
-from client.api import CloseIO_API
+from closeio_api.api import CloseIO_API
 
 
 """

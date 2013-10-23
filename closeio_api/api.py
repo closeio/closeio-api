@@ -2,7 +2,7 @@ import json
 import time
 import urllib
 import requests
-from closeio_api.client.utils import local_tz_offset
+from closeio_api.utils import local_tz_offset
 
 class APIError(Exception):
     pass
