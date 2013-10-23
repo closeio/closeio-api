@@ -6,9 +6,9 @@ See the developer docs at http://developer.close.io. For any questions or issues
 
 ### Sample Usage
 ```
-from client.api import CloseIO_API
+from closeio_api import Client
 
-api = CloseIO_API('YOUR_API_KEY')
+api = Client('YOUR_API_KEY')
 
 # post a lead
 lead = api.post('lead', data={'name': 'New Lead'})
