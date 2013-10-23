@@ -4,7 +4,7 @@ import time, argparse, re, unidecode, sys, json
 from progressbar import ProgressBar
 from progressbar.widgets import Percentage, Bar, ETA, FileTransferSpeed
 from requests.exceptions import ConnectionError
-from closeio_api.api import CloseIO_API, APIError
+from closeio_api import Client as CloseIO_API
 from closeio_api.utils import CsvReader, count_lines, title_case, uncamel
 
 parser = argparse.ArgumentParser(description='Import leads from CSV file')

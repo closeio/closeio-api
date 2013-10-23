@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import json
 import codecs
-from closeio_api.api import CloseIO_API
-
+from closeio_api import Client as CloseIO_API
 
 """
 Dumps all leads within a given organization to a file in JSON format

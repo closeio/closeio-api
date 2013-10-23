@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-from closeio_api.api import CloseIO_API
+from closeio_api import Client as CloseIO_API
 
 DELETE_FIELDS = ['Field1', 'Field2', 'Field3']
 

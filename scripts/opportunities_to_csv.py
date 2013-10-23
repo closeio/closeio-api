@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from flask_common.utils import CsvWriter
-from closeio_api.api import CloseIO_API
+from closeio_api import Client as CloseIO_API
 
 HEADERS = ['lead_name', 'status_type', 'status_label', 'confidence', 'user_name', 'value', 'value_period', 'note', 'date_created', 'date_updated', 'date_won']
 
