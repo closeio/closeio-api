@@ -32,5 +32,5 @@ Check out `scripts/` for more detailed examples.
 
 Thanks to our awesome users, other languages are supported, too:
 * Ruby: https://github.com/taylorbrooks/closeio
-* PHP: https://github.com/TheDeveloper/closeio-php-sdk
+* PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/TheDeveloper/closeio-php-sdk
 * Node.js: https://github.com/wehriam/Close.io
