@@ -40,6 +40,8 @@ class API(object):
 
     def get(self, endpoint, data=None):
         if data:
+            for k, v in data.iteritems():
+                data[k] = unicode(v).encode('utf-8')
             endpoint += '/?'+urllib.urlencode(data)
         else:
             endpoint += '/'
