@@ -49,4 +49,4 @@ with open(args.output, 'wb') as f:
 
         if len(leads) < limit:
             break
-        skip += limit + 1
+        skip += limit
