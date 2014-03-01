@@ -31,6 +31,6 @@ Check out `scripts/` for more detailed examples.
 ### Other Languages
 
 Thanks to our awesome users, other languages are supported, too:
-* Ruby: https://github.com/taylorbrooks/closeio
+* Ruby: https://github.com/rest-client/rest-client or https://github.com/taylorbrooks/closeio
 * PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/TheDeveloper/closeio-php-sdk
 * Node.js: https://github.com/wehriam/Close.io
