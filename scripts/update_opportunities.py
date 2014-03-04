@@ -28,12 +28,14 @@ print 'Gathering opportunities for {0}'.format(args.query)
 
 has_more = True
 offset = 0
+limit = 50
 opp_ids = []
 
 while has_more:
-    resp = api.get('lead', data={'_skip': offset, '_limit': 50, 'query': args.query})
+    resp = api.get('lead', data={'_skip': offset, '_limit': limit, 'query': args.query})
     opp_ids.extend([opp['id'] for lead in resp['data'] for opp in lead['opportunities']])
     has_more = resp['has_more']
+    offset += limit
 
 ans = raw_input('{0} opportunities found. Do you want to update all of them to {1}? (y/n): '.format(len(opp_ids), args.status))
 if ans.lower() != 'y':
