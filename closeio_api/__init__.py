@@ -8,11 +8,12 @@ class APIError(Exception):
     pass
 
 class API(object):
-    def __init__(self, base_url, api_key, tz_offset=None, async=False):
+    def __init__(self, base_url, api_key, tz_offset=None, async=False, max_retries=5):
         assert base_url
         self.base_url = base_url
         self.api_key = api_key
         self.async = async
+        self.max_retries = max_retries
         if async:
             import grequests
             self.requests = grequests
@@ -23,12 +24,19 @@ class API(object):
     def dispatch(self, method_name, endpoint, data=None):
         method = getattr(self.requests, method_name)
 
-        response = method(
-            self.base_url+endpoint,
-            data=data != None and json.dumps(data),
-            auth=(self.api_key, ''),
-            headers={'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset}
-        )
+        retries = 0
+        while True and retries < self.max_retries:
+            try:
+                response = method(
+                    self.base_url+endpoint,
+                    data=data != None and json.dumps(data),
+                    auth=(self.api_key, ''),
+                    headers={'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset}
+                )
+                break
+            except requests.exceptions.ConnectionError:
+                time.sleep(2)
+                retries += 1
 
         if self.async:
             return response
@@ -57,7 +65,9 @@ class API(object):
         return self.dispatch('delete', endpoint+'/')
 
     # Only for async requests
-    def map(self, reqs, max_retries=5):
+    def map(self, reqs, max_retries=None):
+        if max_retries == None:
+            max_retries = self.max_retries
         # TODO
         # There is no good way of catching or dealing with exceptions that are raised
         # during the request sending process when using map or imap.
