@@ -5,7 +5,7 @@ requires = ['requests>=0.10.8']
 
 setup(
     name = "closeio_api",
-    py_modules = ['closeio_api'],
+    packages = ['closeio_api'],
     version = "0.1",
     description = "Closeio Python library",
     author = "Closeio Team",
