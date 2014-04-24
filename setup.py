@@ -1,14 +1,13 @@
 from setuptools import setup
-import sys
 
-requires = ['requests>=0.10.8']
+requires = ['requests >= 0.10.8']
 
 setup(
-    name = "closeio_api",
+    name = "closeio",
     packages = ['closeio_api'],
     version = "0.1",
-    description = "Closeio Python library",
-    author = "Closeio Team",
+    description = "Close.io Python Library",
+    author = "Close.io Team",
     url = "https://github.com/elasticsales/closeio-api/",
     install_requires = requires,
     classifiers = [
