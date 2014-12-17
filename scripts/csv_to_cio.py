@@ -246,7 +246,7 @@ for key, val in unique_leads.items():
             api.post('lead', val)
             retries = 0
             success_cnt += 1
-        except APIError, err:
+        except closeio_api.APIError, err:
             print 'An error occurred while saving "%s"' % key
             print err
             retries = 0
