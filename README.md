@@ -32,5 +32,5 @@ Check out `scripts/` for more detailed examples.
 
 Thanks to our awesome users, other languages are supported, too:
 * Ruby: [simple example](https://gist.github.com/philfreo/9359930) that uses [RestClient](https://github.com/rest-client/rest-client)
-* PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/TheDeveloper/closeio-php-sdk
+* PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/loopline-systems/closeio-api-wrapper or https://github.com/TheDeveloper/closeio-php-sdk
 * Node.js: https://github.com/elasticsales/closeio-node
