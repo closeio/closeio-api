@@ -4,6 +4,7 @@ import time, argparse, re, unidecode, sys, json
 from progressbar import ProgressBar
 from progressbar.widgets import Percentage, Bar, ETA, FileTransferSpeed
 from requests.exceptions import ConnectionError
+import closeio_api
 from closeio_api import Client as CloseIO_API
 from closeio_api.utils import CsvReader, count_lines, title_case, uncamel
 
@@ -246,7 +247,7 @@ for key, val in unique_leads.items():
             api.post('lead', val)
             retries = 0
             success_cnt += 1
-        except APIError, err:
+        except closeio_api.APIError, err:
             print 'An error occurred while saving "%s"' % key
             print err
             retries = 0
