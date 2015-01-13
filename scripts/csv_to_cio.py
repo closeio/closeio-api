@@ -226,16 +226,16 @@ for key, val in unique_leads.items():
             'organization_id': org_id,
             'query': 'name:"%s"' % key,
         }
+        has_more = True
         skip = 0
-        limit = 100
-        while True:
+        while has_more:
             filters['_skip'] = skip
-            filters['_limit'] = skip + limit
-            results = api.get('lead', data=filters)['data']
+            resp = api.get('lead', data=filters)
+            results = resp['data']
             search_results.extend(results)
-            if len(results) < limit:
-                break
-            skip += limit
+            has_more = resp['has_more']
+            skip += len(results)
+
         for result in search_results:
             if result['display_name'] == val['name']:
                 dupe = True
