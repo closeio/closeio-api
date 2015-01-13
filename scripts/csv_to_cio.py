@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import time, argparse, re, unidecode, sys, json
 from progressbar import ProgressBar
 from progressbar.widgets import Percentage, Bar, ETA, FileTransferSpeed
@@ -23,6 +24,9 @@ header = reader.next() # skip the 1st line header
 import_count = count_lines(args.file) # may have no trailing newline
 
 cnt = success_cnt = 0
+
+def warning(*objs):
+    print("WARNING: ", *objs, file=sys.stderr)
 
 def slugify(str, separator='_'):
     str = unidecode.unidecode(str).lower().strip()
@@ -69,12 +73,12 @@ custom_headers = list(set(normalized_headers) - set(expected_headers)) # non-rec
 # restore original version (capitalization) to custom fields
 custom_headers = [ header[header_indices[normalized_col]] for normalized_col in custom_headers ]
 
-print "\nRecognized these column names:"
-print '> %s' % ', '.join(expected_headers)
+print("\nRecognized these column names:")
+print('> %s' % ', '.join(expected_headers))
 if len(custom_headers):
-    print "\nThe following column names weren't recognized, and will be imported as custom fields:"
-    print '> %s' % ', '.join(custom_headers)
-    print ''
+    print("\nThe following column names weren't recognized, and will be imported as custom fields:")
+    print('> %s' % ', '.join(custom_headers))
+    print('')
 
 def value_in_row(row, field):
     # "row" is a list representing one row from the CSV
@@ -188,12 +192,13 @@ for i, row in enumerate(reader):
     elif lead['contacts'] not in unique_leads[grouper]['contacts']:
         unique_leads[grouper]['contacts'].extend(lead['contacts'])
 
-print 'Found %d leads (grouped by company) from %d contacts.' % (len(unique_leads), import_count)
+print('Found %d leads (grouped by company) from %d contacts.' % (len(unique_leads), import_count))
 
-print '\nHere is a sample lead (last row):'
-print json.dumps(unique_leads[grouper], indent=4)
+print('\nHere is a sample lead (last row):')
+print(json.dumps(unique_leads[grouper], indent=4))
 
-if raw_input('\nAre you sure you want to continue? (y/n) ') != 'y':
+print('\nAre you sure you want to continue? (y/n) ')
+if raw_input('') != 'y':
     sys.exit()
 
 ##############################################################################
@@ -239,7 +244,7 @@ for key, val in unique_leads.items():
     while retries > 0:
         if dupe:
             dupes_cnt += 1
-            print 'Duplicate - not importing: %s' % val['name']
+            warning('Duplicate - not importing: %s' % val['name'])
             break
 
         try:
@@ -248,24 +253,24 @@ for key, val in unique_leads.items():
             retries = 0
             success_cnt += 1
         except closeio_api.APIError, err:
-            print 'An error occurred while saving "%s"' % key
-            print err
+            warning('An error occurred while saving "%s"' % key)
+            warning(err)
             retries = 0
         except ConnectionError, e:
-            print 'Connection error occurred, retrying... (%d/5)' % retries
+            warning('Connection error occurred, retrying... (%d/5)' % retries)
             if retries == 0:
                 raise
             time.sleep(2)
 
     cnt += 1
     if cnt > import_count:
-        print 'Warning: count overflow'
+        warning('Warning: count overflow')
         cnt = import_count
     pbar.update(cnt)
 
 pbar.finish()
 
-print 'Successful responses: %d of %d' % (success_cnt, len(unique_leads))
+print('Successful responses: %d of %d' % (success_cnt, len(unique_leads)))
 if args.skip_duplicates:
-    print 'Duplicates: %d' % dupes_cnt
+    print('Duplicates: %d' % dupes_cnt)
 
