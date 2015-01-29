@@ -35,12 +35,12 @@ while has_more:
     for l in leads:
         if 'Tags' in l['custom'].keys():
             tags = [t.strip() for t in l['custom']['Tags'].split(',')]
-            new_tags = {}
+            new_fields = {}
             for t in tags:
                 if t in tag_templates.keys():
-                    new_tags['custom.' + tag_templates[t][0]] = tag_templates[t][1]
+                    new_fields['custom.' + tag_templates[t][0]] = tag_templates[t][1]
 
-            api.put('lead/'+l['id'], data=new_tags)
+            api.put('lead/'+l['id'], data=new_fields)
 
     offset += max(0, len(leads) - 1)
     has_more = resp['has_more']
