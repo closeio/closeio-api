@@ -25,7 +25,7 @@ offset = 0
 
 while has_more:
     resp = api.get('lead', data={
-        'query': '*',
+        'query': 'sort:created',
         '_skip': offset,
         '_fields': 'id,custom'
     })
