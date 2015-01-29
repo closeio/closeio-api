@@ -11,7 +11,10 @@ args = parser.parse_args()
 
 tag_templates = {}
 
-c = csv.DictReader(args.csvfile, delimiter=',', quotechar='"', fieldnames=['tag', 'custom_field_name', 'custom_field_value'])
+sniffer = csv.Sniffer()
+dialect = sniffer.sniff(args.csvfile.read(1024))
+args.csvfile.seek(0)
+c = csv.DictReader(args.csvfile, dialect=dialect, fieldnames=['tag', 'custom_field_name', 'custom_field_value'])
 c.next()
 for r in c:
     if r:
