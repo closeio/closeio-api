@@ -3,9 +3,10 @@ import csv
 from closeio_api import Client as CloseIO_API
 
 parser = argparse.ArgumentParser(description='uploads custom fields from csv')
-parser.add_argument('csvfile', type=argparse.FileType('r'), help='csv file')
+parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
 parser.add_argument('--api_key', '-k', required=True, help='API Key')
-parser.add_argument('--development', '-d', action='store_true', help='Use a development (testing) server rather than production.')
+parser.add_argument('--development', '-d', action='store_true',
+                    help='Use a development (testing) server rather than production.')
 
 args = parser.parse_args()
 
@@ -18,9 +19,8 @@ c = csv.DictReader(args.csvfile, dialect=dialect, fieldnames=['tag', 'custom_fie
 c.next()
 for r in c:
     if r:
-        assert len(r) == 3, 'Invalid csv format'
+        assert len(r) == 3, 'Invalid csv format at line %d' % (c.line_num,)
         tag_templates[r['tag']] = (r['custom_field_name'], r['custom_field_value'])
-
 
 api = CloseIO_API(args.api_key, development=args.development)
 has_more = True
