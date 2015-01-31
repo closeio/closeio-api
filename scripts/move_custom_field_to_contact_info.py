@@ -68,7 +68,7 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
                     'emails': []
                 }
                 if new_contact_name:
-                    contact['name'] = new_contact_name,
+                    contact['name'] = new_contact_name
 
 
             for pn in company_phones:
@@ -99,6 +99,7 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
                     })
             except APIError as e:
                 print e
+                print 'Payload:', contact
                 if confirmed:
                     api.put('lead/%s' % lead['id'], data={
                         'custom.Migration completed': 'skipped'
@@ -106,7 +107,11 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
 
             print ''
 
-        offset += len(leads)
+        if not confirmed:
+            # If we don't actually update the "Migration completed" custom field,
+            # we need to paginate
+            offset += len(leads)
+
         has_more = resp['has_more']
 
     print 'Done'
