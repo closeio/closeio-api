@@ -106,6 +106,3 @@ class Client(API):
         else:
             base_url = 'https://app.close.io/api/v1/'
         super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset, async=async)
-
-
-
