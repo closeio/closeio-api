@@ -1,6 +1,6 @@
 from setuptools import setup
 
-requires = ['requests >= 0.10.8']
+requires = ['requests >= 0.10.8', 'grequests >= 0.2.0']
 
 setup(
     name = "closeio",
