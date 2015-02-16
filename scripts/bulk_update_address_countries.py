@@ -2,8 +2,6 @@ import argparse
 import logging
 from closeio_api import Client as CloseIO_API
 
-logging.basicConfig(level=logging.DEBUG)
-
 LEADS_QUERY = '* sort:created'
 
 parser = argparse.ArgumentParser(description='changing old country code to new country code')
@@ -14,9 +12,13 @@ parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
                     help='Without this flag, the script will do a dry run without actually updating any data.')
-
-
 args = parser.parse_args()
+
+log_format = "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
+if not args.confirmed:
+    log_format = 'DRY RUN: '+log_format
+logging.basicConfig(level=logging.DEBUG, format=log_format)
+logging.debug('parameters: %s' % vars(args))
 
 api = CloseIO_API(args.api_key, development=args.development)
 has_more = True
