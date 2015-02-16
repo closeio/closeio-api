@@ -31,8 +31,6 @@ c = csv.DictReader(args.csvfile, dialect=dialect)
 
 api = CloseIO_API(args.api_key, development=args.development)
 
-dry_run_prefix = 'DRY RUN:' if args.confirmed else ''
-
 for r in c:
     assert any(x in ('company', 'lead_id') for x in r.keys()), \
         'error: column company or lead_id not found at line %d' % (c.line_num,)
@@ -56,16 +54,18 @@ for r in c:
     if r.get('lead_id') is not None:
         try:
             resp = api.get('lead/%s' % r['lead_id'], data={
-                'fields': 'id,display_name,name,contacts,custom'
+                'fields': 'id'
             })
 
-            if resp['total_results'] and args.confirmed:
-                lead = resp['data']
-                pass # updating exists lead
-                logging.info('%s updated exists lead %s' % (dry_run_prefix, lead['id']))
+            lead = resp['data']
+            if resp['total_results']:
+                if args.confirmed:
+                    api.put('lead/'+lead['id'], data=payload)
+                logging.info('updated exists lead %s' % (lead['id'], ))
                 continue
         except APIError as e:
-            logging.error('%s %s : lead_id: %s' % (dry_run_prefix, e, r['lead_id']))
+            logging.error('%s : lead_id: %s' % (e, r['lead_id']))
+            continue
 
     # first lead in company
     if lead is None:
@@ -80,11 +80,13 @@ for r in c:
                 print lead
                 continue
         except APIError as e:
-            logging.error('%s %s : company: "%s"' % (dry_run_prefix, e, r['company']))
+            logging.error('%s : company: "%s"' % (e, r['company']))
+            continue
 
     # new lead
     if lead is None and not args.disable_create:
         try:
             resp = api.post('lead', data = payload)
         except APIError as e:
-            logging.error('%s %s : payload: "%s"' % (dry_run_prefix, e, payload))
+            logging.error('%s : payload: "%s"' % (e, payload))
+            continue
