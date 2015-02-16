@@ -21,7 +21,7 @@ args = parser.parse_args()
 log_format = "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
 if not args.confirmed:
     log_format = 'DRY RUN: '+log_format
-logging.basicConfig(level=logging.DEBUG, format=log_format)
+logging.basicConfig(level=logging.INFO, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
@@ -49,7 +49,6 @@ for r in c:
     custom = {x.split('.')[1]: r[x] for x in [y for y in r.keys() if y.startswith('custom.')]}
 
     lead = None
-
     # exists lead
     if r.get('lead_id') is not None:
         try:
@@ -60,33 +59,38 @@ for r in c:
             lead = resp['data']
             if resp['total_results']:
                 if args.confirmed:
-                    api.put('lead/'+lead['id'], data=payload)
-                logging.info('updated exists lead %s' % (lead['id'], ))
+                    api.put('lead/' + lead['id'], data=payload)
+                logging.info('line: %d updated: %s' % lead['id'])
                 continue
         except APIError as e:
-            logging.error('%s : lead_id: %s' % (e, r['lead_id']))
+            logging.error('line: %d : %s' % (c.line_num, e))
             continue
 
-    # first lead in company
+    # first lead in the company
     if lead is None:
         try:
             resp = api.get('lead', data={
-                'query': 'company: %s sort:created' % r['company'],
+                'query': 'company: "%s" sort:created' % r['company'],
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
             if resp['total_results']:
-                lead = resp['data']
-                print lead
+                lead = resp['data'][0]
+                if args.confirmed:
+                    api.put('lead/' + lead['id'], data=payload)
+                logging.info('line: %d updated: %s' % (c.line_num, lead['id']))
                 continue
         except APIError as e:
-            logging.error('%s : company: "%s"' % (e, r['company']))
+            logging.error('line: %d : %s' % (c.line_num, e))
             continue
 
     # new lead
     if lead is None and not args.disable_create:
         try:
-            resp = api.post('lead', data = payload)
+            if args.confirmed:
+                resp = api.post('lead', data=payload)
+            logging.info('line %d new: %s' % (c.line_num, resp['id'] if args.confirmed else 'X'))
         except APIError as e:
-            logging.error('%s : payload: "%s"' % (e, payload))
-            continue
+            logging.error('line: %d : %s' % (c.line_num, e))
+
+
