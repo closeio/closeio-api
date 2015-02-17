@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 import re
 import argparse
 import csv
@@ -28,13 +30,32 @@ sniffer = csv.Sniffer()
 dialect = sniffer.sniff(args.csvfile.read(1024))
 args.csvfile.seek(0)
 c = csv.DictReader(args.csvfile, dialect=dialect)
+assert any(x in ('company', 'lead_id') for x in c.fieldnames), \
+    'ERROR: column company or lead_id is not found'
+
 
 api = CloseIO_API(args.api_key, development=args.development)
 
-for r in c:
-    assert any(x in ('company', 'lead_id') for x in r.keys()), \
-        'error: column company or lead_id not found at line %d' % (c.line_num,)
+try:
+    resp = api.get('custom_fields/lead/')
+except APIError as e:
+    logging.error('line: %d : %s' % (c.line_num, e))
+    raise
 
+available_custom_fieldnames = [x['name'] for x in resp['data']]
+new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.startswith('custom.')]
+                         if x not in available_custom_fieldnames]
+
+for field in new_custom_fieldnames:
+    try:
+        if args.confirmed:
+            api.post('custom_fields/lead/', data={'name': field, 'type': 'text'})
+        logging.info('added new custom field "%s"' % field)
+    except APIError as e:
+        logging.error('line: %d : %s' % (c.line_num, e))
+        raise
+
+for r in c:
     payload = {'name': r['company'],
                'url': r.get('url'),
                'contacts': [{'name': r['contact%s_name' % x],
@@ -44,9 +65,8 @@ for r in c:
                             'urls': get_contact_info(x, r, 'url', 'url')}
                             for x in [y[7] for y in r.keys()
                                       if re.match(r'contact[0-9]_name', y) and r[y]]],
+               'custom': {x.split('.')[1]: r[x] for x in [y for y in r.keys() if y.startswith('custom.')]}
                }
-
-    custom = {x.split('.')[1]: r[x] for x in [y for y in r.keys() if y.startswith('custom.')]}
 
     lead = None
     try:
@@ -55,6 +75,7 @@ for r in c:
             resp = api.get('lead/%s' % r['lead_id'], data={
                 'fields': 'id'
             })
+            lead = resp['data']
         else:
             # first lead in the company
             resp = api.get('lead', data={
@@ -62,8 +83,8 @@ for r in c:
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
-        if resp['total_results']:
-            lead = resp['data'][0]
+            if resp['total_results']:
+                lead = resp['data'][0]
     except APIError as e:
         logging.error('line: %d : %s' % (c.line_num, e))
         continue
@@ -71,7 +92,7 @@ for r in c:
     if lead:
         if args.confirmed:
             api.put('lead/' + lead['id'], data=payload)
-        logging.info('line: %d updated: %s' % (c.line_num, lead['id']))
+        logging.info('line: %d updated: %s %s' % (c.line_num, lead['id'], lead['name']))
         continue
 
     # new lead
@@ -79,6 +100,6 @@ for r in c:
         try:
             if args.confirmed:
                 resp = api.post('lead', data=payload)
-            logging.info('line %d new: %s' % (c.line_num, resp['id'] if args.confirmed else 'X'))
+            logging.info('line %d new: %s %s' % (c.line_num, resp['id'] if args.confirmed else 'X', payload['name']))
         except APIError as e:
             logging.error('line: %d : %s' % (c.line_num, e))
