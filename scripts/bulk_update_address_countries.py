@@ -95,7 +95,7 @@ args.old_code = args.old_code.upper()
 args.new_code = args.new_code.upper()
 assert args.old_code in ISO_COUNTRIES.keys(), '%s country code is not valid' % args.old_code
 assert args.new_code in ISO_COUNTRIES.keys(), '%s country code is not valid' % args.new_code
-assert args.old_code <> args.new_code, 'equal country codes'
+assert args.old_code != args.new_code, 'equal country codes'
 
 logging.info('old country: %s (%s) -> new country: %s (%s) ' % (args.old_code, ISO_COUNTRIES[args.old_code],
                                                                 args.new_code, ISO_COUNTRIES[args.new_code]))
