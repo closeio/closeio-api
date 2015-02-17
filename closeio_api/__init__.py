@@ -56,13 +56,13 @@ class API(object):
         return self.dispatch('get', endpoint)
 
     def post(self, endpoint, data):
-        return self.dispatch('post', endpoint+'' if endpoint.endswith('/') else '/', data)
+        return self.dispatch('post', endpoint+('' if endpoint.endswith('/') else '/'), data)
 
     def put(self, endpoint, data):
-        return self.dispatch('put', endpoint+'' if endpoint.endswith('/') else '/', data)
+        return self.dispatch('put', endpoint+('' if endpoint.endswith('/') else '/'), data)
 
     def delete(self, endpoint):
-        return self.dispatch('delete', endpoint+'' if endpoint.endswith('/') else '/')
+        return self.dispatch('delete', endpoint+('' if endpoint.endswith('/') else '/'))
 
     # Only for async requests
     def map(self, reqs, max_retries=None):
