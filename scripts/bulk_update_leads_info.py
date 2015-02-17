@@ -31,7 +31,7 @@ dialect = sniffer.sniff(args.csvfile.read(1024))
 args.csvfile.seek(0)
 c = csv.DictReader(args.csvfile, dialect=dialect)
 assert any(x in ('company', 'lead_id') for x in c.fieldnames), \
-    'ERROR: column company or lead_id is not found'
+    'ERROR: column "company" or "lead_id" is not found'
 
 
 api = CloseIO_API(args.api_key, development=args.development)
