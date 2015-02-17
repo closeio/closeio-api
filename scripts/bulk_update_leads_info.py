@@ -49,40 +49,30 @@ for r in c:
     custom = {x.split('.')[1]: r[x] for x in [y for y in r.keys() if y.startswith('custom.')]}
 
     lead = None
-    # exists lead
-    if r.get('lead_id') is not None:
-        try:
+    try:
+        if r.get('lead_id') is not None:
+            # exists lead
             resp = api.get('lead/%s' % r['lead_id'], data={
                 'fields': 'id'
             })
-
-            lead = resp['data']
-            if resp['total_results']:
-                if args.confirmed:
-                    api.put('lead/' + lead['id'], data=payload)
-                logging.info('line: %d updated: %s' % lead['id'])
-                continue
-        except APIError as e:
-            logging.error('line: %d : %s' % (c.line_num, e))
-            continue
-
-    # first lead in the company
-    if lead is None:
-        try:
+        else:
+            # first lead in the company
             resp = api.get('lead', data={
                 'query': 'company: "%s" sort:created' % r['company'],
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
-            if resp['total_results']:
-                lead = resp['data'][0]
-                if args.confirmed:
-                    api.put('lead/' + lead['id'], data=payload)
-                logging.info('line: %d updated: %s' % (c.line_num, lead['id']))
-                continue
-        except APIError as e:
-            logging.error('line: %d : %s' % (c.line_num, e))
-            continue
+        if resp['total_results']:
+            lead = resp['data'][0]
+    except APIError as e:
+        logging.error('line: %d : %s' % (c.line_num, e))
+        continue
+
+    if lead:
+        if args.confirmed:
+            api.put('lead/' + lead['id'], data=payload)
+        logging.info('line: %d updated: %s' % (c.line_num, lead['id']))
+        continue
 
     # new lead
     if lead is None and not args.disable_create:
@@ -92,5 +82,3 @@ for r in c:
             logging.info('line %d new: %s' % (c.line_num, resp['id'] if args.confirmed else 'X'))
         except APIError as e:
             logging.error('line: %d : %s' % (c.line_num, e))
-
-
