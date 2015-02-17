@@ -51,18 +51,18 @@ class API(object):
             for k, v in data.iteritems():
                 data[k] = unicode(v).encode('utf-8')
             endpoint += '/?'+urllib.urlencode(data)
-        else:
+        elif not endpoint.endswith('/'):
             endpoint += '/'
         return self.dispatch('get', endpoint)
 
     def post(self, endpoint, data):
-        return self.dispatch('post', endpoint+'/', data)
+        return self.dispatch('post', endpoint+'' if endpoint.endswith('/') else '/', data)
 
     def put(self, endpoint, data):
-        return self.dispatch('put', endpoint+'/', data)
+        return self.dispatch('put', endpoint+'' if endpoint.endswith('/') else '/', data)
 
     def delete(self, endpoint):
-        return self.dispatch('delete', endpoint+'/')
+        return self.dispatch('delete', endpoint+'' if endpoint.endswith('/') else '/')
 
     # Only for async requests
     def map(self, reqs, max_retries=None):
