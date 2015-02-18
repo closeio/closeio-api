@@ -16,6 +16,8 @@ parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
                     help='Without this flag, the script will do a dry run without actually updating any data.')
+parser.add_argument('--create-custom-fields', '-C', action='store_true',
+                    help='Create new custom fields, if not exists.')
 parser.add_argument('--disable-create', '-x', action='store_true',
                     help='Prevent new lead creation. Update only exists leads.')
 args = parser.parse_args()
@@ -41,14 +43,15 @@ available_custom_fieldnames = [x['name'] for x in resp['data']]
 new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.startswith('custom.')]
                          if x not in available_custom_fieldnames]
 
-for field in new_custom_fieldnames:
-    try:
-        if args.confirmed:
-            api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
-        logging.info('added new custom field "%s"' % field)
-    except APIError as e:
-        logging.error('line: %d : %s' % (c.line_num, e))
-        raise
+if args.create_custom_fields:
+    for field in new_custom_fieldnames:
+        try:
+            if args.confirmed:
+                api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
+            logging.info('added new custom field "%s"' % field)
+        except APIError as e:
+            logging.error('line: %d : %s' % (c.line_num, e))
+            raise
 
 for r in c:
     payload = {'name': r['company'],
