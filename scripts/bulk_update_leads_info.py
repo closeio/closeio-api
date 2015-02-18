@@ -84,7 +84,8 @@ for r in c:
 
     custom = {x.split('.г')[1]: r[x] for x in [y for y in r.keys()
                                                 if y.startswith('custom.')
-                                                and y.split('.')[1] in available_custom_fieldnames]}
+                                                and y.split('.')[1] in available_custom_fieldnames
+                                                and r[y]]}
     if custom:
         payload['custom'] = custom
 
