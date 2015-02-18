@@ -82,9 +82,9 @@ for r in c:
     if contacts:
         payload['contacts'] = contacts
 
-    custom = {x.split('.')[1]: r[x] for x in [y for y in r.keys()
-                                              if y.startswith('custom.')
-                                              and y.split('.')[1] in available_custom_fieldnames]}
+    custom = {x.split('.г')[1]: r[x] for x in [y for y in r.keys()
+                                                if y.startswith('custom.')
+                                                and y.split('.')[1] in available_custom_fieldnames]}
     if custom:
         payload['custom'] = custom
 
