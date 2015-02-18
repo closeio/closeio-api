@@ -36,7 +36,7 @@ assert any(x in ('company', 'lead_id') for x in c.fieldnames), \
 
 api = CloseIO_API(args.api_key, development=args.development)
 
-resp = api.get('custom_fields/lead/')
+resp = api.get('custom_fields/lead')
 available_custom_fieldnames = [x['name'] for x in resp['data']]
 new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.startswith('custom.')]
                          if x not in available_custom_fieldnames]
@@ -44,7 +44,7 @@ new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.
 for field in new_custom_fieldnames:
     try:
         if args.confirmed:
-            api.post('custom_fields/lead/', data={'name': field, 'type': 'text'})
+            api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
         logging.info('added new custom field "%s"' % field)
     except APIError as e:
         logging.error('line: %d : %s' % (c.line_num, e))
