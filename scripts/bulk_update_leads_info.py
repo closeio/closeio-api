@@ -77,7 +77,7 @@ for r in c:
         else:
             # first lead in the company
             resp = api.get('lead', data={
-                'query': 'company: "%s" sort:created' % r['company'],
+                'query': 'company:"%s" sort:created' % r['company'],
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
