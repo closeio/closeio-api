@@ -51,26 +51,42 @@ new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.
 
 if args.create_custom_fields:
     for field in new_custom_fieldnames:
-        try:
-            if args.confirmed:
-                api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
-            logging.info('added new custom field "%s"' % field)
-        except APIError as e:
-            logging.error('line: %d : %s' % (c.line_num, e))
-            raise
+        if args.confirmed:
+            api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
+        available_custom_fieldnames.append(field)
+        logging.info('added new custom field "%s"' % field)
 
 for r in c:
-    payload = {'name': r['company'],
-               'url': r.get('url'),
-               'contacts': [{'name': r['contact%s_name' % x],
-                            'title': r['contact%s_title' % x],
-                            'phones': get_contact_info(x, r, 'phone', 'office'),
-                            'emails': get_contact_info(x, r, 'email', 'office'),
-                            'urls': get_contact_info(x, r, 'url', 'url')}
-                            for x in [y[7] for y in r.keys()
-                                      if re.match(r'contact[0-9]_name', y) and r[y]]],
-               'custom': {x.split('.')[1]: r[x] for x in [y for y in r.keys() if y.startswith('custom.')]}
-               }
+    payload = {}
+
+    if r.get('company'):
+        payload['name'] = r['company']
+
+    if r.get('url'):
+        payload['url'] = r['url']
+
+    contacts = []
+    for x in [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y) and r[y]]:
+        contact = {'name': r['contact%s_name' % x]}
+        if r.get('contact%s_title' % x):
+            contact['title'] = r['contact%s_title' % x]
+        phones = get_contact_info(x, r, 'phone', 'office')
+        if phones:
+            contact['phones'] = phones
+        emails = get_contact_info(x, r, 'email', 'office')
+        if emails:
+            contact['emails'] = emails
+        urls = get_contact_info(x, r, 'url', 'url')
+        if urls:
+            contact['url'] = urls
+    if contacts:
+        payload['contacts'] = contacts
+
+    custom = {x.split('.')[1]: r[x] for x in [y for y in r.keys()
+                                              if y.startswith('custom.')
+                                              and y.split('.')[1] in available_custom_fieldnames]}
+    if custom:
+        payload['custom'] = custom
 
     lead = None
     try:
