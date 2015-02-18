@@ -6,8 +6,14 @@ import csv
 import logging
 from closeio_api import Client as CloseIO_API, APIError
 
-get_contact_info = lambda key, row, what, typ: [{what: row[x], 'type': typ} for x in row.keys()
-                                                if re.match(r'contact%s_%s[0-9]' % (key, what), x) and row[x]]
+
+def get_contact_info(contact_no, csv_row, what, contact_type):
+    columns = [x for x in csv_row.keys()
+               if re.match(r'contact%s_%s[0-9]' % (contact_no, what), x) and csv_row[x]]
+    contact_info = []
+    for col in columns:
+        contact_info.append({what: csv_row[col], 'type': contact_type})
+    return contact_info
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
