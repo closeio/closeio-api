@@ -32,7 +32,7 @@ args = parser.parse_args()
 log_format = "[%(asctime)s] %(levelname)s %(message)s"
 if not args.confirmed:
     log_format = 'DRY RUN: '+log_format
-logging.basicConfig(level=logging.INFO, format=log_format)
+logging.basicConfig(level=logging.DEBUG, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
@@ -102,7 +102,8 @@ for r in c:
             resp = api.get('lead/%s' % r['lead_id'], data={
                 'fields': 'id'
             })
-            lead = resp['data']
+            logging.debug('received: %s' % resp)
+            lead = resp
         else:
             # first lead in the company
             resp = api.get('lead', data={
@@ -110,11 +111,12 @@ for r in c:
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
+            logging.debug('received: %s' % resp)
             if resp['total_results']:
                 lead = resp['data'][0]
 
         if lead:
-            logging.debug(payload)
+            logging.debug('to sent: %s' % payload)
             if args.confirmed:
                 api.put('lead/' + lead['id'], data=payload)
             logging.info('line %d updated: %s %s' % (c.line_num,
@@ -125,7 +127,7 @@ for r in c:
 
         # new lead
         if lead is None and not args.disable_create:
-            logging.debug(payload)
+            logging.debug('to sent: %s' % payload)
             if args.confirmed:
                 resp = api.post('lead', data=payload)
             logging.info('line %d new: %s %s' % (c.line_num,
