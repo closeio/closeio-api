@@ -72,6 +72,9 @@ for r in c:
     if r.get('url'):
         payload['url'] = r['url']
 
+    if r.get('description'):
+        payload['description'] = r['description']
+
     contacts = []
     for x in [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y) and r[y]]:
         contact = {'name': r['contact%s_name' % x]}
