@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import re
 import argparse
@@ -24,14 +24,14 @@ parser.add_argument('--confirmed', '-c', action='store_true',
                     help='Without this flag, the script will do a dry run without actually updating any data.')
 parser.add_argument('--create-custom-fields', '-C', action='store_true',
                     help='Create new custom fields, if not exists.')
-parser.add_argument('--disable-create', '-x', action='store_true',
+parser.add_argument('--disable-create', '-e', action='store_true',
                     help='Prevent new lead creation. Update only exists leads.')
 args = parser.parse_args()
 
-log_format = "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
+log_format = "[%(asctime)s] %(levelname)s %(message)s"
 if not args.confirmed:
     log_format = 'DRY RUN: '+log_format
-logging.basicConfig(level=logging.INFO, format=log_format)
+logging.basicConfig(level=logging.DEBUG, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
@@ -56,6 +56,8 @@ if args.create_custom_fields:
         available_custom_fieldnames.append(field)
         logging.info('added new custom field "%s"' % field)
 
+logging.debug('avaliable custom fields: %s' % available_custom_fieldnames)
+
 for r in c:
     payload = {}
 
@@ -79,13 +81,12 @@ for r in c:
         urls = get_contact_info(x, r, 'url', 'url')
         if urls:
             contact['url'] = urls
+        contacts.append(contact)
     if contacts:
         payload['contacts'] = contacts
 
-    custom = {x.split('.г')[1]: r[x] for x in [y for y in r.keys()
-                                                if y.startswith('custom.')
-                                                and y.split('.')[1] in available_custom_fieldnames
-                                                and r[y]]}
+    custom = {x.split('.')[1]: r[x] for x in r.keys() if x.startswith('custom.')
+              and x.split('.')[1] in available_custom_fieldnames and r[x]}
     if custom:
         payload['custom'] = custom
 
@@ -111,6 +112,7 @@ for r in c:
         continue
 
     if lead:
+        logging.debug(payload)
         if args.confirmed:
             api.put('lead/' + lead['id'], data=payload)
         logging.info('line: %d updated: %s %s' % (c.line_num, lead['id'], lead['name']))
@@ -119,8 +121,9 @@ for r in c:
     # new lead
     if lead is None and not args.disable_create:
         try:
+            logging.debug(payload)
             if args.confirmed:
                 resp = api.post('lead', data=payload)
             logging.info('line %d new: %s %s' % (c.line_num, resp['id'] if args.confirmed else 'X', payload['name']))
         except APIError as e:
-            logging.error('line: %d : %s' % (c.line_num, e))
+            logging.error('line: %d skipped with error %s' % (c.line_num, e))
