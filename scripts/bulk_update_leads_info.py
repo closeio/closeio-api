@@ -126,17 +126,23 @@ for r in c:
                                                      lead['id'],
                                                      lead.get('name') if lead.get('name') else ''))
             updated_leads += 1
-            continue
-
-        # new lead
-        if lead is None and not args.disable_create:
+        elif lead is None and not args.disable_create:
             logging.debug('to sent: %s' % payload)
             if args.confirmed:
-                resp = api.post('lead', data=payload)
+                lead = api.post('lead', data=payload)
             logging.info('line %d new: %s %s' % (c.line_num,
-                                                 resp['id'] if args.confirmed else 'X',
+                                                 lead['id'] if args.confirmed else 'X',
                                                  payload['name']))
             new_leads += 1
+
+        notes = [r[x] for x in r.keys() if re.match(r'note[0-9]', x) and r[x]]
+        if notes:
+            for note in notes:
+                if args.confirmed:
+                    resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
+                logging.debug('%s new note: %s' % (lead['id'], note))
+
+
     except APIError as e:
         logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, payload))
         skipped_leads += 1
