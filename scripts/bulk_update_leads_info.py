@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import re
 import argparse
 import csv
@@ -31,7 +32,7 @@ args = parser.parse_args()
 log_format = "[%(asctime)s] %(levelname)s %(message)s"
 if not args.confirmed:
     log_format = 'DRY RUN: '+log_format
-logging.basicConfig(level=logging.DEBUG, format=log_format)
+logging.basicConfig(level=logging.INFO, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
@@ -57,6 +58,10 @@ if args.create_custom_fields:
         logging.info('added new custom field "%s"' % field)
 
 logging.debug('avaliable custom fields: %s' % available_custom_fieldnames)
+
+updated_leads = 0
+new_leads = 0
+skipped_leads = 0
 
 for r in c:
     payload = {}
@@ -90,8 +95,8 @@ for r in c:
     if custom:
         payload['custom'] = custom
 
-    lead = None
     try:
+        lead = None
         if r.get('lead_id') is not None:
             # exists lead
             resp = api.get('lead/%s' % r['lead_id'], data={
@@ -107,23 +112,31 @@ for r in c:
             })
             if resp['total_results']:
                 lead = resp['data'][0]
-    except APIError as e:
-        logging.error('line: %d : %s' % (c.line_num, e))
-        continue
 
-    if lead:
-        logging.debug(payload)
-        if args.confirmed:
-            api.put('lead/' + lead['id'], data=payload)
-        logging.info('line: %d updated: %s %s' % (c.line_num, lead['id'], lead['name']))
-        continue
+        if lead:
+            logging.debug(payload)
+            if args.confirmed:
+                api.put('lead/' + lead['id'], data=payload)
+            logging.info('line %d updated: %s %s' % (c.line_num,
+                                                     lead['id'],
+                                                     lead.get('name') if lead.get('name') else ''))
+            updated_leads += 1
+            continue
 
-    # new lead
-    if lead is None and not args.disable_create:
-        try:
+        # new lead
+        if lead is None and not args.disable_create:
             logging.debug(payload)
             if args.confirmed:
                 resp = api.post('lead', data=payload)
-            logging.info('line %d new: %s %s' % (c.line_num, resp['id'] if args.confirmed else 'X', payload['name']))
-        except APIError as e:
-            logging.error('line: %d skipped with error %s' % (c.line_num, e))
+            logging.info('line %d new: %s %s' % (c.line_num,
+                                                 resp['id'] if args.confirmed else 'X',
+                                                 payload['name']))
+            new_leads += 1
+    except APIError as e:
+        logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, payload))
+        skipped_leads += 1
+
+logging.info('summary: updated[%d], new[%d], skipped[%d]' % (updated_leads, skipped_leads, new_leads))
+if skipped_leads:
+    sys.exit(1)
+
