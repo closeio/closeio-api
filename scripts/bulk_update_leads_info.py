@@ -88,7 +88,7 @@ for r in c:
             contact['emails'] = emails
         urls = get_contact_info(x, r, 'url', 'url')
         if urls:
-            contact['url'] = urls
+            contact['urls'] = urls
         contacts.append(contact)
     if contacts:
         payload['contacts'] = contacts
