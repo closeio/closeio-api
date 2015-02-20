@@ -76,8 +76,10 @@ for r in c:
         payload['description'] = r['description']
 
     contacts = []
-    for x in [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y) and r[y]]:
-        contact = {'name': r['contact%s_name' % x]}
+    for x in [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]:
+        contact = {}
+        if r.get('contact%s_name' % x):
+            contact['name'] = r['contact%s_name' % x]
         if r.get('contact%s_title' % x):
             contact['title'] = r['contact%s_title' % x]
         phones = get_contact_info(x, r, 'phone', 'office')
@@ -141,6 +143,7 @@ for r in c:
                 if args.confirmed:
                     resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
                 logging.debug('%s new note: %s' % (lead['id'], note))
+
 
 
     except APIError as e:
