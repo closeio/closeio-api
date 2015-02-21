@@ -88,12 +88,16 @@ available_custom_fieldnames = [x['name'] for x in resp['data']]
 new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.startswith('custom.')]
                          if x not in available_custom_fieldnames]
 
-if args.create_custom_fields:
-    for field in new_custom_fieldnames:
-        if args.confirmed:
-            api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
-        available_custom_fieldnames.append(field)
-        logging.info('added new custom field "%s"' % field)
+if new_custom_fieldnames:
+    if args.create_custom_fields:
+        for field in new_custom_fieldnames:
+            if args.confirmed:
+                api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
+            available_custom_fieldnames.append(field)
+            logging.info('added new custom field "%s"' % field)
+    else:
+        logging.error('unknown custom fieldnames: %s' % new_custom_fieldnames)
+        sys.exit(1)
 
 logging.debug('avaliable custom fields: %s' % available_custom_fieldnames)
 
