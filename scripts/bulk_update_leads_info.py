@@ -13,6 +13,7 @@ OPPORTUNITY_FIELDS = ['opportunity%s_note',
                       'opportunity%s_confidence',
                       'opportunity%s_status']
 
+
 def get_contact_info(contact_no, csv_row, what, contact_type):
     columns = [x for x in csv_row.keys()
                if re.match(r'contact%s_%s[0-9]' % (contact_no, what), x) and csv_row[x]]
