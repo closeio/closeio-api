@@ -7,6 +7,11 @@ import csv
 import logging
 from closeio_api import Client as CloseIO_API, APIError
 
+OPPORTUNITY_FIELDS = ['opportunity%s_note',
+                      'opportunity%s_value',
+                      'opportunity%s_value_period',
+                      'opportunity%s_confidence',
+                      'opportunity%s_status']
 
 def get_contact_info(contact_no, csv_row, what, contact_type):
     columns = [x for x in csv_row.keys()
@@ -16,23 +21,55 @@ def get_contact_info(contact_no, csv_row, what, contact_type):
         contact_info.append({what: csv_row[col], 'type': contact_type})
     return contact_info
 
-parser = argparse.ArgumentParser(description='')
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""
+Imports leads and related data from a csv file with header.
+Header's columns may be declared in any order. Detects csv dialect (delimeter and quotechar).
+""", epilog="""
+key columns:
+    * lead_id                           - If exists and not empty, update using lead_id.
+    * company                           - If lead_id is empty or is not exists, imports to
+                                          first lead from found company. If the company was
+                                          not found, loads as new lead.
+lead columns:
+    * url                               - lead url, may be empty
+    * description                       - lead description, may be empty
+    * note[0-9]                         - lead notes, may be empty
+
+opportunity columns (must be filled all values):
+    * opportunity[0-9]_note             - opportunity note
+    * opportunity[0-9]_value            - opportunity value in cents
+    * opportunity[0-9]_value_period     - will have a value like one_time or monthly
+    * opportunity[0-9]_confidence       - opportunity confidence
+    * opportunity[0-9]_status           - opportunity status
+
+contact columns:
+    * contact[0-9]_name                 - contact name, may be empty
+    * contact[0-9]_title                - contact title, may be empty
+
+contact information columns (per contact):
+    * contact[0-9]_phone[0-9]           - contact phones
+    * contact[0-9]_email[0-9]           - contact emails
+    * contact[0-9]_url[0-9]             - contact urls
+""")
+
 parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
 parser.add_argument('--api_key', '-k', required=True, help='API Key')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
                     help='Without this flag, the script will do a dry run without actually updating any data.')
-parser.add_argument('--create-custom-fields', '-C', action='store_true',
+parser.add_argument('--create-custom-fields', '-f', action='store_true',
                     help='Create new custom fields, if not exists.')
 parser.add_argument('--disable-create', '-e', action='store_true',
                     help='Prevent new lead creation. Update only exists leads.')
+parser.add_argument('--continue-on-error', '-s', action='store_true',
+                    help='Do not abort import after first error')
 args = parser.parse_args()
 
 log_format = "[%(asctime)s] %(levelname)s %(message)s"
 if not args.confirmed:
     log_format = 'DRY RUN: '+log_format
-logging.basicConfig(level=logging.DEBUG, format=log_format)
+logging.basicConfig(level=logging.INFO, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
@@ -75,8 +112,9 @@ for r in c:
     if r.get('description'):
         payload['description'] = r['description']
 
+    contact_ids = [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]
     contacts = []
-    for x in [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]:
+    for x in contact_ids:
         contact = {}
         if r.get('contact%s_name' % x):
             contact['name'] = r['contact%s_name' % x]
@@ -91,7 +129,8 @@ for r in c:
         urls = get_contact_info(x, r, 'url', 'url')
         if urls:
             contact['urls'] = urls
-        contacts.append(contact)
+        if contact:
+            contacts.append(contact)
     if contacts:
         payload['contacts'] = contacts
 
@@ -128,6 +167,7 @@ for r in c:
                                                      lead['id'],
                                                      lead.get('name') if lead.get('name') else ''))
             updated_leads += 1
+        # new lead
         elif lead is None and not args.disable_create:
             logging.debug('to sent: %s' % payload)
             if args.confirmed:
@@ -138,19 +178,30 @@ for r in c:
             new_leads += 1
 
         notes = [r[x] for x in r.keys() if re.match(r'note[0-9]', x) and r[x]]
-        if notes:
-            for note in notes:
-                if args.confirmed:
-                    resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
-                logging.debug('%s new note: %s' % (lead['id'], note))
+        for note in notes:
+            if args.confirmed:
+                resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
+            logging.debug('%s new note: %s' % (lead['id'], note))
 
-
+        opportunity_ids = [x[11] for x in c.fieldnames if re.match(r'opportunity[0-9]_note', x)]
+        for i in opportunity_ids:
+            if all([r[x % i] for x in OPPORTUNITY_FIELDS]):
+                api.post('opportunity', data={'lead_id': lead['id'],
+                                              'note': r['opportunity%s_note' % i],
+                                              'value_period': r['opportunity%s_value_period' % i],
+                                              'confidence': r['opportunity%s_confidence' % i],
+                                              'status': r['opportunity%s_status' % i]})
+            else:
+                logging.error('line %d is not a fully filled opportunity %s, skipped', (c.line_num, i))
 
     except APIError as e:
         logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, payload))
         skipped_leads += 1
+        if not args.continue_on_error:
+            logging.info('stopped on error')
+            sys.exit(1)
 
-logging.info('summary: updated[%d], new[%d], skipped[%d]' % (updated_leads, skipped_leads, new_leads))
+logging.info('summary: updated[%d], new[%d], skipped[%d]' % (updated_leads, new_leads, skipped_leads))
 if skipped_leads:
     sys.exit(1)
 
