@@ -48,7 +48,8 @@ if args.tasks:
     offset = 0
     while has_more:
         resp = api.get('task', data={
-            'query': 'assigned_to:"%s" sort:date_created' % args.from_user_id,
+            'assigned_to': args.from_user_id,
+            '_order_by': 'date_created',
             '_skip': offset,
             '_fields': 'id,assigned_to'
         })
