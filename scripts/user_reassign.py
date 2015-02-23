@@ -69,7 +69,8 @@ if args.opportunities:
     offset = 0
     while has_more:
         resp = api.get('opportunity', data={
-            'query': 'user_id:"%s" sort:date_created' % args.from_user_id,
+            'query': 'user_id:"%s"' % args.from_user_id,
+            '_order_by': 'date_created',
             '_skip': offset,
             '_fields': 'id,assigned_to'
         })
