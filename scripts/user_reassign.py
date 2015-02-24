@@ -18,13 +18,15 @@ parser.add_argument('--confirmed', '-c', action='store_true',
 group = parser.add_argument_group()
 group.add_argument('--tasks', '-T', action='store_true',
                    help='')
-group.add_argument('--opportunities', '-O', action='store_true',
-                   help='')
+group.add_argument('--all-tasks', action='store_true')
+group.add_argument('--opportunities', '-O', action='store_true')
+group.add_argument('--all-opportunities', action='store_true')
+
 
 args = parser.parse_args()
 
-if not args.tasks and not args.opportunities:
-    parser.error("at least one of --tasks and --opportunities required")
+if not any([args.tasks, args.opportunities, args.all_tasks, args.all_opportunities]):
+    parser.error("at least one option required")
 
 assert args.from_user_id != args.to_user_id, 'equal user codes'
 
@@ -43,17 +45,22 @@ to_user = api.get('user/'+args.to_user_id)
 logging.debug(to_user)
 
 # tasks
-if args.tasks:
+if args.tasks or args.all_tasks:
     has_more = True
     offset = 0
     while has_more:
-        resp = api.get('task', data={
+        payload ={
             'assigned_to': args.from_user_id,
             '_order_by': 'date_created',
             '_skip': offset,
             '_fields': 'id,assigned_to'
-        })
+        }
 
+        if not args.all_tasks:
+            payload['is_complete'] = false 
+            
+        resp = api.get('task', data=payload)
+        
         tasks = resp['data']
         for task in tasks:
             if args.confirmed:
@@ -64,17 +71,22 @@ if args.tasks:
         has_more = resp['has_more']
 
 # opportunities
-if args.opportunities:
+if args.opportunities or args.all_opportunities:
     has_more = True
     offset = 0
     while has_more:
-        resp = api.get('opportunity', data={
+        payload={
             'query': 'user_id:"%s"' % args.from_user_id,
             '_order_by': 'date_created',
             '_skip': offset,
             '_fields': 'id,assigned_to'
-        })
+        }
 
+        if not args.all_opportunities:
+            payload['status_type'] = 'active'
+            
+        resp = api.get('opportunity', data=payload)
+        
         opportunities = resp['data']
         for opportunity in opportunities:
             if args.confirmed:
