@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -32,22 +33,21 @@ key columns:
                                           first lead from found company. If the company was
                                           not found, loads as new lead.
 lead columns:
-    * url                               - lead url, may be empty
-    * description                       - lead description, may be empty
-    * note[0-9]                         - lead notes, may be empty
+    * url                               - lead url
+    * description                       - lead description
+    * status                            - lead status
+    * note[0-9]                         - lead notes
 
-opportunity columns (must be filled all values):
+opportunity columns (new items will be added if all values filled):
     * opportunity[0-9]_note             - opportunity note
     * opportunity[0-9]_value            - opportunity value in cents
     * opportunity[0-9]_value_period     - will have a value like one_time or monthly
     * opportunity[0-9]_confidence       - opportunity confidence
     * opportunity[0-9]_status           - opportunity status
 
-contact columns:
-    * contact[0-9]_name                 - contact name, may be empty
-    * contact[0-9]_title                - contact title, may be empty
-
-contact information columns (per contact):
+contact columns (new contacts wil be added):
+    * contact[0-9]_name                 - contact name
+    * contact[0-9]_title                - contact title
     * contact[0-9]_phone[0-9]           - contact phones
     * contact[0-9]_email[0-9]           - contact emails
     * contact[0-9]_url[0-9]             - contact urls
@@ -116,6 +116,9 @@ for r in c:
 
     if r.get('description'):
         payload['description'] = r['description']
+
+    if r.get('status'):
+        payload['status'] = r['status']
 
     contact_ids = [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]
     contacts = []
@@ -191,6 +194,11 @@ for r in c:
         opportunity_ids = [x[11] for x in c.fieldnames if re.match(r'opportunity[0-9]_note', x)]
         for i in opportunity_ids:
             if all([r[x % i] for x in OPPORTUNITY_FIELDS]):
+                if r['opportunity%s_value_period' % i] not in ('one_time', 'monthly'):
+                    logging.error('line %d invalid value_period "%s" for lead %d' %
+                                  (c.line_num, r['opportunity%s_value_period' % i], i)
+                    )
+                    continue
                 api.post('opportunity', data={'lead_id': lead['id'],
                                               'note': r['opportunity%s_note' % i],
                                               'value_period': r['opportunity%s_value_period' % i],
