@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import argparse
 import logging
 
@@ -49,15 +48,15 @@ if args.tasks or args.all_tasks:
     has_more = True
     offset = 0
     while has_more:
-        payload ={
+        payload = {
             'assigned_to': args.from_user_id,
             '_order_by': 'date_created',
             '_skip': offset,
-            '_fields': 'id,assigned_to'
+            '_fields': 'id'
         }
 
         if not args.all_tasks:
-            payload['is_complete'] = false 
+            payload['is_complete'] = False
             
         resp = api.get('task', data=payload)
         
@@ -75,23 +74,23 @@ if args.opportunities or args.all_opportunities:
     has_more = True
     offset = 0
     while has_more:
-        payload={
-            'query': 'user_id:"%s"' % args.from_user_id,
+        payload = {
+            'user_id': args.from_user_id,
             '_order_by': 'date_created',
             '_skip': offset,
-            '_fields': 'id,assigned_to'
+            '_fields': 'id'
         }
 
         if not args.all_opportunities:
             payload['status_type'] = 'active'
             
         resp = api.get('opportunity', data=payload)
-        
+
         opportunities = resp['data']
         for opportunity in opportunities:
             if args.confirmed:
-                api.put('opportunity/'+opportunity['id'], data={'user_id', args.to_user_id})
-            logging.info('updated opportunity %s' % task['id'])
+                api.put('opportunity/'+opportunity['id'], data={'user_id': args.to_user_id})
+            logging.info('updated opportunity %s' % opportunity['id'])
 
         offset += max(0, len(opportunities) - 1)
         has_more = resp['has_more']
