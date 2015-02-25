@@ -54,7 +54,7 @@ contact columns (new contacts wil be added):
 """)
 
 parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
-parser.add_argument('--api_key', '-k', required=True, help='API Key')
+parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
