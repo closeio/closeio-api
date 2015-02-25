@@ -7,19 +7,18 @@ import logging
 from closeio_api import Client as CloseIO_API
 
 parser = argparse.ArgumentParser(description='Assigns tasks or opportunities from one user to another')
-parser.add_argument('--from-user-id', '-f', type=str, help='')
-parser.add_argument('--to-user-id', '-t', type=str, help='')
-parser.add_argument('--api_key', '-k', required=True, help='')
+parser.add_argument('--from-user-id', '-f', type=str, help='source user id')
+parser.add_argument('--to-user-id', '-t', type=str, help='target user id')
+parser.add_argument('--api_key', '-k', required=True, help='close.io API key')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
                     help='Without this flag, the script will do a dry run without actually updating any data.')
 group = parser.add_argument_group()
-group.add_argument('--tasks', '-T', action='store_true',
-                   help='')
-group.add_argument('--all-tasks', action='store_true')
-group.add_argument('--opportunities', '-O', action='store_true')
-group.add_argument('--all-opportunities', action='store_true')
+group.add_argument('--tasks', '-T', action='store_true', help='reassign only non complete tasks')
+group.add_argument('--all-tasks', action='store_true', help='reassign all tasks')
+group.add_argument('--opportunities', '-O', action='store_true', help='reassign only active opportunities')
+group.add_argument('--all-opportunities', action='store_true', help='reassign all opportunities')
 
 
 args = parser.parse_args()
