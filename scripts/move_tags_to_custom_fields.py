@@ -4,7 +4,7 @@ from closeio_api import Client as CloseIO_API
 
 parser = argparse.ArgumentParser(description='Splits up a "Tags" custom field into separate custom fields, as described by a CSV file with columns "tag", "custom_field_name", "custom_field_value"')
 parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
-parser.add_argument('--api_key', '-k', required=True, help='API Key')
+parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 
