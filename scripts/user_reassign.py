@@ -7,8 +7,13 @@ import logging
 from closeio_api import Client as CloseIO_API
 
 parser = argparse.ArgumentParser(description='Assigns tasks or opportunities from one user to another')
-parser.add_argument('--from-user-id', '-f', type=str, help='')
-parser.add_argument('--to-user-id', '-t', type=str, help='')
+group_from = parser.add_mutually_exclusive_group(required=True)
+group_from.add_argument('--from-user-id', '-f', type=str, help='')
+group_from.add_argument('--from-user-email', type=str, help='')
+group_to = parser.add_mutually_exclusive_group(required=True)
+group_to.add_argument('--to-user-id', '-t', type=str, help='')
+group_to.add_argument('--to-user-email', type=str, help='')
+
 parser.add_argument('--api-key', '-k', required=True, help='')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
@@ -27,8 +32,6 @@ args = parser.parse_args()
 if not any([args.tasks, args.opportunities, args.all_tasks, args.all_opportunities]):
     parser.error("at least one option required")
 
-assert args.from_user_id != args.to_user_id, 'equal user codes'
-
 log_format = "[%(asctime)s] %(levelname)s %(message)s"
 if not args.confirmed:
     log_format = 'DRY RUN: '+log_format
@@ -37,19 +40,55 @@ logging.debug('parameters: %s' % vars(args))
 
 api = CloseIO_API(args.api_key, development=args.development)
 
-# check users
-from_user = api.get('user/'+args.from_user_id)
-logging.debug(from_user)
-to_user = api.get('user/'+args.to_user_id)
-logging.debug(to_user)
+emails_to_ids = {}
+if any([args.from_user_email, args.to_user_email]):
+    has_more = True
+    offset = 0
+    while has_more:
+        resp = api.get('user')
+        for user in resp['data']:
+            emails_to_ids[user['email']] = user['id']
+        offset += max(0, len(resp['data']) - 1)
+        has_more = resp['has_more']
+
+logging.debug(emails_to_ids)
+
+if args.from_user_email:
+    from_user_id = emails_to_ids[args.from_user_email]
+else:
+    # for exception, if user_id is not present in the database
+    resp = api.get('user/'+args.from_user_id, data={
+        '_fields': 'id'
+    })
+
+    from_user_id = resp['id']
+
+if args.to_user_email:
+    to_user_id = emails_to_ids[args.to_user_email]
+
+else:
+    resp = api.get('user/'+args.to_user_id, data={
+        '_fields': 'id'
+    })
+
+    to_user_id = resp['id']
+
+ids_to_emails = dict((v, k) for k, v in emails_to_ids.iteritems())
+
+logging.info('from user_id %s (%s)' % (from_user_id, ids_to_emails[from_user_id]))
+logging.info('to user_id: %s (%s)' % (to_user_id, ids_to_emails[to_user_id]))
+
+assert from_user_id != to_user_id, 'equal user codes'
+
 
 # tasks
+updated_tasks = 0
 if args.tasks or args.all_tasks:
     has_more = True
     offset = 0
     while has_more:
         payload = {
-            'assigned_to': args.from_user_id,
+            'assigned_to': from_user_id,
             '_order_by': 'date_created',
             '_skip': offset,
             '_fields': 'id'
@@ -63,19 +102,21 @@ if args.tasks or args.all_tasks:
         tasks = resp['data']
         for task in tasks:
             if args.confirmed:
-                api.put('task/'+task['id'], data={'assigned_to': args.to_user_id})
+                api.put('task/'+task['id'], data={'assigned_to': to_user_id})
             logging.info('updated task %s' % task['id'])
+            updated_tasks += 1
 
         offset += max(0, len(tasks) - 1)
         has_more = resp['has_more']
 
 # opportunities
+updated_opportunities = 0
 if args.opportunities or args.all_opportunities:
     has_more = True
     offset = 0
     while has_more:
         payload = {
-            'user_id': args.from_user_id,
+            'user_id': from_user_id,
             '_order_by': 'date_created',
             '_skip': offset,
             '_fields': 'id'
@@ -83,14 +124,18 @@ if args.opportunities or args.all_opportunities:
 
         if not args.all_opportunities:
             payload['status_type'] = 'active'
-            
+
         resp = api.get('opportunity', data=payload)
 
         opportunities = resp['data']
         for opportunity in opportunities:
             if args.confirmed:
-                api.put('opportunity/'+opportunity['id'], data={'user_id': args.to_user_id})
+                api.put('opportunity/'+opportunity['id'], data={'user_id': to_user_id})
             logging.info('updated opportunity %s' % opportunity['id'])
+            updated_opportunities += 1
 
         offset += max(0, len(opportunities) - 1)
         has_more = resp['has_more']
+
+logging.info('summary: updated tasks %d, updated opportunities %d' % (updated_tasks, updated_opportunities))
+
