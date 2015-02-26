@@ -20,11 +20,10 @@ parser.add_argument('--development', '-d', action='store_true',
 parser.add_argument('--confirmed', '-c', action='store_true',
                     help='Without this flag, the script will do a dry run without actually updating any data.')
 group = parser.add_argument_group()
-group.add_argument('--tasks', '-T', action='store_true',
-                   help='')
-group.add_argument('--all-tasks', action='store_true')
-group.add_argument('--opportunities', '-O', action='store_true')
-group.add_argument('--all-opportunities', action='store_true')
+group.add_argument('--tasks', '-T', action='store_true', help='reassign only non complete tasks')
+group.add_argument('--all-tasks', action='store_true', help='reassign all tasks')
+group.add_argument('--opportunities', '-O', action='store_true', help='reassign only active opportunities')
+group.add_argument('--all-opportunities', action='store_true', help='reassign all opportunities')
 
 
 args = parser.parse_args()
