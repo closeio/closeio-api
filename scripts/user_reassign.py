@@ -9,7 +9,7 @@ from closeio_api import Client as CloseIO_API
 parser = argparse.ArgumentParser(description='Assigns tasks or opportunities from one user to another')
 parser.add_argument('--from-user-id', '-f', type=str, help='source user id')
 parser.add_argument('--to-user-id', '-t', type=str, help='target user id')
-parser.add_argument('--api_key', '-k', required=True, help='close.io API key')
+parser.add_argument('--api-key', '-k', required=True, help='close.io API key')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
