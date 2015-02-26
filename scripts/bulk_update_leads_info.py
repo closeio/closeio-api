@@ -37,6 +37,13 @@ lead columns:
     * description                       - lead description
     * status                            - lead status
     * note[0-9]                         - lead notes
+    * address[0-9]_country              - ISO 3166-1 alpha-2 country code
+    * address[0-9]_city                 - city
+    * address[0-9]_zipcode              - zipcode
+    * address[0-9]_label                - label (business, mailing, other)
+    * address[0-9]_state                - state
+    * address[0-9]_address_1            - text part 1
+    * address[0-9]_address_2            - text part 2
 
 opportunity columns (new items will be added if all values filled):
     * opportunity[0-9]_note             - opportunity note
@@ -142,6 +149,18 @@ for r in c:
     if contacts:
         payload['contacts'] = contacts
 
+    addresses_ids = set([y[8] for y in r.keys() if re.match(r'address[0-9]_*', y)])
+    addresses = []
+    for x in addresses_ids:
+        address = {}
+        for z in ['country', 'city', 'zipcode', 'label', 'state', 'address_1', 'address_2']:
+            if r.get('address%s_%s' % (x, z)):
+                address[z] = r['address%s_%s' % (x, z)]
+        if address:
+            addresses.append(address)
+    if addresses:
+        payload['addresses'] = addresses
+
     custom = {x.split('.')[1]: r[x] for x in r.keys() if x.startswith('custom.')
               and x.split('.')[1] in available_custom_fieldnames and r[x]}
     if custom:
@@ -196,8 +215,7 @@ for r in c:
             if all([r[x % i] for x in OPPORTUNITY_FIELDS]):
                 if r['opportunity%s_value_period' % i] not in ('one_time', 'monthly'):
                     logging.error('line %d invalid value_period "%s" for lead %d' %
-                                  (c.line_num, r['opportunity%s_value_period' % i], i)
-                    )
+                                  (c.line_num, r['opportunity%s_value_period' % i], i))
                     continue
                 api.post('opportunity', data={'lead_id': lead['id'],
                                               'note': r['opportunity%s_note' % i],
