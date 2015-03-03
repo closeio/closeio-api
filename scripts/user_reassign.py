@@ -58,20 +58,22 @@ if args.from_user_email:
 else:
     # for exception, if user_id is not present in the database
     resp = api.get('user/'+args.from_user_id, data={
-        '_fields': 'id'
+        '_fields': 'id,email'
     })
 
     from_user_id = resp['id']
+    emails_to_ids[resp['email']] = resp['id']
 
 if args.to_user_email:
     to_user_id = emails_to_ids[args.to_user_email]
 
 else:
     resp = api.get('user/'+args.to_user_id, data={
-        '_fields': 'id'
+        '_fields': 'id,email'
     })
 
     to_user_id = resp['id']
+    emails_to_ids[resp['email']] = resp['id']
 
 ids_to_emails = dict((v, k) for k, v in emails_to_ids.iteritems())
 
