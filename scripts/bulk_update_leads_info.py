@@ -12,7 +12,8 @@ OPPORTUNITY_FIELDS = ['opportunity%s_note',
                       'opportunity%s_value',
                       'opportunity%s_value_period',
                       'opportunity%s_confidence',
-                      'opportunity%s_status']
+                      'opportunity%s_status',
+                      'opportunity%s_date_won']
 
 
 def get_contact_info(contact_no, csv_row, what, contact_type):
@@ -51,6 +52,7 @@ opportunity columns (new items will be added if all values filled):
     * opportunity[0-9]_value_period     - will have a value like one_time or monthly
     * opportunity[0-9]_confidence       - opportunity confidence
     * opportunity[0-9]_status           - opportunity status
+    * opportunity[0-9]_date_won         - opportunity date won
 
 contact columns (new contacts wil be added):
     * contact[0-9]_name                 - contact name
@@ -221,7 +223,8 @@ for r in c:
                                               'note': r['opportunity%s_note' % i],
                                               'value_period': r['opportunity%s_value_period' % i],
                                               'confidence': r['opportunity%s_confidence' % i],
-                                              'status': r['opportunity%s_status' % i]})
+                                              'status': r['opportunity%s_status' % i],
+                                              'date_won': r['opportunity%s_date_won' % i]})
             else:
                 logging.error('line %d is not a fully filled opportunity %s, skipped', (c.line_num, i))
 
@@ -235,4 +238,3 @@ for r in c:
 logging.info('summary: updated[%d], new[%d], skipped[%d]' % (updated_leads, new_leads, skipped_leads))
 if skipped_leads:
     sys.exit(1)
-
