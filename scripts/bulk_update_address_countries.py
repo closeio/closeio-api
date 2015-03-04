@@ -73,7 +73,7 @@ parser.add_argument('--list-countries', '-l', action='store_true',
 
 parser.add_argument('old_code', type=str, help='Old country code')
 parser.add_argument('new_code', type=str, help='New country code')
-parser.add_argument('--api_key', '-k', required=True, help='API Key')
+parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--development', '-d', action='store_true',
                     help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', '-c', action='store_true',
