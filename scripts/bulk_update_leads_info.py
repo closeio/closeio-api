@@ -4,9 +4,11 @@
 import sys
 import re
 import argparse
+import datetime
 import csv
 import logging
 from closeio_api import Client as CloseIO_API, APIError
+from dateutil.parser import parse as parse_date
 
 OPPORTUNITY_FIELDS = ['opportunity%s_note',
                       'opportunity%s_value',
@@ -214,22 +216,29 @@ for r in c:
 
         opportunity_ids = [x[11] for x in c.fieldnames if re.match(r'opportunity[0-9]_note', x)]
         for i in opportunity_ids:
+            opp_payload = None
             if all([r[x % i] for x in OPPORTUNITY_FIELDS]):
                 if r['opportunity%s_value_period' % i] not in ('one_time', 'monthly'):
                     logging.error('line %d invalid value_period "%s" for lead %d' %
                                   (c.line_num, r['opportunity%s_value_period' % i], i))
                     continue
-                api.post('opportunity', data={'lead_id': lead['id'],
-                                              'note': r['opportunity%s_note' % i],
-                                              'value_period': r['opportunity%s_value_period' % i],
-                                              'confidence': r['opportunity%s_confidence' % i],
-                                              'status': r['opportunity%s_status' % i],
-                                              'date_won': r['opportunity%s_date_won' % i]})
+                opp_payload = {
+                    'lead_id': lead['id'],
+                    'note': r['opportunity%s_note' % i],
+                    #'value': int(float(re.sub(r'[^\d.]', '', r['opportunity%s_value' % i])) * 100),  # converts $1,000.42 into 100042
+                    'value': int(r['opportunity%s_value' % i]),  # assumes cents are given
+                    'value_period': r['opportunity%s_value_period' % i],
+                    'confidence': int(r['opportunity%s_confidence' % i]),
+                    'status': r['opportunity%s_status' % i],
+                    'date_won': str(parse_date(r['opportunity%s_date_won' % i])),
+                    #'date_won': str(datetime.datetime.strptime(r['opportunity%s_date_won' % i], '%d/%m/%y')),
+                }
+                api.post('opportunity', data=opp_payload)
             else:
-                logging.error('line %d is not a fully filled opportunity %s, skipped', (c.line_num, i))
+                logging.error('line %d is not a fully filled opportunity %s, skipped' % (c.line_num, i))
 
     except APIError as e:
-        logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, payload))
+        logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, opp_payload))
         skipped_leads += 1
         if not args.continue_on_error:
             logging.info('stopped on error')
