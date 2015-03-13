@@ -48,9 +48,13 @@ class API(object):
 
     def get(self, endpoint, data=None):
         if data:
-            for k, v in data.iteritems():
-                data[k] = unicode(v).encode('utf-8')
-            endpoint += '/?'+urllib.urlencode(data)
+            # If you just want a single lead, contact, note, etc.
+            if isinstance(data, basestring):
+                endpoint += '/'+data
+            else:
+                for k, v in data.iteritems():
+                    data[k] = unicode(v).encode('utf-8')
+                endpoint += '/?'+urllib.urlencode(data)
         else:
             endpoint += '/'
         return self.dispatch('get', endpoint)
@@ -59,9 +63,13 @@ class API(object):
         return self.dispatch('post', endpoint+'/', data)
 
     def put(self, endpoint, data):
+        if(data.has_key('id')):
+            endpoint += '/'+data.pop('id')
         return self.dispatch('put', endpoint+'/', data)
 
-    def delete(self, endpoint):
+    def delete(self, endpoint, data=None):
+        if(data and data.has_key('id')):
+            endpoint += '/'+data.pop('id')
         return self.dispatch('delete', endpoint+'/')
 
     # Only for async requests
