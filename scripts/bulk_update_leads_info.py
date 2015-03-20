@@ -56,12 +56,15 @@ opportunity columns (new items will be added if all values filled):
     * opportunity[0-9]_status           - opportunity status
     * opportunity[0-9]_date_won         - opportunity date won
 
-contact columns (new contacts wil be added):
+contact columns (new contacts will be added):
     * contact[0-9]_name                 - contact name
     * contact[0-9]_title                - contact title
     * contact[0-9]_phone[0-9]           - contact phones
     * contact[0-9]_email[0-9]           - contact emails
     * contact[0-9]_url[0-9]             - contact urls
+
+custom fields (new custom types will be created, new fields will be added):
+    * custom.[name]                     - custom field "name"
 """)
 
 parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
