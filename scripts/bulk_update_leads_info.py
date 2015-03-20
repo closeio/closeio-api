@@ -4,7 +4,7 @@
 import sys
 import re
 import argparse
-import datetime
+#import datetime
 import csv
 import logging
 from closeio_api import Client as CloseIO_API, APIError
@@ -90,8 +90,8 @@ logging.debug('parameters: %s' % vars(args))
 sniffer = csv.Sniffer()
 dialect = sniffer.sniff(args.csvfile.read(1024))
 args.csvfile.seek(0)
-c = csv.DictReader(args.csvfile, dialect=dialect)
-assert any(x in ('company', 'lead_id') for x in c.fieldnames), \
+csv_file = csv.DictReader(args.csvfile, dialect=dialect)
+assert any(x in ('company', 'lead_id') for x in csv_file.fieldnames), \
     'ERROR: column "company" or "lead_id" is not found'
 
 
@@ -99,7 +99,7 @@ api = CloseIO_API(args.api_key, development=args.development)
 
 resp = api.get('custom_fields/lead')
 available_custom_fieldnames = [x['name'] for x in resp['data']]
-new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.startswith('custom.')]
+new_custom_fieldnames = [x for x in [y.split('.')[1] for y in csv_file.fieldnames if y.startswith('custom.')]
                          if x not in available_custom_fieldnames]
 
 if new_custom_fieldnames:
@@ -119,36 +119,36 @@ updated_leads = 0
 new_leads = 0
 skipped_leads = 0
 
-for r in c:
+for row in csv_file:
     payload = {}
 
-    if r.get('company'):
-        payload['name'] = r['company']
+    if row.get('company'):
+        payload['name'] = row['company']
 
-    if r.get('url'):
-        payload['url'] = r['url']
+    if row.get('url'):
+        payload['url'] = row['url']
 
-    if r.get('description'):
-        payload['description'] = r['description']
+    if row.get('description'):
+        payload['description'] = row['description']
 
-    if r.get('status'):
-        payload['status'] = r['status']
+    if row.get('status'):
+        payload['status'] = row['status']
 
-    contact_ids = [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]
+    contact_ids = [y[7] for y in row.keys() if re.match(r'contact[0-9]_name', y)]
     contacts = []
     for x in contact_ids:
         contact = {}
-        if r.get('contact%s_name' % x):
-            contact['name'] = r['contact%s_name' % x]
-        if r.get('contact%s_title' % x):
-            contact['title'] = r['contact%s_title' % x]
-        phones = get_contact_info(x, r, 'phone', 'office')
+        if row.get('contact%s_name' % x):
+            contact['name'] = row['contact%s_name' % x]
+        if row.get('contact%s_title' % x):
+            contact['title'] = row['contact%s_title' % x]
+        phones = get_contact_info(x, row, 'phone', 'office')
         if phones:
             contact['phones'] = phones
-        emails = get_contact_info(x, r, 'email', 'office')
+        emails = get_contact_info(x, row, 'email', 'office')
         if emails:
             contact['emails'] = emails
-        urls = get_contact_info(x, r, 'url', 'url')
+        urls = get_contact_info(x, row, 'url', 'url')
         if urls:
             contact['urls'] = urls
         if contact:
@@ -156,28 +156,28 @@ for r in c:
     if contacts:
         payload['contacts'] = contacts
 
-    addresses_ids = set([y[8] for y in r.keys() if re.match(r'address[0-9]_*', y)])
+    addresses_ids = set([y[8] for y in row.keys() if re.match(r'address[0-9]_*', y)])
     addresses = []
     for x in addresses_ids:
         address = {}
         for z in ['country', 'city', 'zipcode', 'label', 'state', 'address_1', 'address_2']:
-            if r.get('address%s_%s' % (x, z)):
-                address[z] = r['address%s_%s' % (x, z)]
+            if row.get('address%s_%s' % (x, z)):
+                address[z] = row['address%s_%s' % (x, z)]
         if address:
             addresses.append(address)
     if addresses:
         payload['addresses'] = addresses
 
-    custom = {x.split('.')[1]: r[x] for x in r.keys() if x.startswith('custom.')
-              and x.split('.')[1] in available_custom_fieldnames and r[x]}
+    custom = {x.split('.')[1]: row[x] for x in row.keys() if x.startswith('custom.')
+              and x.split('.')[1] in available_custom_fieldnames and row[x]}
     if custom:
         payload['custom'] = custom
 
     try:
         lead = None
-        if r.get('lead_id') is not None:
+        if row.get('lead_id') is not None:
             # exists lead
-            resp = api.get('lead/%s' % r['lead_id'], data={
+            resp = api.get('lead/%s' % row['lead_id'], data={
                 'fields': 'id'
             })
             logging.debug('received: %s' % resp)
@@ -185,7 +185,7 @@ for r in c:
         else:
             # first lead in the company
             resp = api.get('lead', data={
-                'query': 'company:"%s" sort:created' % r['company'],
+                'query': 'company:"%s" sort:created' % row['company'],
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
@@ -197,7 +197,7 @@ for r in c:
             logging.debug('to sent: %s' % payload)
             if args.confirmed:
                 api.put('lead/' + lead['id'], data=payload)
-            logging.info('line %d updated: %s %s' % (c.line_num,
+            logging.info('line %d updated: %s %s' % (csv_file.line_num,
                                                      lead['id'],
                                                      lead.get('name') if lead.get('name') else ''))
             updated_leads += 1
@@ -206,42 +206,42 @@ for r in c:
             logging.debug('to sent: %s' % payload)
             if args.confirmed:
                 lead = api.post('lead', data=payload)
-            logging.info('line %d new: %s %s' % (c.line_num,
+            logging.info('line %d new: %s %s' % (csv_file.line_num,
                                                  lead['id'] if args.confirmed else 'X',
                                                  payload['name']))
             new_leads += 1
 
-        notes = [r[x] for x in r.keys() if re.match(r'note[0-9]', x) and r[x]]
+        notes = [row[x] for x in row.keys() if re.match(r'note[0-9]', x) and row[x]]
         for note in notes:
             if args.confirmed:
                 resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
             logging.debug('%s new note: %s' % (lead['id'], note))
 
-        opportunity_ids = [x[11] for x in c.fieldnames if re.match(r'opportunity[0-9]_note', x)]
+        opportunity_ids = [x[11] for x in csv_file.fieldnames if re.match(r'opportunity[0-9]_note', x)]
         for i in opportunity_ids:
             opp_payload = None
-            if all([r[x % i] for x in OPPORTUNITY_FIELDS]):
-                if r['opportunity%s_value_period' % i] not in ('one_time', 'monthly'):
+            if all([row[x % i] for x in OPPORTUNITY_FIELDS]):
+                if row['opportunity%s_value_period' % i] not in ('one_time', 'monthly'):
                     logging.error('line %d invalid value_period "%s" for lead %d' %
-                                  (c.line_num, r['opportunity%s_value_period' % i], i))
+                                  (csv_file.line_num, row['opportunity%s_value_period' % i], i))
                     continue
                 opp_payload = {
                     'lead_id': lead['id'],
-                    'note': r['opportunity%s_note' % i],
+                    'note': row['opportunity%s_note' % i],
                     #'value': int(float(re.sub(r'[^\d.]', '', r['opportunity%s_value' % i])) * 100),  # converts $1,000.42 into 100042
-                    'value': int(r['opportunity%s_value' % i]),  # assumes cents are given
-                    'value_period': r['opportunity%s_value_period' % i],
-                    'confidence': int(r['opportunity%s_confidence' % i]),
-                    'status': r['opportunity%s_status' % i],
-                    'date_won': str(parse_date(r['opportunity%s_date_won' % i])),
+                    'value': int(row['opportunity%s_value' % i]),  # assumes cents are given
+                    'value_period': row['opportunity%s_value_period' % i],
+                    'confidence': int(row['opportunity%s_confidence' % i]),
+                    'status': row['opportunity%s_status' % i],
+                    'date_won': str(parse_date(row['opportunity%s_date_won' % i])),
                     #'date_won': str(datetime.datetime.strptime(r['opportunity%s_date_won' % i], '%d/%m/%y')),
                 }
                 api.post('opportunity', data=opp_payload)
             else:
-                logging.error('line %d is not a fully filled opportunity %s, skipped' % (c.line_num, i))
+                logging.error('line %d is not a fully filled opportunity %s, skipped' % (csv_file.line_num, i))
 
     except APIError as e:
-        logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, opp_payload))
+        logging.error('line %d skipped with error %s payload: %s' % (csv_file.line_num, e, opp_payload))
         skipped_leads += 1
         if not args.continue_on_error:
             logging.info('stopped on error')
