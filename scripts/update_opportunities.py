@@ -6,7 +6,7 @@ from closeio_api import Client as CloseIO_API
 
 parser = argparse.ArgumentParser(description="Change all the opportunities for a given leads' search query to a given status.")
 parser.add_argument('--query', type=str, required=True, help='Search query.')
-parser.add_argument('--api_key', type=str, required=True, help='API key')
+parser.add_argument('--api-key', type=str, required=True, help='API key')
 parser.add_argument('--status', type=str, required=True, help='Label of the new status')
 parser.add_argument('--dev', action='store_true', help='Use the dev server', default=False)
 args = parser.parse_args()

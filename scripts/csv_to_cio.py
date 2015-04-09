@@ -10,7 +10,7 @@ from closeio_api import Client as CloseIO_API
 from closeio_api.utils import CsvReader, count_lines, title_case, uncamel
 
 parser = argparse.ArgumentParser(description='Import leads from CSV file')
-parser.add_argument('--api_key', '-k', required=True, help='API Key')
+parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--skip_duplicates', action='store_true', help='Skip leads that are already present in Close.io (determined by company name).')
 parser.add_argument('--no_grouping', action='store_true', help='Turn off the default group-by-company behavior.')
 parser.add_argument('--development', action='store_true', help='Use a development server rather than production.')

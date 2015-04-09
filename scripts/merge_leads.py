@@ -3,7 +3,7 @@ import argparse
 from closeio_api import Client as CloseIO_API
 
 parser = argparse.ArgumentParser(description='Detect duplicates & merge leads (see source code for details)')
-parser.add_argument('--api_key', '-k', required=True, help='API Key')
+parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--development', action='store_true', help='Use a development (testing) server rather than production.')
 parser.add_argument('--confirmed', action='store_true', help='Without this flag, no action will be taken (dry run). Use this to perform the merge.')
 args = parser.parse_args()
