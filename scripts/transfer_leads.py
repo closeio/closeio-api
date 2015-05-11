@@ -9,7 +9,10 @@ from closeio_api import Client as CloseIO_API
 def empty_if_none(val):
     return val if val is not None else ''
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""
+Transfering leads from one organization to another.
+
+""")
 parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--target-api-key', required=True, help='Target company API Key')
 parser.add_argument('--development', '-d', action='store_true',
