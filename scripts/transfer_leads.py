@@ -75,6 +75,18 @@ for field in new_custom_fieldnames:
     target_api.post('custom_fields/lead', data={'name': field, 'type': 'text'})
     logging.info('added new custom field "%s"' % field)
 
+
+#target user ids
+has_more = True
+offset = 0
+target_user_ids = []
+while has_more:
+    users = resp['data']
+    for user in users:
+        target_user_ids.append(user['id'])
+    offset += max(0, len(users) - 1)
+    has_more = resp['has_more']
+
 for lead in leads_to_transfer:
     payload = {
         'name': empty_if_none(lead['name']),
@@ -139,13 +151,18 @@ for lead in leads_to_transfer:
     # tasks
     new_tasks = []
     for task in lead['tasks']:
-        new_tasks.append({
+        new_task = {
             'lead_id': new_lead['id'],
             'text': task['text'],
             'due_date': task['due_date'],
             'is_complete': task['is_complete'],
-            'assigned_to': task['assigned_to']
-        })
+        }
+
+        for field in ['created_by', 'updated_by', 'assigned_to']:
+            if task[field] in target_user_ids:
+                new_task[field] = task[field]
+
+        new_tasks.append(new_task)
 
     for payload in new_tasks:
         if args.confirmed:
@@ -173,19 +190,23 @@ for lead in leads_to_transfer:
     for activity in new_lead_activities:
         if activity['_type'] == 'Note':
             if args.confirmed:
-                target_api.post('activity/note', data={
+                new_note = {
                     'lead_id': new_lead['id'],
                     'note': activity['note'],
                     'date_created': activity['date_created'],
                     'date_updated': activity['date_updated']
-                })
+                }
+                if activity['user_id'] in target_user_ids:
+                    new_note['user_id'] = activity['user_id']
+                target_api.post('activity/note', data=new_note)
+
             logging.info('target: %s added note: %s' % (new_lead['id'], activity['note']))
 
         elif activity['_type'] == 'Email':
             if args.confirmed:
-                target_api.post('activity/email', data={
+                new_email = {
                     'lead_id': new_lead['id'],
-                    'status': 'sent',
+                    'status': activity['status'],
                     'direction': activity['direction'],
                     'attachments': activity['attachments'],
                     'subject': activity['subject'],
@@ -198,16 +219,18 @@ for lead in leads_to_transfer:
                     'envelope': activity['envelope'],
                     'date_created': activity['date_created'],
                     'date_updated': activity['date_updated']
-                })
+                }
+                if activity['user_id'] in target_user_ids:
+                    new_email['user_id'] = activity['user_id']
+                target_api.post('activity/email', data=new_email)
+
             logging.info('target: %s added email: %s %s' % (new_lead['id'], activity['to'], activity['subject']))
         elif activity['_type'] == 'Call':
             if args.confirmed:
-                target_api.post('activity/call', data={
+                new_call = {
                     'lead_id': new_lead['id'],
-                    'created_by_name': activity['created_by_name'],
                     'direction': activity['direction'],
                     'duration': activity['duration'],
-                    'updated_by_name': activity['updated_by_name'],
                     'voicemail_duration': activity['voicemail_duration'],
                     'note': activity['note'],
                     'source': activity['source'],
@@ -220,7 +243,10 @@ for lead in leads_to_transfer:
                     'recording_url': activity['recording_url'],
                     'date_created': activity['date_created'],
                     'date_updated': activity['date_updated']
-                })
+                }
+                if activity['user_id'] in target_user_ids:
+                    new_call['user_id'] = activity['user_id']
+                target_api.post('activity/call', data=new_call)
             logging.info('target: %s added call: %s  duration: %s' % (new_lead['id'],
                                                                       activity['phone'],
                                                                       activity['duration']))
