@@ -143,7 +143,8 @@ for lead in leads_to_transfer:
             'lead_id': new_lead['id'],
             'text': task['text'],
             'due_date': task['due_date'],
-            'is_complete': task['is_complete']
+            'is_complete': task['is_complete'],
+            'assigned_to': task['assigned_to']
         })
 
     for payload in new_tasks:
