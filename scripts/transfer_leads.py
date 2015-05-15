@@ -38,10 +38,15 @@ offset = 0
 
 leads_to_transfer = []
 
+if not 'sort:created' in args.query:
+    lead_query = args.query + ' sort:created'
+else:
+    lead_query = args.query
+
 while has_more:
     # Get a page of leads
     resp = api.get('lead', data={
-        'query': args.query,
+        'query': lead_query,
         '_skip': offset,
     })
     leads = resp['data']
