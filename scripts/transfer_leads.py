@@ -196,8 +196,6 @@ for lead in leads_to_transfer:
                     'cc': activity['cc'],
                     'bcc': activity['bcc'],
                     'envelope': activity['envelope'],
-                    'need_smtp_credentials': activity['need_smtp_credentials'],
-                    'send_attempts': activity['send_attempts'],
                     'date_created': activity['date_created'],
                     'date_updated': activity['date_updated']
                 })
