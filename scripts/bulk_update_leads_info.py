@@ -62,6 +62,10 @@ contact columns (new contacts wil be added):
     * contact[0-9]_phone[0-9]           - contact phones
     * contact[0-9]_email[0-9]           - contact emails
     * contact[0-9]_url[0-9]             - contact urls
+
+custom columns (new custom field will be created if not exists):
+    * custom.[custom_field_name]        - value of custom_field_name
+
 """)
 
 parser.add_argument('csvfile', type=argparse.FileType('rU'), help='csv file')
