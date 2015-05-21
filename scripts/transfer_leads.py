@@ -238,14 +238,20 @@ for lead in leads_to_transfer:
                     'remote_phone': activity['remote_phone'],
                     'phone': activity['phone'],
                     'local_phone': activity['local_phone'],
-                    'transferred_from': activity['transferred_from'],
-                    'transferred_to': activity['transferred_to'],
                     'recording_url': activity['recording_url'],
                     'date_created': activity['date_created'],
                     'date_updated': activity['date_updated']
                 }
+
                 if activity['user_id'] in target_user_ids:
                     new_call['user_id'] = activity['user_id']
+
+                if activity['transferred_from'] in target_user_ids:
+                    new_call['transferred_from'] = activity['transferred_from']
+
+                if activity['transferred_to'] in target_user_ids:
+                    new_call['transferred_to'] = activity['transferred_to']
+
                 target_api.post('activity/call', data=new_call)
             logging.info('target: %s added call: %s  duration: %s' % (new_lead['id'],
                                                                       activity['phone'],
