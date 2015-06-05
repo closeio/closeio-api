@@ -100,7 +100,7 @@ api = CloseIO_API(args.api_key, development=args.development)
 
 resp = api.get('custom_fields/lead')
 available_custom_fieldnames = [x['name'] for x in resp['data']]
-new_custom_fieldnames = [x for x in [y.split('.')[1] for y in c.fieldnames if y.startswith('custom.')]
+new_custom_fieldnames = [x for x in [y.split('.', 1)[1] for y in c.fieldnames if y.startswith('custom.')]
                          if x not in available_custom_fieldnames]
 
 if new_custom_fieldnames:
@@ -170,7 +170,7 @@ for r in c:
         payload['addresses'] = addresses
 
     custom_patches = {key: r[key] for key in r if key.startswith('custom.')
-              and key.split('.')[1] in available_custom_fieldnames and r[key]}
+              and key.split('.', 1)[1] in available_custom_fieldnames and r[key]}
 
     if custom_patches:
         payload.update(custom_patches)
