@@ -169,10 +169,11 @@ for r in c:
     if addresses:
         payload['addresses'] = addresses
 
-    custom = {x.split('.')[1]: r[x] for x in r.keys() if x.startswith('custom.')
-              and x.split('.')[1] in available_custom_fieldnames and r[x]}
-    if custom:
-        payload['custom'] = custom
+    custom_patches = {key: r[key] for key in r if key.startswith('custom.')
+              and key.split('.')[1] in available_custom_fieldnames and r[key]}
+
+    if custom_patches:
+        payload.update(custom_patches)
 
     try:
         lead = None
