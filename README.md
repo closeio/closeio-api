@@ -28,6 +28,18 @@ lead_results = api.get('lead', data={
 
 Check out `scripts/` for more detailed examples.
 
+### Running a script
+```
+$ git clone git@github.com:elasticsales/closeio-api.git
+$ cd closeio-api
+$ virtualenv venv
+$ source venv/activate
+$ pip install -r requirements.txt
+$ python script/merge_leads.py -k MYAPIKEY 
+...
+
+```
+
 ### Other Languages
 
 Thanks to our awesome users, other languages are supported, too:
