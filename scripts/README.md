@@ -6,7 +6,7 @@ Before you start, you should already have `git`, `python-2.7` and `virtualenv` i
 
 Setup
 -----
-1. `git clone git@github.com:elasticsales/closeio-api.git`
+1. `git clone git@github.com:closeio/closeio-api.git`
 1. `cd closeio-api`
 1. `git submodule update --init --recursive`
 1. `virtualenv-2.7 venv`

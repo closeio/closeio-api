@@ -8,7 +8,7 @@ setup(
     version = "0.1",
     description = "Close.io Python Library",
     author = "Close.io Team",
-    url = "https://github.com/elasticsales/closeio-api/",
+    url = "https://github.com/closeio/closeio-api/",
     install_requires = requires,
     classifiers = [
         "Programming Language :: Python",
