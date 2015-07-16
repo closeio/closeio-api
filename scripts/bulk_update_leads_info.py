@@ -89,7 +89,7 @@ logging.basicConfig(level=logging.INFO, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
-dialect = sniffer.sniff(args.csvfile.read(1024))
+dialect = sniffer.sniff(args.csvfile.read(2048))
 args.csvfile.seek(0)
 c = csv.DictReader(args.csvfile, dialect=dialect)
 assert any(x in ('company', 'lead_id') for x in c.fieldnames), \
@@ -243,7 +243,7 @@ for r in c:
                 logging.error('line %d is not a fully filled opportunity %s, skipped' % (c.line_num, i))
 
     except APIError as e:
-        logging.error('line %d skipped with error %s payload: %s' % (c.line_num, e, opp_payload))
+        logging.error('line %d skipped with error %s' % (c.line_num, e))
         skipped_leads += 1
         if not args.continue_on_error:
             logging.info('stopped on error')
