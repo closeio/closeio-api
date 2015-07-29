@@ -33,7 +33,7 @@ Check out `scripts/` for more detailed examples.
 $ git clone git@github.com:closeio/closeio-api.git
 $ cd closeio-api
 $ virtualenv venv
-$ source venv/activate
+$ source venv/bin/activate
 $ pip install -r requirements.txt
 $ python script/merge_leads.py -k MYAPIKEY 
 ...
