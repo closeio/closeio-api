@@ -48,7 +48,7 @@ if any([args.from_user_email, args.to_user_email]):
         resp = api.get('user')
         for user in resp['data']:
             emails_to_ids[user['email']] = user['id']
-        offset += max(0, len(resp['data']) - 1)
+        offset += len(resp['data'])
         has_more = resp['has_more']
 
 logging.debug(emails_to_ids)
@@ -116,7 +116,7 @@ try:
                 logging.info('updated %s' % task['id'])
                 updated_tasks += 1
 
-            offset += max(0, len(tasks) - 1)
+            offset += len(tasks)
             has_more = resp['has_more']
 
     # opportunities
@@ -150,7 +150,7 @@ try:
                 logging.info('updated %s' % opportunity['id'])
                 updated_opportunities += 1
 
-            offset += max(0, len(opportunities) - 1)
+            offset += len(opportunities)
             has_more = resp['has_more']
 except APIError:
     logging.error('stopped on error %s' % e)

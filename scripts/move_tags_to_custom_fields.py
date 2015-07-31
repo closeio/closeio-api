@@ -49,5 +49,5 @@ while has_more:
             print '...', new_fields
             api.put('lead/'+l['id'], data=new_fields)
 
-    offset += max(0, len(leads) - 1)
+    offset += len(leads)
     has_more = resp['has_more']

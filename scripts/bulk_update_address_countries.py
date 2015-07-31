@@ -124,5 +124,5 @@ while has_more:
                 api.put('lead/'+lead['id'], data={'addresses': lead['addresses']})
             logging.info('updated %s' % lead['id'])
 
-    offset += max(0, len(leads) - 1)
+    offset += len(leads)
     has_more = resp['has_more']
