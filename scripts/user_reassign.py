@@ -45,7 +45,7 @@ if any([args.from_user_email, args.to_user_email]):
     has_more = True
     offset = 0
     while has_more:
-        resp = api.get('user')
+        resp = api.get('user', data={'_skip': offset})
         for user in resp['data']:
             emails_to_ids[user['email']] = user['id']
         offset += len(resp['data'])
