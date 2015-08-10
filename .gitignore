@@ -1,6 +1,7 @@
 *.py[co]
 
-venv/
+venv
+.env
 
 # Packages
 *.egg
