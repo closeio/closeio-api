@@ -26,13 +26,16 @@ def run(api_key, development, confirmed, limit=100):
         leads = resp['data']
 
         for lead in leads:
+            if len(lead['addresses']) < 2:
+                logging.warning("unexpected result: %s", lead)
+                continue # this shouldn't happen based on the search query, but just to be safe...
             if confirmed:
                 api.put('lead/' + lead['id'], data={'addresses': lead['addresses'][:1]})
             logging.info("removed %d extra address(es) for %s\n%s" % (len(lead['addresses'][1:]), lead['id'], lead['addresses'][1:]))
 
         has_more = resp['has_more']
 
-        time.sleep(1.5)  # give the search indexer some time to catch up with the changes
+        time.sleep(2)  # give the search indexer some time to catch up with the changes
 
 
 if __name__ == '__main__':
