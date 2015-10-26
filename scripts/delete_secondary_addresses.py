@@ -29,6 +29,8 @@ LEADS_QUERY_WITH_MULTIPLE_ADDRESSES = "addresses > 1 sort:created"
 has_more = True
 offset = 0
 
+operations_queue = []
+
 while has_more:
     resp = api.get('lead', data={
         'query': LEADS_QUERY_WITH_MULTIPLE_ADDRESSES,
@@ -39,9 +41,16 @@ while has_more:
     leads = resp['data']
 
     for lead in leads:
-        if args.confirmed:
-            api.put('lead/' + lead['id'], data={'addresses': lead['addresses'][:1]})
-        logging.info('removed %d extra address(es) for %s' % (len(lead['addresses'][1:]), lead['id']))
+        operations_queue.append({
+            'url': 'lead/' + lead['id'],
+            'data': {'addresses': lead['addresses'][:1]},
+            'log': 'removed %d extra address(es) for %s' % (len(lead['addresses'][1:]), lead['id']),
+        })
 
     offset += len(leads)
     has_more = resp['has_more']
+
+for operation in operations_queue:
+    if args.confirmed:
+        api.put(operation['url'], data=operation['data'])
+    logging.info(operation['log'])
