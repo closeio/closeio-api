@@ -23,8 +23,10 @@ class TestDeleteSecondaryAddresses(unittest.TestCase):
     def test_run(self):
         for i in range(3):
             self.factory.lead_with_addresses(1)
-        for i in range(6):
+        for i in range(3):
             self.factory.lead_with_addresses(2)
+        for i in range(3):
+            self.factory.lead_with_addresses(3)
 
         time.sleep(1.5)
 

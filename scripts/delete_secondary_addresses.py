@@ -36,7 +36,7 @@ def run(api_key, development, confirmed, limit=100):
             operations_queue.append({
                 'url': 'lead/' + lead['id'],
                 'data': {'addresses': lead['addresses'][:1]},
-                'log': 'removed %d extra address(es) for %s' % (len(lead['addresses'][1:]), lead['id']),
+                'log': 'removed %d extra address(es) for %s: %s' % (len(lead['addresses'][1:]), lead['id'], lead['addresses'][:1]),
             })
 
         offset += len(leads)
