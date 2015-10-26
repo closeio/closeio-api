@@ -28,7 +28,7 @@ def run(api_key, development, confirmed, limit=100):
         for lead in leads:
             if confirmed:
                 api.put('lead/' + lead['id'], data={'addresses': lead['addresses'][:1]})
-            logging.info('removed %d extra address(es) for %s' % (len(lead['addresses'][1:]), lead['id']))
+            logging.info("removed %d extra address(es) for %s\n%s" % (len(lead['addresses'][1:]), lead['id'], lead['addresses'][1:]))
 
         has_more = resp['has_more']
 
