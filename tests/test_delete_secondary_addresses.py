@@ -32,7 +32,7 @@ class TestDeleteSecondaryAddresses(unittest.TestCase):
 
         time.sleep(1.5)
 
-        leads = list(utils.all(self.api))
+        leads = list(utils.all(self.api, fields="id,addresses"))
         self.assertEqual(9, len(leads))
         for lead in leads:
             self.assertEqual(1, len(lead['addresses']), "lead %s has too many addresses" % lead)

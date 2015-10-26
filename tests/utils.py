@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 
-def all(api, query='*'):
+def all(api, query='*', fields='id'):
     has_more = True
 
     while has_more:
         resp = api.get('lead', data={
             'query': query,
-            '_fields': 'id,addresses'
+            '_fields': fields,
         })
 
         leads = resp['data']
