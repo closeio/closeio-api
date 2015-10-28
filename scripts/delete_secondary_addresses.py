@@ -13,7 +13,7 @@ def run(api_key, development, confirmed, limit=100):
 
     # loop through existing leads with multiple addresses
 
-    LEADS_QUERY_WITH_MULTIPLE_ADDRESSES = "addresses > 1 sort:created"
+    LEADS_QUERY_WITH_MULTIPLE_ADDRESSES = "addresses > 1 sort:activities"
     has_more = True
 
     while has_more:
