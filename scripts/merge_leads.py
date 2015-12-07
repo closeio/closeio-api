@@ -44,7 +44,9 @@ while has_more:
             continue # same lead, skip
 
         # Determine whether "lead" should be considered a duplicate of the previous lead ("last_lead")
-        is_duplicate = last_lead and lead['name'].strip() and last_lead['name'].strip().lower() == lead['name'].strip().lower()
+        last_lead_name = (last_lead['name'] or '').strip().lower() if last_lead else ''
+        lead_name = (lead['name'] or '').strip().lower()
+        is_duplicate = last_lead and lead_name and last_lead_name == lead_name
 
         if is_duplicate:
 
