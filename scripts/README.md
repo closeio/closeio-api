@@ -32,7 +32,6 @@ The script will look for your CSV to have specific column names (case insensitiv
 - `zip`
 - `country` (2 letter abbreviation)
 - (any additional fields will be added as custom fields)
-```
 
 Multiple contacts will be grouped in the same lead if multiple rows have the same value in the "company" column.
 
