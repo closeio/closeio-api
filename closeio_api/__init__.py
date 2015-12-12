@@ -28,7 +28,7 @@ class API(object):
 
     def dispatch(self, method_name, endpoint, data=None):
         method = getattr(self.requests, method_name)
-        for retry_count in xrange(self.max_retries):
+        for retry_count in range(self.max_retries):
             try:
                 response = method(
                     self.base_url+endpoint,
@@ -54,7 +54,7 @@ class API(object):
 
     def get(self, endpoint, data=None):
         data = data or {}
-        encoded_data = dict((k, six.text_type(v).encode('utf-8')) for k, v in data.iteritems())
+        encoded_data = dict((k, six.text_type(v).encode('utf-8')) for k, v in data.items())
         endpoint += ('/?' + urllib.urlencode(encoded_data)) if data else '/'
         return self.dispatch('get', endpoint)
 
