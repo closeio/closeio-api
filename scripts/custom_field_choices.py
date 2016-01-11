@@ -61,7 +61,7 @@ else:
 	sniffer = csv.Sniffer()
 	dialect = sniffer.sniff(args.csvfile.read(1024))
 	args.csvfile.seek(0)
-	c = csv.DictReader(args.csvfile, dialect=dialect, fieldnames=['field_name', 'choice', 'action'])
+	c = csv.DictReader(args.csvfile, dialect=dialect)
 	assert any(x in ('field_name', 'choice', 'action') for x in c.fieldnames), \
 		'ERROR: column "field_name", "choice" or "action" is not found'
 	c.next()
