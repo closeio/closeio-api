@@ -135,21 +135,21 @@ for r in c:
     if r.get('status'):
         payload['status'] = r['status']
 
-    contact_ids = [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]
+    contact_indexes = [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]  # extract the ordinal number for all the contacts in this row (y[7] bcos len('contact') == 7)
     contacts = []
-    for x in contact_ids:
+    for idx in contact_indexes:
         contact = {}
-        if r.get('contact%s_name' % x):
-            contact['name'] = r['contact%s_name' % x]
-        if r.get('contact%s_title' % x):
-            contact['title'] = r['contact%s_title' % x]
-        phones = get_contact_info(x, r, 'phone', 'office')
+        if r.get('contact%s_name' % idx):
+            contact['name'] = r['contact%s_name' % idx]
+        if r.get('contact%s_title' % idx):
+            contact['title'] = r['contact%s_title' % idx]
+        phones = get_contact_info(idx, r, 'phone', 'office')
         if phones:
             contact['phones'] = phones
-        emails = get_contact_info(x, r, 'email', 'office')
+        emails = get_contact_info(idx, r, 'email', 'office')
         if emails:
             contact['emails'] = emails
-        urls = get_contact_info(x, r, 'url', 'url')
+        urls = get_contact_info(idx, r, 'url', 'url')
         if urls:
             contact['urls'] = urls
         if contact:
@@ -157,13 +157,13 @@ for r in c:
     if contacts:
         payload['contacts'] = contacts
 
-    addresses_ids = set([y[8] for y in r.keys() if re.match(r'address[0-9]_*', y)])
+    addresses_indexes = set([y[7] for y in r.keys() if re.match(r'address[0-9]_*', y)])  # extract the ordinal number for all the addresses in this row (y[7] bcos len('address') == 7)
     addresses = []
-    for x in addresses_ids:
+    for idx in addresses_indexes:
         address = {}
         for z in ['country', 'city', 'zipcode', 'label', 'state', 'address_1', 'address_2']:
-            if r.get('address%s_%s' % (x, z)):
-                address[z] = r['address%s_%s' % (x, z)]
+            if r.get('address%s_%s' % (idx, z)):
+                address[z] = r['address%s_%s' % (idx, z)]
         if address:
             addresses.append(address)
     if addresses:

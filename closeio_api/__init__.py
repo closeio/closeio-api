@@ -23,9 +23,7 @@ class API(object):
 
     def dispatch(self, method_name, endpoint, data=None):
         method = getattr(self.requests, method_name)
-
-        retries = 0
-        while True and retries < self.max_retries:
+        for retry_count in xrange(self.max_retries):
             try:
                 response = method(
                     self.base_url+endpoint,
@@ -33,10 +31,12 @@ class API(object):
                     auth=(self.api_key, ''),
                     headers={'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset}
                 )
-                break
             except requests.exceptions.ConnectionError:
+                if (retry_count + 1 == self.max_retries):
+                    raise
                 time.sleep(2)
-                retries += 1
+            else:
+                break
 
         if self.async:
             return response
@@ -47,12 +47,9 @@ class API(object):
                 raise APIError(response.text)
 
     def get(self, endpoint, data=None):
-        if data:
-            for k, v in data.iteritems():
-                data[k] = unicode(v).encode('utf-8')
-            endpoint += '/?'+urllib.urlencode(data)
-        else:
-            endpoint += '/'
+        data = data or {}
+        encoded_data = dict((k, unicode(v).encode('utf-8')) for k, v in data.iteritems())
+        endpoint += ('/?' + urllib.urlencode(encoded_data)) if data else '/'
         return self.dispatch('get', endpoint)
 
     def post(self, endpoint, data):
@@ -100,9 +97,9 @@ class API(object):
 
 
 class Client(API):
-    def __init__(self, api_key, tz_offset=None, async=False, development=False):
+    def __init__(self, api_key, tz_offset=None, async=False, max_retries=5, development=False):
         if development:
             base_url = 'http://localhost:5001/api/v1/'
         else:
             base_url = 'https://app.close.io/api/v1/'
-        super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset, async=async)
+        super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset, async=async, max_retries=max_retries)
