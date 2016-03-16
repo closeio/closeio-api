@@ -8,17 +8,6 @@ Wrapper around csv reader that ignores non utf-8 chars and strips the record
 """
 class CsvReader(object):
     def __init__(self, filename, delimiter=','):
-
-        # make sure the file contains proper newlines
-        with open(filename, 'rb') as f:
-            data = f.read()
-        newfilename = 'tmp_csv.csv'
-        with open(newfilename, 'wb') as f:
-            f.write(data.replace('\r', '\n').replace('\n\n', '\n'))
-            os.unlink(filename)
-            os.rename(newfilename, filename)
-
-        # construct a csv reader
         self.reader = csv.reader(open(filename, 'rbU'), delimiter=delimiter)
 
     def __iter__(self):
