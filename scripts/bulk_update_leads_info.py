@@ -123,8 +123,8 @@ skipped_leads = 0
 for r in c:
     payload = {}
 
-    if r.get('company'):
-        payload['name'] = r['company']
+    if r.get('name'):
+        payload['name'] = r['name']
 
     if r.get('url'):
         payload['url'] = r['url']
