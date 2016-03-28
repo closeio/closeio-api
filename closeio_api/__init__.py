@@ -16,8 +16,8 @@ class API(object):
         self.tz_offset = tz_offset or local_tz_offset()
 
         if async:
-                import grequests
-                self.requests = grequests
+            import grequests
+            self.requests = grequests
         else:
             self.requests = requests
 
