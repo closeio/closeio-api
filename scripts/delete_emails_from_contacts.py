@@ -5,7 +5,7 @@ from requests.exceptions import ConnectionError
 from closeio_api import APIError, Client as CloseIO_API
 from closeio_api.utils import CsvReader
 
-parser = argparse.ArgumentParser(description='Import leads from CSV file')
+parser = argparse.ArgumentParser(description='Remove email addresses from contacts in CSV file')
 parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--confirmed', action='store_true', help='Really run this?')
 parser.add_argument('file', help='Path to the csv file')
