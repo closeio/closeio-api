@@ -13,7 +13,7 @@ class API(object):
         self.base_url = base_url
         self.async = async
         self.max_retries = max_retries
-        self.tz_offset = tz_offset or local_tz_offset()
+        self.tz_offset = tz_offset or str(local_tz_offset())
 
         if async:
             import grequests
