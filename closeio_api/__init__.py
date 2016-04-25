@@ -35,7 +35,7 @@ class API(object):
             '----------- /HTTP Request -----------'))
 
     def dispatch(self, method_name, endpoint, data=None, **kwargs):
-        for retry_count in xrange(self.max_retries):
+        for retry_count in range(self.max_retries):
             try:
                 request = requests.Request(
                     method_name,
