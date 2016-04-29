@@ -13,7 +13,7 @@ class API(object):
         self.base_url = base_url
         self.async = async
         self.max_retries = max_retries
-        self.tz_offset = tz_offset or local_tz_offset()
+        self.tz_offset = tz_offset or str(local_tz_offset())
 
         if async:
             import grequests
@@ -35,7 +35,7 @@ class API(object):
             '----------- /HTTP Request -----------'))
 
     def dispatch(self, method_name, endpoint, data=None, **kwargs):
-        for retry_count in xrange(self.max_retries):
+        for retry_count in range(self.max_retries):
             try:
                 request = requests.Request(
                     method_name,
