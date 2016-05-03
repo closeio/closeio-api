@@ -114,7 +114,8 @@ class API(object):
 class Client(API):
     def __init__(self, api_key, tz_offset=None, async=False, max_retries=5, development=False):
         if development:
-            base_url = 'http://localhost:5001/api/v1/'
+            base_url = 'https://localhost:5001/api/v1/'
         else:
             base_url = 'https://app.close.io/api/v1/'
         super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset, async=async, max_retries=max_retries)
+
