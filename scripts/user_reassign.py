@@ -5,7 +5,7 @@ import argparse
 import logging
 
 from closeio_api import Client as CloseIO_API, APIError
-from utils import closeio_api_loop, TaskRunner
+from utils import loop_over_changing_resultset, TaskRunner
 
 
 if __name__ == '__main__':
@@ -83,70 +83,57 @@ def task(api, args):
         # tasks
         updated_tasks = 0
         if args.tasks or args.all_tasks:
-            has_more = True
-            offset = 0
-            while has_more:
+            def get_tasks():
                 payload = {
                     'assigned_to': from_user_id,
                     '_order_by': 'date_created',
-                    '_skip': offset,
                     '_fields': 'id'
                 }
 
                 if not args.all_tasks:
                     payload['is_complete'] = False
 
-                resp = api.get('task', data=payload)
+                return api.get('task', data=payload)
 
-                tasks = resp['data']
+            for tasks in loop_over_changing_resultset(get_tasks):
                 for task in tasks:
-                    if args.confirmed:
-                        try:
-                            api.put('task/'+task['id'], data={'assigned_to': to_user_id})
-                        except APIError as e:
-                            tasks_errors += 1
-                            if not args.continue_on_error:
-                                raise e
-                            logging.error('task %s skipped with error %s' % (task['id'], e))
+                    try:
+                        api.put('task/'+task['id'], data={'assigned_to': to_user_id})
+                    except APIError as e:
+                        tasks_errors += 1
+                        if not args.continue_on_error:
+                            raise e
+                        logging.error('task %s skipped with error %s' % (task['id'], e))
                     logging.info('updated %s' % task['id'])
                     updated_tasks += 1
-
-                offset += len(tasks)
-                has_more = resp['has_more']
 
         # opportunities
         updated_opportunities = 0
         if args.opportunities or args.all_opportunities:
-            has_more = True
-            offset = 0
-            while has_more:
+            def get_opportunities():
                 payload = {
                     'user_id': from_user_id,
                     '_order_by': 'date_created',
-                    '_skip': offset,
                     '_fields': 'id'
                 }
 
                 if not args.all_opportunities:
                     payload['status_type'] = 'active'
 
-                resp = api.get('opportunity', data=payload)
-
-                opportunities = resp['data']
+                return api.get('opportunity', data=payload)
+                
+            for opportunities in loop_over_changing_resultset(get_opportunities):
                 for opportunity in opportunities:
-                    if args.confirmed:
-                        try:
-                            api.put('opportunity/'+opportunity['id'], data={'user_id': to_user_id})
-                        except APIError as e:
-                            opportunities_errors += 1
-                            if not args.continue_on_error:
-                                raise e
-                            logging.error('opportunity %s skipped with error %s' % (opportunity['id'], e))
+                    try:
+                        api.put('opportunity/'+opportunity['id'], data={'user_id': to_user_id})
+                    except APIError as e:
+                        opportunities_errors += 1
+                        if not args.continue_on_error:
+                            raise e
+                        logging.error('opportunity %s skipped with error %s' % (opportunity['id'], e))
                     logging.info('updated %s' % opportunity['id'])
                     updated_opportunities += 1
 
-                offset += len(opportunities)
-                has_more = resp['has_more']
     except APIError:
         logging.error('stopped on error %s' % e)
 
