@@ -9,11 +9,8 @@ from closeio_api import Client as CloseIO_API, APIError
 
 
 def loop_over_changing_resultset(api_call):
-    has_more = True
-    while has_more:
-        resp = api_call()
-        yield resp['data']
-        has_more = resp['has_more']
+    for result in loop_over_stable_resultset(api_call):
+        yield result
         logging.info("Pausing for 2s to give the search indexer some time to catch up with the changes")
         time.sleep(2)
 
