@@ -4,7 +4,7 @@ import requests
 from closeio_api.utils import local_tz_offset
 
 import six
-from six.moves import urllib
+from six.moves.urllib.parse import urlencode
 
 
 class APIError(Exception):
@@ -69,7 +69,7 @@ class API(object):
     def get(self, endpoint, data=None, **kwargs):
         data = data or {}
         encoded_data = dict((k, six.text_type(v).encode('utf-8')) for k, v in data.items())
-        endpoint += ('/?' + urllib.urlencode(encoded_data)) if data else '/'
+        endpoint += ('/?' + urlencode(encoded_data)) if data else '/'
         return self.dispatch('get', endpoint, **kwargs)
 
     def post(self, endpoint, data, **kwargs):
