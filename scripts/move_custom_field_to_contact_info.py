@@ -11,6 +11,7 @@ from closeio_api import APIError
 @click.option('--new_contact_name', default='', help="If --use_existing_contact flag was not set, or if a lead doesn't contain any contacts, this is the name of the contact that will be created.")
 @click.option('--phones_custom_field', default='all phones', help='Name of the custom field containing phones that should be moved into a contact.')
 @click.option('--emails_custom_field', default='all emails', help='Name of the custom field containing emails that should be moved into a contact.')
+@click.option('--title_custom_field', default='contact title', help='Name of the custom field containing a contact\'s title.')
 def run(api_key, confirmed, development=False, use_existing_contact=False, new_contact_name='', phones_custom_field='all phones', emails_custom_field='all emails'):
     """
     After an import from a different CRM, for all leads, move emails and phones that were put in
@@ -21,6 +22,7 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
     print 'confirmed:', `confirmed`
     print 'phones_custom_field:', `phones_custom_field`
     print 'emails_custom_field:', `emails_custom_field`
+    print 'title_custom_field:', `title_custom_field`
     print 'use_existing_contact:', `use_existing_contact`
 
     api = CloseIO_API(api_key, development=development)
@@ -43,8 +45,9 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
 
             company_emails = custom.get(emails_custom_field, '')
             company_phones = custom.get(phones_custom_field, '')
+            contact_title = custom.get(title_custom_field, '')
 
-            if not company_phones and not company_emails:
+            if not company_phones and not company_emails and not contact_title:
                 continue
 
             if company_emails :
@@ -70,15 +73,17 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
                 if new_contact_name:
                     contact['name'] = new_contact_name
 
-
             for pn in company_phones:
                 contact['phones'].append({ 'type': 'office', 'phone': pn })
             for e in company_emails:
                 contact['emails'].append({ 'type': 'office', 'email': e })
+            if contact_title:
+                contact['title'] = contact_title
 
             print 'Lead:', lead['id'], lead['name'].encode('utf8')
             print 'Emails:', `custom.get(emails_custom_field)`, ' => ', `company_emails`
             print 'Phones:', `custom.get(phones_custom_field)`, ' => ', `company_phones`
+            print 'Title:', `custom.get(title_custom_field)`, ' => ', `contact_title`
 
             try:
                 if contact.get('id'):

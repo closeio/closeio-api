@@ -16,27 +16,41 @@ class API(object):
                  async=False, max_retries=5):
         assert base_url
         self.base_url = base_url
-        self.api_key = api_key
         self.async = async
         self.max_retries = max_retries
+        self.tz_offset = tz_offset or str(local_tz_offset())
+
         if async:
             import grequests
             self.requests = grequests
         else:
-            self.requests = requests.Session()
-        self.tz_offset = tz_offset or local_tz_offset()
+            self.requests = requests
 
-    def dispatch(self, method_name, endpoint, data=None):
-        method = getattr(self.requests, method_name)
+        self.session = self.requests.Session()
+
+        self.session.auth = (api_key, '')
+        self.session.headers.update({'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset})
+
+    def _print_request(self, request):
+        print('{}\n{}\n{}\n\n{}\n{}'.format(
+            '----------- HTTP Request -----------',
+            request.method + ' ' + request.url,
+            '\n'.join('{}: {}'.format(k, v) for k, v in request.headers.items()),
+            request.body or '',
+            '----------- /HTTP Request -----------'))
+
+    def dispatch(self, method_name, endpoint, data=None, **kwargs):
         for retry_count in range(self.max_retries):
             try:
-                response = method(
+                request = requests.Request(
+                    method_name,
                     self.base_url+endpoint,
                     data=data is not None and json.dumps(data),
-                    auth=(self.api_key, ''),
-                    headers={'Content-Type': 'application/json',
-                             'X-TZ-Offset': self.tz_offset}
                 )
+                prepped_request = self.session.prepare_request(request)
+                if kwargs.get('debug', False):
+                    self._print_request(prepped_request)
+                response = self.session.send(prepped_request)
             except requests.exceptions.ConnectionError:
                 if (retry_count + 1 == self.max_retries):
                     raise
@@ -52,20 +66,20 @@ class API(object):
             else:
                 raise APIError(response.text)
 
-    def get(self, endpoint, data=None):
+    def get(self, endpoint, data=None, **kwargs):
         data = data or {}
         encoded_data = dict((k, six.text_type(v).encode('utf-8')) for k, v in data.items())
         endpoint += ('/?' + urllib.urlencode(encoded_data)) if data else '/'
-        return self.dispatch('get', endpoint)
+        return self.dispatch('get', endpoint, **kwargs)
 
-    def post(self, endpoint, data):
-        return self.dispatch('post', endpoint+'/', data)
+    def post(self, endpoint, data, **kwargs):
+        return self.dispatch('post', endpoint+'/', data, **kwargs)
 
-    def put(self, endpoint, data):
-        return self.dispatch('put', endpoint+'/', data)
+    def put(self, endpoint, data, **kwargs):
+        return self.dispatch('put', endpoint+'/', data, **kwargs)
 
-    def delete(self, endpoint):
-        return self.dispatch('delete', endpoint+'/')
+    def delete(self, endpoint, **kwargs):
+        return self.dispatch('delete', endpoint+'/', **kwargs)
 
     # Only for async requests
     def map(self, reqs, max_retries=None):
@@ -111,8 +125,9 @@ class Client(API):
     def __init__(self, api_key, tz_offset=None, async=False,
                  max_retries=5, development=False):
         if development:
-            base_url = 'http://localhost:5001/api/v1/'
+            base_url = 'https://localhost:5001/api/v1/'
         else:
             base_url = 'https://app.close.io/api/v1/'
         super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset,
                                      async=async, max_retries=max_retries)
+

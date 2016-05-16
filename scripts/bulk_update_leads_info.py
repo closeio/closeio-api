@@ -123,8 +123,8 @@ skipped_leads = 0
 for r in c:
     payload = {}
 
-    if r.get('company'):
-        payload['name'] = r['company']
+    if r.get('name'):
+        payload['name'] = r['name']
 
     if r.get('url'):
         payload['url'] = r['url']
@@ -135,7 +135,7 @@ for r in c:
     if r.get('status'):
         payload['status'] = r['status']
 
-    contact_indexes = [y[7] for y in r.keys() if re.match(r'contact[0-9]_name', y)]  # extract the ordinal number for all the contacts in this row (y[7] bcos len('contact') == 7)
+    contact_indexes = [y[len('contact')] for y in r.keys() if re.match(r'contact[0-9]_name', y)]  # extract the ordinal number for all the contacts in this row (y[7] bcos len('contact') == 7)
     contacts = []
     for idx in contact_indexes:
         contact = {}
@@ -157,7 +157,7 @@ for r in c:
     if contacts:
         payload['contacts'] = contacts
 
-    addresses_indexes = set([y[7] for y in r.keys() if re.match(r'address[0-9]_*', y)])  # extract the ordinal number for all the addresses in this row (y[7] bcos len('address') == 7)
+    addresses_indexes = set([y[len('address')] for y in r.keys() if re.match(r'address[0-9]_*', y)])  # extract the ordinal number for all the addresses in this row (y[7] bcos len('address') == 7)
     addresses = []
     for idx in addresses_indexes:
         address = {}
@@ -219,26 +219,28 @@ for r in c:
                 resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
             logging.debug('%s new note: %s' % (lead['id'], note))
 
-        opportunity_ids = [x[11] for x in c.fieldnames if re.match(r'opportunity[0-9]_note', x)]
+        opportunity_ids = { x[len('opportunity')] for x in c.fieldnames if re.match(r'opportunity[0-9]', x) }
         for i in opportunity_ids:
             opp_payload = None
-            if all([r[x % i] for x in OPPORTUNITY_FIELDS]):
+            if any([r.get(x % i) for x in OPPORTUNITY_FIELDS]):
                 if r['opportunity%s_value_period' % i] not in ('one_time', 'monthly'):
                     logging.error('line %d invalid value_period "%s" for lead %d' %
                                   (c.line_num, r['opportunity%s_value_period' % i], i))
                     continue
+
                 opp_payload = {
                     'lead_id': lead['id'],
-                    'note': r['opportunity%s_note' % i],
+                    'note': r.get('opportunity%s_note' % i),
                     #'value': int(float(re.sub(r'[^\d.]', '', r['opportunity%s_value' % i])) * 100),  # converts $1,000.42 into 100042
-                    'value': int(r['opportunity%s_value' % i]),  # assumes cents are given
-                    'value_period': r['opportunity%s_value_period' % i],
-                    'confidence': int(r['opportunity%s_confidence' % i]),
-                    'status': r['opportunity%s_status' % i],
-                    'date_won': str(parse_date(r['opportunity%s_date_won' % i])),
+                    'value': int(r['opportunity%s_value' % i]) if 'opportunity%s_value' %i in r else None,  # assumes cents are given
+                    'value_period': r.get('opportunity%s_value_period' % i),
+                    'confidence': int(r['opportunity%s_confidence' % i]) if 'opportunity%s' % i in r else None,
+                    'status': r.get('opportunity%s_status' % i),
+                    'date_won': str(parse_date(r['opportunity%s_date_won' % i])) if 'opportunity%s_date_won' % i in r else None
                     #'date_won': str(datetime.datetime.strptime(r['opportunity%s_date_won' % i], '%d/%m/%y')),
                 }
-                api.post('opportunity', data=opp_payload)
+                if args.confirmed:
+                    api.post('opportunity', data=opp_payload)
             else:
                 logging.error('line %d is not a fully filled opportunity %s, skipped' % (c.line_num, i))
 

@@ -30,7 +30,7 @@ Check out `scripts/` for more detailed examples.
 
 ### Running a script
 ```
-$ git clone git@github.com:closeio/closeio-api.git
+$ git clone https://github.com/closeio/closeio-api.git
 $ cd closeio-api
 $ virtualenv venv
 $ source venv/bin/activate
