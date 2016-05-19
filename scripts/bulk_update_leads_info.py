@@ -123,8 +123,12 @@ skipped_leads = 0
 for r in c:
     payload = {}
 
-    if r.get('name'):
-        payload['name'] = r['name']
+    # Skip all-empty rows
+    if not any(r.itervalues()):
+        continue
+
+    if r.get('company'):
+        payload['name'] = r['company']
 
     if r.get('url'):
         payload['url'] = r['url']
