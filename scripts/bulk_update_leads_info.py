@@ -89,12 +89,12 @@ logging.basicConfig(level=logging.INFO, format=log_format)
 logging.debug('parameters: %s' % vars(args))
 
 sniffer = csv.Sniffer()
-dialect = sniffer.sniff(args.csvfile.read(2048))
+dialect = sniffer.sniff(args.csvfile.read(1000000))
 args.csvfile.seek(0)
 c = csv.DictReader(args.csvfile, dialect=dialect)
+
 assert any(x in ('company', 'lead_id') for x in c.fieldnames), \
     'ERROR: column "company" or "lead_id" is not found'
-
 
 api = CloseIO_API(args.api_key, development=args.development)
 
