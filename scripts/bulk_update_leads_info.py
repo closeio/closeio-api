@@ -221,7 +221,7 @@ for r in c:
         for note in notes:
             if args.confirmed:
                 resp = api.post('activity/note', data={'note': note, 'lead_id': lead['id']})
-            logging.debug('%s new note: %s' % (lead['id'] if args.confirmed else 'X', note))
+            logging.debug('%s new note: %s' % (lead['id'] if args.confirmed else 'X', note.decode('utf-8')))
 
         opportunity_ids = { x[len('opportunity')] for x in c.fieldnames if re.match(r'opportunity[0-9]', x) }
         for i in opportunity_ids:
