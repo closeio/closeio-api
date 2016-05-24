@@ -3,13 +3,7 @@
 
 import logging
 
-from utils import loop_over_changing_resultset, TaskRunner
-
-
-if __name__ == '__main__':
-    task_runner = TaskRunner(description='Delete all but first address for leads with multiple addresses.', task=task)
-    task_runner.parser.add_argument('--limit', '-l', help='Limit number of items per page', type=int, default=100)
-    task_runner.run()
+from utils import TaskRunner
 
 
 def task(api, args):
@@ -27,3 +21,9 @@ def task(api, args):
                 continue # this shouldn't happen based on the search query, but just to be safe...
             api.put('lead/' + lead['id'], data={'addresses': lead['addresses'][:1]})
             logging.info("removed %d extra address(es) for %s\n%s" % (len(lead['addresses'][1:]), lead['id'], lead['addresses'][1:]))
+
+
+if __name__ == '__main__':
+    task_runner = TaskRunner(description='Delete all but first address for leads with multiple addresses.', task=task)
+    task_runner.parser.add_argument('--limit', '-l', help='Limit number of items per page', type=int, default=100)
+    task_runner.run()

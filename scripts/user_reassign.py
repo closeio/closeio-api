@@ -4,34 +4,8 @@
 import argparse
 import logging
 
-from closeio_api import Client as CloseIO_API, APIError
-from utils import loop_over_changing_resultset, TaskRunner
-
-
-if __name__ == '__main__':
-    task_runner = TaskRunner(description='Assigns tasks or opportunities from one user to another', task=task)
-    parser = task_runner.parser
-    parser.add_argument('--continue-on-error', '-s', action='store_true', help='Do not abort after first error')
-
-    group_from = parser.add_mutually_exclusive_group(required=True)
-    group_from.add_argument('--from-user-id', '-f', type=str, help='')
-    group_from.add_argument('--from-user-email', type=str, help='')
-
-    group_to = parser.add_mutually_exclusive_group(required=True)
-    group_to.add_argument('--to-user-id', '-t', type=str, help='')
-    group_to.add_argument('--to-user-email', type=str, help='')
-
-    group = parser.add_argument_group()
-    group.add_argument('--tasks', '-T', action='store_true', help='reassign only non complete tasks')
-    group.add_argument('--all-tasks', action='store_true', help='reassign all tasks')
-    group.add_argument('--opportunities', '-O', action='store_true', help='reassign only active opportunities')
-    group.add_argument('--all-opportunities', action='store_true', help='reassign all opportunities')
-
-    args = parser.parse_args()
-    if not any([args.tasks, args.opportunities, args.all_tasks, args.all_opportunities]):
-        parser.error("at least one option required")
-
-    task_runner.run()
+from closeio_api import APIError
+from utils import TaskRunner
 
 
 def task(api, args):
@@ -140,3 +114,29 @@ def task(api, args):
     logging.info('summary: updated tasks %d, updated opportunities %d' % (updated_tasks, updated_opportunities))
     if opportunities_errors or tasks_errors:
         logging.info('summary: tasks errors: %s, opportunities errors %d' % (tasks_errors, opportunities_errors))
+
+
+if __name__ == '__main__':
+    task_runner = TaskRunner(description='Assigns tasks or opportunities from one user to another', task=task)
+    parser = task_runner.parser
+    parser.add_argument('--continue-on-error', '-s', action='store_true', help='Do not abort after first error')
+
+    group_from = parser.add_mutually_exclusive_group(required=True)
+    group_from.add_argument('--from-user-id', '-f', type=str, help='')
+    group_from.add_argument('--from-user-email', type=str, help='')
+
+    group_to = parser.add_mutually_exclusive_group(required=True)
+    group_to.add_argument('--to-user-id', '-t', type=str, help='')
+    group_to.add_argument('--to-user-email', type=str, help='')
+
+    group = parser.add_argument_group()
+    group.add_argument('--tasks', '-T', action='store_true', help='reassign only non complete tasks')
+    group.add_argument('--all-tasks', action='store_true', help='reassign all tasks')
+    group.add_argument('--opportunities', '-O', action='store_true', help='reassign only active opportunities')
+    group.add_argument('--all-opportunities', action='store_true', help='reassign all opportunities')
+
+    args = parser.parse_args()
+    if not any([args.tasks, args.opportunities, args.all_tasks, args.all_opportunities]):
+        parser.error("at least one option required")
+
+    task_runner.run()
