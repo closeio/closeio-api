@@ -9,7 +9,7 @@ import argparse
 
 from closeio_api import Client as CloseIO_API, APIError
 from scripts import delete_secondary_addresses
-from scripts.utils import loop_over_stable_resultset
+from scripts.utils import CloseIO_API_Wrapper, loop_over_stable_resultset
 from factories import Factory
 
 
@@ -18,7 +18,8 @@ api_key = os.getenv("CLOSEIO_API_KEY")
 
 class TestDeleteSecondaryAddresses(unittest.TestCase):
     def setUp(self):
-        self.api = CloseIO_API(api_key)
+        real_api = CloseIO_API(api_key)
+        self.api = CloseIO_API_Wrapper(real_api, paranoid=False)
         self.factory = Factory(self.api)
         self.factory.delete_all_leads()
 

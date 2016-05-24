@@ -9,8 +9,8 @@ import argparse
 
 from closeio_api import Client as CloseIO_API, APIError
 from scripts import user_reassign
+from scripts.utils import CloseIO_API_Wrapper
 from factories import Factory
-import utils
 
 api_key = os.getenv("CLOSEIO_API_KEY")
 
@@ -18,7 +18,8 @@ api_key = os.getenv("CLOSEIO_API_KEY")
 class TesUserReassign(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.api = CloseIO_API(api_key)
+        real_api = CloseIO_API(api_key)
+        cls.api = CloseIO_API_Wrapper(real_api, paranoid=False)
         cls.factory = Factory(cls.api)
         cls.user1 = cls.api.get('me', data={'_fields': 'id,email,memberships'})
 
@@ -53,7 +54,7 @@ class TesUserReassign(unittest.TestCase):
     def test_run_reassign_tasks(self):
         self.args.tasks = True
         user_reassign.task(api=self.api, args=self.args)
-        
+
         time.sleep(1)
 
         updatedTask1 = self.api.get('task/' + self.task1["id"])
@@ -65,7 +66,7 @@ class TesUserReassign(unittest.TestCase):
     def test_run_reassign_all_tasks(self):
         self.args.all_tasks = True
         user_reassign.task(api=self.api, args=self.args)
-        
+
         time.sleep(1)
 
         updatedTask1 = self.api.get('task/' + self.task1["id"])
@@ -77,7 +78,7 @@ class TesUserReassign(unittest.TestCase):
     def test_run_reassign_opportunities(self):
         self.args.opportunities = True
         user_reassign.task(api=self.api, args=self.args)
-        
+
         time.sleep(1)
 
         updateOpportunity1 = self.api.get('opportunity/' + self.opportunity1["id"])
@@ -89,7 +90,7 @@ class TesUserReassign(unittest.TestCase):
     def test_run_reassign_all_opportunities(self):
         self.args.all_opportunities = True
         user_reassign.task(api=self.api, args=self.args)
-        
+
         time.sleep(1)
 
         updateOpportunity1 = self.api.get('opportunity/' + self.opportunity1["id"])
