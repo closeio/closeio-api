@@ -46,3 +46,4 @@ Thanks to our awesome users, other languages are supported, too:
 * Ruby: [simple example](https://gist.github.com/philfreo/9359930) that uses [RestClient](https://github.com/rest-client/rest-client), or use [taylorbrook's gem](https://github.com/taylorbrooks/closeio)
 * PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/loopline-systems/closeio-api-wrapper or https://github.com/TheDeveloper/closeio-php-sdk
 * Node.js: https://github.com/closeio/closeio-node
+* C#: https://github.com/MoreThanRewards/CloseIoDotNet
