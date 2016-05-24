@@ -69,7 +69,7 @@ def task(api, args):
 
                 return api.get('task', data=payload)
 
-            for tasks in loop_over_changing_resultset(get_tasks):
+            for tasks in api.loop_over_changing_resultset(get_tasks):
                 for task in tasks:
                     try:
                         api.put('task/'+task['id'], data={'assigned_to': to_user_id})
@@ -95,8 +95,8 @@ def task(api, args):
                     payload['status_type'] = 'active'
 
                 return api.get('opportunity', data=payload)
-                
-            for opportunities in loop_over_changing_resultset(get_opportunities):
+
+            for opportunities in api.loop_over_changing_resultset(get_opportunities):
                 for opportunity in opportunities:
                     try:
                         api.put('opportunity/'+opportunity['id'], data={'user_id': to_user_id})

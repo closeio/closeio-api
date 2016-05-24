@@ -14,7 +14,7 @@ def task(api, args):
             '_limit': args.limit,
         })
 
-    for leads in loop_over_changing_resultset(filter_leads_with_multiple_addresses):
+    for leads in api.loop_over_changing_resultset(filter_leads_with_multiple_addresses):
         for lead in leads:
             if len(lead['addresses']) < 2:
                 logging.warning("unexpected result: %s", lead)
