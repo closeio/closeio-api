@@ -59,8 +59,9 @@ class TaskRunner(object):
         log_format = "[%(asctime)s] %(levelname)s %(message)s"
         if not args.confirmed:
             log_format = 'DRY RUN: ' + log_format
-            logging.basicConfig(level=logging.INFO, format=log_format)
-            logging.debug('parameters: %s' % vars(args))
+
+        logging.basicConfig(level=logging.INFO, format=log_format)
+        logging.debug('parameters: %s' % vars(args))
 
         real_api = CloseIO_API(args.api_key, args.development)
         api = CloseIO_API_Wrapper(real_api, paranoid=not args.confirmed)
