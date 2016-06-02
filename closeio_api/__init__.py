@@ -12,13 +12,14 @@ class APIError(Exception):
 
 
 class API(object):
-    def __init__(self, base_url, api_key, tz_offset=None,
-                 async=False, max_retries=5):
+    def __init__(self, base_url, api_key=None, tz_offset=None,
+                 async=False, max_retries=5, verify=True):
         assert base_url
         self.base_url = base_url
         self.async = async
         self.max_retries = max_retries
         self.tz_offset = tz_offset or str(local_tz_offset())
+        self.verify = verify
 
         if async:
             import grequests
@@ -27,8 +28,8 @@ class API(object):
             self.requests = requests
 
         self.session = self.requests.Session()
-
-        self.session.auth = (api_key, '')
+        if api_key:
+            self.session.auth = (api_key, '')
         self.session.headers.update({'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset})
 
     def _print_request(self, request):
@@ -39,18 +40,26 @@ class API(object):
             request.body or '',
             '----------- /HTTP Request -----------'))
 
-    def dispatch(self, method_name, endpoint, data=None, **kwargs):
+    def dispatch(self, method_name, endpoint, data=None, debug=False,
+                 api_key=None):
         for retry_count in range(self.max_retries):
             try:
+                if api_key:
+                    auth = (api_key, '')
+                else:
+                    auth = None
+                    assert self.session.auth, 'Must specify api_key.'
                 request = requests.Request(
                     method_name,
                     self.base_url+endpoint,
                     data=data is not None and json.dumps(data),
+                    auth=auth,
                 )
                 prepped_request = self.session.prepare_request(request)
-                if kwargs.get('debug', False):
+                if debug:
                     self._print_request(prepped_request)
-                response = self.session.send(prepped_request)
+                response = self.session.send(prepped_request,
+                                             verify=self.verify)
             except requests.exceptions.ConnectionError:
                 if (retry_count + 1 == self.max_retries):
                     raise
@@ -122,12 +131,15 @@ class API(object):
 
 
 class Client(API):
-    def __init__(self, api_key, tz_offset=None, async=False,
+    def __init__(self, api_key=None, tz_offset=None, async=False,
                  max_retries=5, development=False):
         if development:
-            base_url = 'https://localhost:5001/api/v1/'
+            base_url = 'https://local.close.io:5001/api/v1/'
+            # See https://github.com/kennethreitz/requests/issues/2966
+            verify = False
         else:
             base_url = 'https://app.close.io/api/v1/'
+            verify = True
         super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset,
-                                     async=async, max_retries=max_retries)
-
+                                     async=async, max_retries=max_retries,
+                                     verify=verify)
