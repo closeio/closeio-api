@@ -10,6 +10,15 @@ from six.moves.urllib.parse import urlencode
 class APIError(Exception):
     pass
 
+class ValidationError(APIError):
+    def __init__(self, json):
+        # For compatibility purposes we can access the original string through
+        # the args property.
+        super(APIError, self).__init__(str(json))
+
+        # Easy access to errors.
+        self.errors = json.get('errors', [])
+        self.field_errors = json.get('field-errors', {})
 
 class API(object):
     def __init__(self, base_url, api_key=None, tz_offset=None,
@@ -72,6 +81,8 @@ class API(object):
         else:
             if response.ok:
                 return response.json()
+            elif response.status_code == 400:
+                raise ValidationError(response.json())
             else:
                 raise APIError(response.text)
 
