@@ -8,17 +8,20 @@ from six.moves.urllib.parse import urlencode
 
 
 class APIError(Exception):
-    pass
-
-class ValidationError(APIError):
-    def __init__(self, json):
+    def __init__(self, response):
         # For compatibility purposes we can access the original string through
         # the args property.
-        super(APIError, self).__init__(str(json))
+        super(APIError, self).__init__(response.text)
+        self.response = response
+
+class ValidationError(APIError):
+    def __init__(self, response):
+        super(ValidationError, self).__init__(response)
 
         # Easy access to errors.
-        self.errors = json.get('errors', [])
-        self.field_errors = json.get('field-errors', {})
+        data = response.json()
+        self.errors = data.get('errors', [])
+        self.field_errors = data.get('field-errors', {})
 
 class API(object):
     def __init__(self, base_url, api_key=None, tz_offset=None,
@@ -82,9 +85,9 @@ class API(object):
             if response.ok:
                 return response.json()
             elif response.status_code == 400:
-                raise ValidationError(response.json())
+                raise ValidationError(response)
             else:
-                raise APIError(response.text)
+                raise APIError(response)
 
     def get(self, endpoint, data=None, **kwargs):
         data = data or {}
@@ -115,7 +118,7 @@ class API(object):
         if self.async:
             import grequests
             responses = [(
-                response.json() if response.ok else APIError()
+                response.json() if response.ok else APIError(response)
             ) for response in grequests.map(reqs)]
             # retry the api calls that failed until they succeed or the
             # max_retries limit is reached
@@ -132,7 +135,7 @@ class API(object):
                 new_reqs = [reqs[i] for i in range(len(responses))
                             if i in error_ids]
                 new_resps = [(
-                    response.json() if response.ok else APIError()
+                    response.json() if response.ok else APIError(response)
                 ) for response in grequests.map(new_reqs)]
                 # update the responses that previously finished with errors
                 for i in range(len(error_ids)):
