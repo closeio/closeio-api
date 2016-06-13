@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     while has_more:
         resp = api.get('lead', data={
-            'query': 'sort:opportunities,date_created',
+            'query': 'sort:-opportunities,date_created',
             '_skip': offset,
             '_fields': 'id,display_name,name,contacts,status_label,opportunities'
         })
