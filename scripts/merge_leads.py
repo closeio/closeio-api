@@ -187,7 +187,7 @@ if __name__ == "__main__":
                 leads_merged_this_page += len(duplicates) + 1 # +1 for the destination lead
                 total_leads_merged += 1
 
-        pbar.update(len(leads))
+        pbar.update(pbar.currval + len(leads))
 
         # We subtract the number of leads merged since those no longer exist.
         offset += max(0, len(leads) - leads_merged_this_page)
