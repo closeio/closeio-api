@@ -31,7 +31,7 @@ Priority (how to choose 'Destination lead'):
 
 Beware Of:
     - There is currently a limit of 200 contacts per lead and 100 emails and 100 phones per contact.
-      The "in" search query will likely barf as you get close to 1000 arguments so the find_duplicates()
+      The "in" search query will likely barf as you get close to 1000 arguments so the find_duplicates_for_lead()
       needs to be refactored to accomodate a merge where we have lots of contacts and emails/phones
       within those contacts. It's also unclear what happens when you merge two leads with 201 unique
       contacts between them...
@@ -64,28 +64,36 @@ api = CloseIO_API(args.api_key, development=args.development)
 logger = setup_logger()
 
 
-def find_duplicates(lead, compare_using):
-    assert lead and compare_using
+def find_duplicates_for_lead(lead, comparator_field):
+    """
+    Find and return duplicate leads for a given lead based on a comparator
+    field. For example, if comparator field is 'phone', and contacts
+    associated with leads A, B, and C have the same phone number, then calling
+    this function for lead A should return leads B and C.
+    """
+    assert lead and comparator_field
 
     duplicates = []
+
     search_values = None
-    if compare_using == 'company':
+    if comparator_field == 'company':
         search_values = [lead['name']]
     else:
-        compare_using_plural = '{0}s'.format(compare_using)
-        search_values = [e[compare_using] for c in lead['contacts'] for e in c[compare_using_plural]]
+        comparator_field_plural = '{0}s'.format(comparator_field)
+        search_values = [e[comparator_field] for c in lead['contacts'] for e in c[comparator_field_plural]]
 
         # compute this lead's data points we're to compare against (such as emails or phone numbers)
         lead_elems = set()
         for contact in lead['contacts']:
-            for elem in contact['{}s'.format(compare_using)]:
-                lead_elems.add(elem[compare_using] )
-        logger.debug('%s (%s) %ss: ["%s"]', lead['id'], lead['display_name'], compare_using, ','.join(lead_elems))
-    
+            for elem in contact['{}s'.format(comparator_field)]:
+                lead_elems.add(elem[comparator_field] )
+
     if search_values:
-        query = '{0} in ("{1}")'.format(compare_using, '","'.join(search_values))
-        logger.debug('query = "%s"', query)
- 
+        query = '{0} in ({1})'.format(
+            comparator_field,
+            ', '.join('"%s"' % val for val in search_values)
+        )
+        logger.debug('query = %s', query)
 
         has_more = True
         offset = 0
@@ -97,24 +105,27 @@ def find_duplicates(lead, compare_using):
             })
             leads = resp['data']
             logger.debug('Fetched %d of %d duplicate leads.', len(leads), resp['total_results'])
-            
+
             # Add leads to our list of duplicates iff they are exact matches
             # making sure to exclude the original lead from our duplicates
             for l in leads:
                 if l['id'] == lead['id']:
                     logger.debug('Removed lead %s from duplicate search results.', l['id'])
                     continue
-                if compare_using == 'company':
+                if comparator_field == 'company':
                     if lead['name'].strip().lower() == l['name'].strip().lower():
                         duplicates.append(l)
                 else:
                     l_elems = set()
                     for contact in l['contacts']:
-                        for elem in contact['{}s'.format(compare_using)]:
-                            l_elems.add(elem[compare_using] )
-                            logger.debug('%s (%s) %ss: ["%s"]', l['id'], l['display_name'], compare_using, ','.join(l_elems))
+                        for elem in contact[comparator_field_plural]:
+                            l_elems.add(elem[comparator_field] )
+
+                    logger.debug('%s (%s) %ss: ["%s"]', l['id'], l['display_name'], comparator_field, ','.join(l_elems))
+
+                    # if at least one of the phones/emails/etc. is a match,
+                    # consider the lead duplicate
                     intersection = lead_elems & l_elems
-                    logger.debug('["%s"] & ["%s"] = ["%s"]', ','.join(lead_elems), ','.join(l_elems), ','.join(intersection))
                     if intersection:
                         duplicates.append(l)
 
@@ -130,8 +141,8 @@ def merge_lead(destination_lead, duplicates):
                 'source': source_lead['id'],
                 'destination': destination_lead['id'],
             })
-            logger.info("Merged source:%s (%s) and destination:%s (%s) response_body:%s", 
-                        source_lead['id'], source_lead['display_name'], destination_lead['id'], 
+            logger.info("Merged source:%s (%s) and destination:%s (%s) response_body:%s",
+                        source_lead['id'], source_lead['display_name'], destination_lead['id'],
                         destination_lead['display_name'], resp)
 
 if __name__ == "__main__":
@@ -139,23 +150,26 @@ if __name__ == "__main__":
     has_more = True
     offset = 0
     total_leads_merged = 0
+    first_iteration = True
 
     while has_more:
         resp = api.get('lead', data={
-            'query': 'sort:-opportunities,date_created',
+            'query': 'sort:date_created',
             '_skip': offset,
             '_fields': 'id,display_name,name,contacts,status_label,opportunities'
         })
         leads = resp['data']
         leads_merged_this_page = 0
-        duplicates_this_page = {}
+        duplicates_this_page = set()
 
-        if offset == 0:
+        if first_iteration:
             total_leads = resp['total_results']
             progress_widgets = ['Analyzing %d Leads: ' % total_leads, Percentage(), ' ', Bar(), ' ', ETA(), ' ', FileTransferSpeed()]
             pbar = ProgressBar(widgets=progress_widgets, maxval=total_leads).start()
+            first_iteration = False
 
         for idx, lead in enumerate(leads):
+            logger.debug("-------------------------------------------------")
             logger.debug("idx: %d, lead: %s (%s)", idx, lead['id'], lead['display_name'])
             logger.debug("duplicates_this_page: %s", duplicates_this_page)
 
@@ -164,18 +178,20 @@ if __name__ == "__main__":
                 logger.debug("skipping lead %s", lead['id'])
                 continue
 
-            duplicates = find_duplicates(lead, args.field)
-            duplicates_this_page.update(dict([(x['id'], None) for x in duplicates]))
+            duplicates = find_duplicates_for_lead(lead, args.field)
+            duplicates_this_page |= set(x['id'] for x in duplicates)
             if duplicates:
-                logger.info('%s (%s): %d duplicates', lead['id'], lead['display_name'], len(duplicates))
+                logger.info('%s (%s): %d duplicates: %s', lead['id'], lead['display_name'],
+                            len(duplicates), ', '.join([d['id'] for d in duplicates]))
                 merge_lead(lead, duplicates)
                 leads_merged_this_page += len(duplicates) + 1 # +1 for the destination lead
                 total_leads_merged += 1
 
+        pbar.update(len(leads))
+
         # We subtract the number of leads merged since those no longer exist.
         offset += max(0, len(leads) - leads_merged_this_page)
         has_more = resp['has_more']
-        pbar.update(offset)
 
     pbar.finish()
     logger.info("*** Merging Complete ***")
