@@ -39,7 +39,7 @@ import sys
 import argparse
 from closeio_api import Client as CloseIO_API
 from progressbar import ProgressBar
-from progressbar.widgets import Counter, Percentage, Bar, ETA, FileTransferSpeed
+from progressbar.widgets import Counter, Percentage, Bar, AdaptiveETA, FileTransferSpeed
 
 
 parser = argparse.ArgumentParser(description='Detect duplicates & merge leads (see source code for details)')
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
         if first_iteration:
             total_leads = resp['total_results']
-            progress_widgets = ['Analyzing %d Leads: ' % total_leads, Counter(), Percentage(), ' ', Bar(), ' ', ETA(), ' ', FileTransferSpeed()]
+            progress_widgets = ['Analyzing %d Leads: ' % total_leads, Counter(), Percentage(), ' ', Bar(), ' ', AdaptiveETA(), ' ', FileTransferSpeed()]
             pbar = ProgressBar(widgets=progress_widgets, maxval=total_leads).start()
             pbar.update(offset)
             first_iteration = False
