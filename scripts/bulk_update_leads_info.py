@@ -19,6 +19,7 @@ OPPORTUNITY_FIELDS = ['opportunity%s_note',
 
 
 def get_contact_info(contact_no, csv_row, what, contact_type):
+
     columns = [x for x in csv_row.keys()
                if re.match(r'contact%s_%s[0-9]' % (contact_no, what), x) and csv_row[x]]
     contact_info = []
@@ -121,7 +122,7 @@ new_leads = 0
 skipped_leads = 0
 
 for r in c:
-    payload = {}
+    payload = {}    
 
     # Skip all-empty rows
     if not any(r.itervalues()):
@@ -178,8 +179,8 @@ for r in c:
 
     if custom_patches:
         payload.update(custom_patches)
-
     try:
+
         lead = None
         if r.get('lead_id') is not None:
             # exists lead
@@ -190,8 +191,9 @@ for r in c:
             lead = resp
         else:
             # first lead in the company
+            logging.debug('company: %s' % r['company'].decode('utf-8'))
             resp = api.get('lead', data={
-                'query': 'company:"%s" sort:created' % r['company'],
+                'query': 'company:"%s" sort:created' % r['company'].decode('utf-8'),
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
             })
@@ -214,7 +216,7 @@ for r in c:
                 lead = api.post('lead', data=payload)
             logging.info('line %d new: %s %s' % (c.line_num,
                                                  lead['id'] if args.confirmed else 'X',
-                                                 payload['name']))
+                                                 payload['name'].decode('utf-8')))
             new_leads += 1
 
         notes = [r[x] for x in r.keys() if re.match(r'note[0-9]', x) and r[x]]
