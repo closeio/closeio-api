@@ -1,10 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import json
 import time
 import requests
 from closeio_api.utils import local_tz_offset
-
-import six
-from six.moves.urllib.parse import urlencode
 
 
 class APIError(Exception):
@@ -52,8 +52,11 @@ class API(object):
             request.body or '',
             '----------- /HTTP Request -----------'))
 
-    def dispatch(self, method_name, endpoint, data=None, debug=False,
-                 api_key=None):
+    def dispatch(self, method_name, endpoint, **kwargs):
+        api_key = kwargs.pop('api_key', None)
+        data = kwargs.pop('data', None)
+        debug = kwargs.pop('debug', False)
+
         for retry_count in range(self.max_retries):
             try:
                 if api_key:
@@ -61,11 +64,14 @@ class API(object):
                 else:
                     auth = None
                     assert self.session.auth, 'Must specify api_key.'
+                kwargs.update({
+                    'auth': auth,
+                    'json': data
+                })
                 request = requests.Request(
                     method_name,
                     self.base_url+endpoint,
-                    data=data is not None and json.dumps(data),
-                    auth=auth,
+                    **kwargs
                 )
                 prepped_request = self.session.prepare_request(request)
                 if debug:
@@ -89,17 +95,17 @@ class API(object):
             else:
                 raise APIError(response)
 
-    def get(self, endpoint, data=None, **kwargs):
-        data = data or {}
-        encoded_data = dict((k, six.text_type(v).encode('utf-8')) for k, v in data.items())
-        endpoint += ('/?' + urlencode(encoded_data)) if data else '/'
+    def get(self, endpoint, params=None, **kwargs):
+        kwargs.update({'params': params})
         return self.dispatch('get', endpoint, **kwargs)
 
     def post(self, endpoint, data, **kwargs):
-        return self.dispatch('post', endpoint+'/', data, **kwargs)
+        kwargs.update({'data': data})
+        return self.dispatch('post', endpoint+'/', **kwargs)
 
     def put(self, endpoint, data, **kwargs):
-        return self.dispatch('put', endpoint+'/', data, **kwargs)
+        kwargs.update({'data': data})
+        return self.dispatch('put', endpoint+'/', **kwargs)
 
     def delete(self, endpoint, **kwargs):
         return self.dispatch('delete', endpoint+'/', **kwargs)
