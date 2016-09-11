@@ -2,10 +2,9 @@ import os
 import re
 import csv
 import time
-import six
 
 
-class CsvReader(six.Iterator):
+class CsvReader(object):
     """
     Wrapper around csv reader that ignores non utf-8 chars
     and strips the record
@@ -17,6 +16,9 @@ class CsvReader(six.Iterator):
         return self
 
     def __next__(self):
+        return self.next() 
+
+    def next(self):
         row = next(self.reader)
         row = [el.decode('utf8', errors='ignore').replace('\"', '').strip()
                for el in row]
@@ -50,5 +52,5 @@ def uncamel(text):
 
 def local_tz_offset():
     # http://stackoverflow.com/questions/1111056/get-tz-information-of-the-system-in-python
-    return six.text_type((time.timezone if (time.localtime().tm_isdst == 0)
-                          else time.altzone) / 60 / 60 * -1)
+    return (time.timezone if (time.localtime().tm_isdst == 0)
+                          else time.altzone) / 60 / 60 * -1

@@ -6,5 +6,4 @@ grequests==0.3.0
 progressbar-latest==2.4
 python-dateutil==2.5.3
 requests==2.11.1
-six==1.10.0
 Unidecode==0.4.19
