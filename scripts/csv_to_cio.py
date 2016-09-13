@@ -252,11 +252,11 @@ for key, val in unique_leads.items():
             api.post('lead', val)
             retries = 0
             success_cnt += 1
-        except closeio_api.APIError, err:
+        except closeio_api.APIError as err:
             warning('An error occurred while saving "%s"' % key)
             warning(err)
             retries = 0
-        except ConnectionError, e:
+        except ConnectionError as e:
             warning('Connection error occurred, retrying... (%d/5)' % retries)
             if retries == 0:
                 raise

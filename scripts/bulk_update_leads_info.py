@@ -124,7 +124,7 @@ for r in c:
     payload = {}
 
     # Skip all-empty rows
-    if not any(r.itervalues()):
+    if not any(r.values()):
         continue
 
     if r.get('company'):
