@@ -7,6 +7,7 @@ i=1
 while read contact_id rest_of_shit
 do
   test $i -eq 1 && ((i=i+1)) && continue
+  contact_id=${contact_id%$'\r'}
   echo "Contact ID: $contact_id"
   curl -XDELETE "https://app.close.io/api/v1/contact/$contact_id/" -u $API_KEY:
 done < $1
