@@ -32,7 +32,7 @@ limit = 50
 opp_ids = []
 
 while has_more:
-    resp = api.get('lead', data={'_skip': offset, '_limit': limit, 'query': args.query})
+    resp = api.get('lead', params={'_skip': offset, '_limit': limit, 'query': args.query})
     opp_ids.extend([opp['id'] for lead in resp['data'] for opp in lead['opportunities']])
     has_more = resp['has_more']
     offset += limit

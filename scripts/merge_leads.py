@@ -105,7 +105,7 @@ def find_duplicates_for_lead(lead, comparator_field):
         has_more = True
         offset = 0
         while has_more:
-            resp = api.get('lead', data={
+            resp = api.get('lead', params={
                 'query': query,
                 '_skip': offset,
                 '_fields': 'id,display_name,name,status_label,contacts,opportunities'
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     first_iteration = True
 
     while has_more:
-        resp = api.get('lead', data={
+        resp = api.get('lead', params={
             'query': 'sort:date_created',  # sort by date_created so that the oldest lead is always merged into
             '_skip': offset,
             '_fields': 'id,display_name,name,contacts,status_label,opportunities'

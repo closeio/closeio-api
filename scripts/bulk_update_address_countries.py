@@ -105,7 +105,7 @@ has_more = True
 offset = 0
 
 while has_more:
-    resp = api.get('lead', data={
+    resp = api.get('lead', params={
         'query': LEADS_QUERY,
         '_skip': offset,
         '_fields': 'id,addresses'

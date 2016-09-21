@@ -230,7 +230,7 @@ for key, val in unique_leads.items():
         skip = 0
         while has_more:
             filters['_skip'] = skip
-            resp = api.get('lead', data=filters)
+            resp = api.get('lead', params=filters)
             results = resp['data']
             search_results.extend(results)
             has_more = resp['has_more']

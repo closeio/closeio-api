@@ -32,7 +32,7 @@ def run(api_key, confirmed, development=False, use_existing_contact=False, new_c
     while has_more:
 
         # Get a page of leads
-        resp = api.get('lead', data={
+        resp = api.get('lead', params={
             'query': '"custom.Source CRM":* not "custom.Migration completed":* sort:created',
             '_skip': offset,
             '_fields': 'id,display_name,name,contacts,custom',

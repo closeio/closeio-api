@@ -17,7 +17,7 @@ def run(api_key, development, confirmed, limit=100):
     has_more = True
 
     while has_more:
-        resp = api.get('lead', data={
+        resp = api.get('lead', params={
             'query': LEADS_QUERY_WITH_MULTIPLE_ADDRESSES,
             '_fields': 'id,addresses',
             '_limit': limit,

@@ -183,14 +183,14 @@ for r in c:
         lead = None
         if r.get('lead_id') is not None:
             # exists lead
-            resp = api.get('lead/%s' % r['lead_id'], data={
+            resp = api.get('lead/%s' % r['lead_id'], params={
                 'fields': 'id'
             })
             logging.debug('received: %s' % resp)
             lead = resp
         else:
             # first lead in the company
-            resp = api.get('lead', data={
+            resp = api.get('lead', params={
                 'query': 'company:"%s" sort:created' % r['company'],
                 '_fields': 'id,display_name,name,contacts,custom',
                 'limit': 1
