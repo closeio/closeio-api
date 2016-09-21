@@ -45,7 +45,7 @@ if any([args.from_user_email, args.to_user_email]):
     has_more = True
     offset = 0
     while has_more:
-        resp = api.get('user', data={'_skip': offset})
+        resp = api.get('user', params={'_skip': offset})
         for user in resp['data']:
             emails_to_ids[user['email']] = user['id']
         offset += len(resp['data'])
@@ -57,7 +57,7 @@ if args.from_user_email:
     from_user_id = emails_to_ids[args.from_user_email]
 else:
     # for exception, if user_id is not present in the database
-    resp = api.get('user/'+args.from_user_id, data={
+    resp = api.get('user/'+args.from_user_id, params={
         '_fields': 'id,email'
     })
 
@@ -68,7 +68,7 @@ if args.to_user_email:
     to_user_id = emails_to_ids[args.to_user_email]
 
 else:
-    resp = api.get('user/'+args.to_user_id, data={
+    resp = api.get('user/'+args.to_user_id, params={
         '_fields': 'id,email'
     })
 
@@ -101,7 +101,7 @@ try:
             if not args.all_tasks:
                 payload['is_complete'] = False
 
-            resp = api.get('task', data=payload)
+            resp = api.get('task', params=payload)
 
             tasks = resp['data']
             for task in tasks:
@@ -135,7 +135,7 @@ try:
             if not args.all_opportunities:
                 payload['status_type'] = 'active'
 
-            resp = api.get('opportunity', data=payload)
+            resp = api.get('opportunity', params=payload)
 
             opportunities = resp['data']
             for opportunity in opportunities:
