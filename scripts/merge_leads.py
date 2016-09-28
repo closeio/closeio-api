@@ -98,7 +98,7 @@ def find_duplicates_for_lead(lead, comparator_field):
     if search_values:
         query = '{0} in ({1}) sort:date_created'.format(
             comparator_field,
-            ', '.join('"%s"' % val for val in search_values)
+            ', '.join('"%s"' % val.encode('utf-8') for val in search_values)
         )
         logger.debug('query = %s', query)
 
