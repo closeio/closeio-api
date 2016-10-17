@@ -35,7 +35,8 @@ $ cd closeio-api
 $ virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
-$ python script/merge_leads.py -k MYAPIKEY 
+$ python setup.py install
+$ python scripts/merge_leads.py -k MYAPIKEY 
 ...
 
 ```
