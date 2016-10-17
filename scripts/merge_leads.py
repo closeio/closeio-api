@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
         if first_iteration:
             total_leads = resp['total_results']
-            progress_widgets = ['Analyzing %d Leads: ' % total_leads, Counter(), Percentage(), ' ', Bar(), ' ', AdaptiveETA(), ' ', FileTransferSpeed()]
+            progress_widgets = ['Analyzing %d Leads: ' % total_leads, Counter(), ' ', Percentage(), ' ', Bar(), ' ', AdaptiveETA(), ' ', FileTransferSpeed()]
             pbar = ProgressBar(widgets=progress_widgets, maxval=total_leads).start()
             pbar.update(offset)
             first_iteration = False
@@ -192,18 +192,22 @@ if __name__ == "__main__":
             # in our duplicates lists (see README at top of file)
             if lead['id'] in duplicates_this_page:
                 logger.debug("skipping lead %s", lead['id'])
-                continue
+            else:
+                duplicates = find_duplicates_for_lead(lead, args.field)
+                duplicates_this_page |= set(x['id'] for x in duplicates)
+                if duplicates:
+                    logger.info('%s (%s): %d duplicates: %s', lead['id'], lead['display_name'],
+                                len(duplicates), ', '.join([d['id'] for d in duplicates]))
+                    merge_lead(lead, duplicates)
+                    leads_merged_this_page += len(duplicates) + 1  # +1 for the destination lead
+                    total_leads_merged += 1
 
-            duplicates = find_duplicates_for_lead(lead, args.field)
-            duplicates_this_page |= set(x['id'] for x in duplicates)
-            if duplicates:
-                logger.info('%s (%s): %d duplicates: %s', lead['id'], lead['display_name'],
-                            len(duplicates), ', '.join([d['id'] for d in duplicates]))
-                merge_lead(lead, duplicates)
-                leads_merged_this_page += len(duplicates) + 1  # +1 for the destination lead
-                total_leads_merged += 1
-
-        pbar.update(pbar.currval + len(leads))
+            # Progress bar can overflow if some leads were added between the
+            # first iteration of this loop and now. We just show the maxval
+            # in such cases.
+            if pbar.currval + 1 > pbar.maxval:
+                pbar.maxval = pbar.currval + 1
+            pbar.update(pbar.currval + 1)
 
         # We subtract the number of leads merged since those no longer exist.
         offset += max(0, len(leads) - leads_merged_this_page)
