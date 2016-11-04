@@ -7,7 +7,7 @@ from closeio_api.utils import CsvReader
 
 parser = argparse.ArgumentParser(description='Remove email addresses from contacts in CSV file')
 parser.add_argument('--api-key', '-k', required=True, help='API Key')
-parser.add_argument('--confirmed', action='store_true', help='Really run this?')
+parser.add_argument('--confirmed', action='store_true', help='Confirm making changes. Otherwise this script is not going to modify any data.')
 parser.add_argument('--verbose', '-v', action='store_true', help='Increase logging verbosity.')
 parser.add_argument('file', help='Path to the csv file')
 args = parser.parse_args()
