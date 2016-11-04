@@ -31,8 +31,12 @@ for row in reader:
 
     try:
         contact = api.get('contact/' + contact_id)
+
         if not contact['emails']:
+            if args.verbose:
+                print 'Skipping %s because it has no email addresses' % contact_id)
             continue
+
         emails = filter(lambda email: email['email'] != email_address, contact['emails'])
         if args.confirmed:
             resp = api.put('contact/' + contact_id, {'emails': emails})
