@@ -8,6 +8,7 @@ from closeio_api.utils import CsvReader
 parser = argparse.ArgumentParser(description='Remove email addresses from contacts in CSV file')
 parser.add_argument('--api-key', '-k', required=True, help='API Key')
 parser.add_argument('--confirmed', action='store_true', help='Really run this?')
+parser.add_argument('--verbose', '-v', action='store_true', help='Increase logging verbosity.')
 parser.add_argument('file', help='Path to the csv file')
 args = parser.parse_args()
 
@@ -24,12 +25,22 @@ api = CloseIO_API(args.api_key, async=False)
 for row in reader:
     contact_id = row[headers['contact_id']]
     email_address = row[headers['email_address']]
+
+    if args.verbose:
+        print 'Attempting to remove %s from %s' % (email_address, contact_id)
+
     try:
-        contact = api.get('contact/' + contact_id) 
+        contact = api.get('contact/' + contact_id)
         if not contact['emails']:
             continue
         emails = filter(lambda email: email['email'] != email_address, contact['emails'])
         if args.confirmed:
-            resp = api.put('contact/' + contact_id, {'emails': emails}) 
-    except APIError:
-        pass
+            resp = api.put('contact/' + contact_id, {'emails': emails})
+            if args.verbose:
+                print 'Removed %s from %s' % (email_address, contact_id)
+    except APIError as e:
+        if args.verbose:
+            print 'Encountered an API error (%s): %s' % (
+                e.response.status_code,
+                e.response.text
+            )
