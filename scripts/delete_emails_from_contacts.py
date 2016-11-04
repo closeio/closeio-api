@@ -34,7 +34,7 @@ for row in reader:
 
         if not contact['emails']:
             if args.verbose:
-                print 'Skipping %s because it has no email addresses' % contact_id)
+                print 'Skipping %s because it has no email addresses' % contact_id
             continue
 
         emails = filter(lambda email: email['email'] != email_address, contact['emails'])
