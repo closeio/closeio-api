@@ -34,7 +34,7 @@ for idx, user_id in enumerate(inactive_users):
     skip = 0
     limit = 100
     while has_more:
-        resp = api.get('task', data={
+        resp = api.get('task', params={
             'assigned_to': user_id,
             '_skip': skip,
             '_limit': limit,
