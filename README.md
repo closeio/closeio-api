@@ -5,7 +5,8 @@ A convenient Python wrapper for the [Close.io](https://close.io/) API.
 See the developer docs at http://developer.close.io. For any questions or issues, please contact support(at)close(dot)io.
 
 ### Sample Usage
-```
+
+```python
 from closeio_api import Client
 import urllib
 
@@ -23,13 +24,12 @@ lead_results = api.get('lead', params={
     '_fields': 'id,display_name,status_label',
     'query': 'custom.my_custom_field:"some_value" status:"Potential" sort:updated'
 })
-
 ```
 
 Check out `scripts/` for more detailed examples.
 
 ### Running a script
-```
+```bash
 $ git clone https://github.com/closeio/closeio-api.git
 $ cd closeio-api
 $ virtualenv venv
