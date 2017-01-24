@@ -5,7 +5,7 @@ requires = ['requests >= 2.11.1', 'grequests >= 0.3.0']
 setup(
     name="closeio",
     packages=['closeio_api'],
-    version="0.4",
+    version="0.5",
     description="Close.io Python Library",
     long_description="Closeio Python library",
     author="Close.io Team",
