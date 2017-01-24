@@ -97,7 +97,7 @@ class API(object):
 
     def get(self, endpoint, params=None, **kwargs):
         kwargs.update({'params': params})
-        return self.dispatch('get', endpoint, **kwargs)
+        return self.dispatch('get', endpoint+'/', **kwargs)
 
     def post(self, endpoint, data, **kwargs):
         kwargs.update({'data': data})
