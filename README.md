@@ -1,10 +1,16 @@
 ## Close.io API
 
+[![PyPI version](https://badge.fury.io/py/closeio.svg)](https://badge.fury.io/py/closeio)
+
 A convenient Python wrapper for the [Close.io](https://close.io/) API.
 
 See the developer docs at http://developer.close.io. For any questions or issues, please contact support(at)close(dot)io.
 
-### Sample Usage
+### Installation (of API client)
+
+`pip install closeio`
+
+### Sample Usage (of API client)
 
 ```python
 from closeio_api import Client
