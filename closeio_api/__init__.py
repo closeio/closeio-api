@@ -6,6 +6,11 @@ import requests
 from closeio_api.utils import local_tz_offset
 
 
+# Max number of requests that can be executed concurrently in a single batch.
+# This limit is used in API#map.
+MAX_CONCURRENT_REQUESTS = 10
+
+
 class APIError(Exception):
     """Raised when sending a request to the API failed."""
     def __init__(self, response):
@@ -180,6 +185,12 @@ class API(object):
         """
         if not self.async:
             raise NotImplementedError('map can only be used in an async Client')
+
+        if len(reqs) > MAX_CONCURRENT_REQUESTS:
+            raise ValueError(
+                'Too many concurrent requests ({}). You can send up to {} in '
+                'a single batch.'.format(len(reqs), MAX_CONCURRENT_REQUESTS)
+            )
 
         if max_retries is None:
             max_retries = self.max_retries
