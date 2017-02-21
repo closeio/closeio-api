@@ -1,7 +1,5 @@
 from setuptools import setup
 
-requires = ['requests >= 2.11.1', 'grequests >= 0.3.0']
-
 setup(
     name="closeio",
     packages=['closeio_api'],
@@ -10,7 +8,9 @@ setup(
     long_description="Closeio Python library",
     author="Close.io Team",
     url="https://github.com/closeio/closeio-api/",
-    install_requires=requires,
+    install_requires=[
+        'requests >= 2.11.1'
+    ],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
