@@ -7,3 +7,4 @@ progressbar-latest==2.4
 python-dateutil==2.5.3
 requests==2.11.1
 Unidecode==0.4.19
+usaddress==0.5.10

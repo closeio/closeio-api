@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import re
 import argparse
-import datetime
 import csv
+import datetime
 import logging
-from closeio_api import Client as CloseIO_API, APIError
+import re
+import sys
+
 from dateutil.parser import parse as parse_date
+import usaddress
+
+from closeio_api import Client as CloseIO_API, APIError
+
 
 OPPORTUNITY_FIELDS = ['opportunity%s_note',
                       'opportunity%s_value',
@@ -25,6 +29,120 @@ def get_contact_info(contact_no, csv_row, what, contact_type):
     for col in columns:
         contact_info.append({what: csv_row[col], 'type': contact_type})
     return contact_info
+
+
+def get_contacts_for_row(r):
+    """Return a list of contact dicts corresponding to contact fields
+    found on a given row.
+    """
+    # Extract ordinal numbers for all the contacts in this row
+    contact_indexes = [
+        y[len('contact')]
+        for y in r.keys() if re.match(r'contact[0-9]_name', y)
+    ]
+
+    contacts = []
+    for idx in contact_indexes:
+        contact = {}
+        if r.get('contact%s_name' % idx):
+            contact['name'] = r['contact%s_name' % idx]
+        if r.get('contact%s_title' % idx):
+            contact['title'] = r['contact%s_title' % idx]
+        phones = get_contact_info(idx, r, 'phone', 'office')
+        if phones:
+            contact['phones'] = phones
+        emails = get_contact_info(idx, r, 'email', 'office')
+        if emails:
+            contact['emails'] = emails
+        urls = get_contact_info(idx, r, 'url', 'url')
+        if urls:
+            contact['urls'] = urls
+        if contact:
+            contacts.append(contact)
+    return contacts
+
+
+def get_addresses_for_row(r):
+    """Return a list of address dicts corresponding to address fields
+    found on a given row.
+    """
+    # Extract ordinal numbers for all the addresses in this row
+    addresses_indexes = set([
+        y[len('address')] for y in r.keys() if re.match(r'address[0-9]_*', y)
+    ])
+
+    addresses = []
+    for idx in addresses_indexes:
+
+        # If a generic "addressX_full" field exists, try to parse it into
+        # subfields. Only works for US street addresses.
+        if r.get('address%s_full' % idx):
+            tag_mapping = {
+               'Recipient': 'address_2',
+               'AddressNumber': 'address_1',
+               'AddressNumberPrefix': 'address_1',
+               'AddressNumberSuffix': 'address_1',
+               'StreetName': 'address_1',
+               'StreetNamePreDirectional': 'address_1',
+               'StreetNamePreModifier': 'address_1',
+               'StreetNamePreType': 'address_1',
+               'StreetNamePostDirectional': 'address_1',
+               'StreetNamePostModifier': 'address_1',
+               'StreetNamePostType': 'address_1',
+               'CornerOf': 'address_1',
+               'IntersectionSeparator': 'address_1',
+               'LandmarkName': 'address_1',
+               'USPSBoxGroupID': 'address_1',
+               'USPSBoxGroupType': 'address_1',
+               'USPSBoxID': 'address_1',
+               'USPSBoxType': 'address_1',
+               'BuildingName': 'address_2',
+               'OccupancyType': 'address_2',
+               'OccupancyIdentifier': 'address_2',
+               'SubaddressIdentifier': 'address_2',
+               'SubaddressType': 'address_2',
+               'PlaceName': 'city',
+               'StateName': 'state',
+               'ZipCode': 'zipcode',
+            }
+            try:
+                address, address_type = usaddress.tag(r['address%s_full' % idx], tag_mapping=tag_mapping)
+            except (usaddress.RepeatedLabelError, UnicodeDecodeError):
+                address, address_type = None, None
+
+            if address_type == 'Street Address':
+                address['country'] = 'US'
+            else:
+                logging.info("couldn't parse an address: %s" % r['address%s_full' % idx])
+                address = None
+
+        # Otherwise, look for explicit subfields
+        else:
+            address = {}
+            for subfield in ('country', 'city', 'zipcode', 'label', 'state',
+                             'address_1', 'address_2'):
+                if r.get('address%s_%s' % (idx, subfield)):
+                    address[subfield] = r['address%s_%s' % (idx, subfield)]
+
+        if address:
+            addresses.append(address)
+
+    return addresses
+
+
+def get_custom_patches_for_row(r):
+    """Return a dict of "custom.field_name: new_value" pairs for all
+    custom fields defined on a given row.
+    """
+    return {
+        key: r[key] for key in r
+        if (
+            key.startswith('custom.') and
+            key.split('.', 1)[1] in available_custom_fieldnames and
+            r[key]
+        )
+    }
+
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description="""
 Imports leads and related data from a csv file with header.
@@ -47,6 +165,9 @@ lead columns:
     * address[0-9]_state                - state
     * address[0-9]_address_1            - text part 1
     * address[0-9]_address_2            - text part 2
+    * address[0-9]_full                 - full address, which we'll attempt to parse into
+                                          its subparts. This currently only works for US
+                                          addresses.
 
 opportunity columns (new items will be added if all values filled):
     * opportunity[0-9]_note             - opportunity note
@@ -139,43 +260,15 @@ for r in c:
     if r.get('status'):
         payload['status'] = r['status']
 
-    contact_indexes = [y[len('contact')] for y in r.keys() if re.match(r'contact[0-9]_name', y)]  # extract the ordinal number for all the contacts in this row (y[7] bcos len('contact') == 7)
-    contacts = []
-    for idx in contact_indexes:
-        contact = {}
-        if r.get('contact%s_name' % idx):
-            contact['name'] = r['contact%s_name' % idx]
-        if r.get('contact%s_title' % idx):
-            contact['title'] = r['contact%s_title' % idx]
-        phones = get_contact_info(idx, r, 'phone', 'office')
-        if phones:
-            contact['phones'] = phones
-        emails = get_contact_info(idx, r, 'email', 'office')
-        if emails:
-            contact['emails'] = emails
-        urls = get_contact_info(idx, r, 'url', 'url')
-        if urls:
-            contact['urls'] = urls
-        if contact:
-            contacts.append(contact)
+    contacts = get_contacts_for_row(r)
     if contacts:
         payload['contacts'] = contacts
 
-    addresses_indexes = set([y[len('address')] for y in r.keys() if re.match(r'address[0-9]_*', y)])  # extract the ordinal number for all the addresses in this row (y[7] bcos len('address') == 7)
-    addresses = []
-    for idx in addresses_indexes:
-        address = {}
-        for z in ['country', 'city', 'zipcode', 'label', 'state', 'address_1', 'address_2']:
-            if r.get('address%s_%s' % (idx, z)):
-                address[z] = r['address%s_%s' % (idx, z)]
-        if address:
-            addresses.append(address)
+    addresses = get_addresses_for_row(r)
     if addresses:
         payload['addresses'] = addresses
 
-    custom_patches = {key: r[key] for key in r if key.startswith('custom.')
-              and key.split('.', 1)[1] in available_custom_fieldnames and r[key]}
-
+    custom_patches = get_custom_patches_for_row(r)
     if custom_patches:
         payload.update(custom_patches)
 
@@ -207,6 +300,7 @@ for r in c:
                                                      lead['id'],
                                                      lead.get('name') if lead.get('name') else ''))
             updated_leads += 1
+
         # new lead
         elif lead is None and not args.disable_create:
             logging.debug('to sent: %s' % payload)
