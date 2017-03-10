@@ -33,19 +33,22 @@ def setup_logger():
 logger = setup_logger()
 
 output = open(args.output,"w") 
-output.write("[")
+output.write('{"events": [')
 
 has_more = True
 cursor = None
+first_iter = True
 while has_more:
     resp = api.get('event', params={'date_updated__gt': args.date_gt, 'date_updated__lt': args.date_lt, '_cursor': cursor})
-    for event in resp['data']:
-        if event['request_id'] == args.request_id:
-            json.dump(event, output, indent=4)
-            output.write(",")
     cursor = resp['cursor_next']
     has_more = bool(cursor)
-    print cursor
 
-output.write("]")
+    for event in resp['data']:
+        if event['request_id'] == args.request_id:
+            if not first_iter:
+                output.write(",")
+            json.dump(event, output, indent=4)
+            first_iter = False
+
+output.write("]}")
 output.close()
