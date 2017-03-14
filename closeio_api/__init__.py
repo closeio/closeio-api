@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
-import time
 import requests
+import time
+
+from closeio_api._version import __version__  # noqa
 from closeio_api.utils import local_tz_offset
 
 
@@ -14,6 +15,7 @@ class APIError(Exception):
         super(APIError, self).__init__(response.text)
         self.response = response
 
+
 class ValidationError(APIError):
     def __init__(self, response):
         super(ValidationError, self).__init__(response)
@@ -22,6 +24,7 @@ class ValidationError(APIError):
         data = response.json()
         self.errors = data.get('errors', [])
         self.field_errors = data.get('field-errors', {})
+
 
 class API(object):
     def __init__(self, base_url, api_key=None, tz_offset=None,
@@ -42,7 +45,15 @@ class API(object):
         self.session = self.requests.Session()
         if api_key:
             self.session.auth = (api_key, '')
-        self.session.headers.update({'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset})
+
+        self.session.headers.update({
+            'Content-Type': 'application/json',
+            'User-Agent': 'python closeio v{} {}'.format(
+                __version__,
+                requests.utils.default_user_agent()
+            ),
+            'X-TZ-Offset': self.tz_offset
+        })
 
     def _print_request(self, request):
         print('{}\n{}\n{}\n\n{}\n{}'.format(

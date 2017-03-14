@@ -1,11 +1,14 @@
 from setuptools import setup
 
+# Version comes directly from source w/o importing
+exec(open('closeio_api/_version.py').read())
+
 requires = ['requests >= 2.11.1', 'grequests >= 0.3.0']
 
 setup(
     name="closeio",
     packages=['closeio_api'],
-    version="0.5",
+    version=__version__,  # noqa
     description="Close.io Python Library",
     long_description="Closeio Python library",
     author="Close.io Team",
