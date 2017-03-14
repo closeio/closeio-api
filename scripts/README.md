@@ -8,7 +8,6 @@ Setup
 -----
 1. `git clone git@github.com:closeio/closeio-api.git`
 1. `cd closeio-api`
-1. `git submodule update --init --recursive`
 1. `virtualenv-2.7 venv`
 1. `. venv/bin/activate`
 1. `pip install -U -r requirements.txt`

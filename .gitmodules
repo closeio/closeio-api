@@ -1,3 +1,0 @@
-[submodule "scripts/flask-common"]
-	path = scripts/flask-common
-	url = https://github.com/closeio/flask-common.git
