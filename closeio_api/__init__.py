@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
+import logging
 import time
 import requests
 from closeio_api.utils import local_tz_offset
 
+DEFAULT_RATE_LIMIT_DELAY = 2   # Seconds
 
 class APIError(Exception):
     def __init__(self, response):
@@ -44,6 +45,16 @@ class API(object):
             self.session.auth = (api_key, '')
         self.session.headers.update({'Content-Type': 'application/json', 'X-TZ-Offset': self.tz_offset})
 
+    def _get_rate_limit_sleep_time(self, response):
+        """Get rate limit window expiration time from response."""
+
+        try:
+            data = response.json()
+            return float(data['error']['rate_reset'])
+        except (AttributeError, KeyError, ValueError):
+            logging.exception('Error parsing rate limiting response')
+            return DEFAULT_RATE_LIMIT_DELAY
+
     def _print_request(self, request):
         print('{}\n{}\n{}\n\n{}\n{}'.format(
             '----------- HTTP Request -----------',
@@ -78,6 +89,14 @@ class API(object):
                     self._print_request(prepped_request)
                 response = self.session.send(prepped_request,
                                              verify=self.verify)
+
+                # Check if request was rate limited
+                if response.status_code == 429:
+                    sleep_time = self._get_rate_limit_sleep_time(response)
+                    logging.debug('Request was rate limited, sleeping %d seconds', sleep_time)
+                    time.sleep(sleep_time)
+                    continue
+
             except requests.exceptions.ConnectionError:
                 if (retry_count + 1 == self.max_retries):
                     raise
