@@ -12,7 +12,7 @@ See the developer docs at http://developer.close.io. For any questions or issues
 
 ### Examples
 
-For detailed examples on how to use our API, see our [scripts repo](https://wwww.github.com/closeio/closeio-api-scripts)
+For detailed examples on how to use our API, [click here.](https://github.com/closeio/closeio-api-scripts)
 
 ### Other Languages
 
