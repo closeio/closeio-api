@@ -4,9 +4,10 @@
 
 A convenient Python wrapper for the [Close.io](https://close.io/) API.
 
-See the developer docs at http://developer.close.io. For any questions or issues, please contact support(at)close(dot)io.
+- API docs: [http://developer.close.io](http://developer.close.io)
+- Support: [support@close.io](mailto:support@close.io?Subject=API%20Python%20Client)
 
-### Installation (of API client)
+### Installation
 
 `pip install closeio`
 
@@ -32,25 +33,15 @@ lead_results = api.get('lead', params={
 })
 ```
 
-Check out `scripts/` for more detailed examples.
+### Example scripts
 
-### Running a script
-```bash
-$ git clone https://github.com/closeio/closeio-api.git
-$ cd closeio-api
-$ virtualenv venv
-$ source venv/bin/activate
-$ pip install -r requirements.txt
-$ python setup.py install
-$ python scripts/merge_leads.py -k MYAPIKEY 
-...
-
-```
+Check out [https://github.com/closeio/closeio-api-scripts](https://github.com/closeio/closeio-api-scripts) for helpful scripts already written to accomplish some common tasks.
 
 ### Other Languages
 
-Thanks to our awesome users, other languages are supported, too:
-* Ruby: [simple example](https://gist.github.com/philfreo/9359930) that uses [RestClient](https://github.com/rest-client/rest-client), or use [taylorbrook's gem](https://github.com/taylorbrooks/closeio)
-* PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/loopline-systems/closeio-api-wrapper or https://github.com/TheDeveloper/closeio-php-sdk
-* Node.js: https://github.com/closeio/closeio-node
-* C#: https://github.com/MoreThanRewards/CloseIoDotNet
+There are API clients available in other languages too, thanks to some awesome contributors:
+
+ - Ruby: [simple example](https://gist.github.com/philfreo/9359930) that uses [RestClient](https://github.com/rest-client/rest-client), or use [taylorbrook's gem](https://github.com/taylorbrooks/closeio)
+ - PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/loopline-systems/closeio-api-wrapper or https://github.com/TheDeveloper/closeio-php-sdk
+ - Node.js: https://github.com/closeio/closeio-node
+ - C#: https://github.com/MoreThanRewards/CloseIoDotNet
