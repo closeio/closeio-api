@@ -1,9 +1,12 @@
-import json
+import logging
 import time
 
 import requests
 
 from closeio_api.utils import local_tz_offset
+
+
+DEFAULT_RATE_LIMIT_DELAY = 2   # Seconds
 
 
 class APIError(Exception):
@@ -42,6 +45,7 @@ class API(object):
         self.session = requests.Session()
         if api_key:
             self.session.auth = (api_key, '')
+
         self.session.headers.update({
             'Content-Type': 'application/json',
             'X-TZ-Offset': self.tz_offset
@@ -62,8 +66,8 @@ class API(object):
             'auth': auth,
             'json': data
         })
-        request = self.requests.Request(method_name, self.base_url + endpoint,
-                                        **kwargs)
+        request = requests.Request(method_name, self.base_url + endpoint,
+                                   **kwargs)
         prepped_request = self.session.prepare_request(request)
 
         if debug:
@@ -84,10 +88,18 @@ class API(object):
             try:
                 response = self.session.send(prepped_req, verify=self.verify)
             except requests.exceptions.ConnectionError:
-                if (retry_count + 1 == self.max_retries):
+                if retry_count + 1 == self.max_retries:
                     raise
                 time.sleep(2)
             else:
+                # Check if request was rate limited.
+                if response.status_code == 429:
+                    sleep_time = self._get_rate_limit_sleep_time(response)
+                    logging.debug('Request was rate limited, sleeping %d seconds', sleep_time)
+                    time.sleep(sleep_time)
+                    continue
+
+                # Break out of the retry loop if the request was successful.
                 break
 
         if response.ok:
@@ -96,6 +108,15 @@ class API(object):
             raise ValidationError(response)
         else:
             raise APIError(response)
+
+    def _get_rate_limit_sleep_time(self, response):
+        """Get rate limit window expiration time from response."""
+        try:
+            data = response.json()
+            return float(data['error']['rate_reset'])
+        except (AttributeError, KeyError, ValueError):
+            logging.exception('Error parsing rate limiting response')
+            return DEFAULT_RATE_LIMIT_DELAY
 
     def get(self, endpoint, params=None, **kwargs):
         """Send a GET request to a given endpoint, for example:
