@@ -3,7 +3,7 @@ import json
 import pytest
 import responses
 
-from closeio_api import Client, APIError
+from closeio_api import Client, APIError, ValidationError
 
 
 SAMPLE_LEAD_RESPONSE = {
@@ -142,3 +142,25 @@ def test_retry_on_rate_limit(api_client):
         # Make sure two calls were made to the API (one rate limited and one
         # successful).
         assert len(rsps.calls) == 2
+
+@responses.activate
+def test_validation_error(api_client):
+    responses.add(
+        responses.POST,
+        'https://app.close.io/api/v1/contact/',
+        body=json.dumps({
+            'errors': [],
+            'field-errors': {
+                'lead': 'This field is required.'
+            }
+        }),
+        status=400,
+        content_type='application/json'
+    )
+
+    with pytest.raises(APIError) as excinfo:
+        api_client.post('contact', {'name': 'new lead'})
+
+    err = excinfo.value
+    assert err.errors == []
+    assert err.field_errors['lead'] == 'This field is required.'
