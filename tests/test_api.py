@@ -6,26 +6,29 @@ import responses
 from closeio_api import Client, APIError
 
 
+SAMPLE_LEAD_RESPONSE = {
+    'name': 'Sample Lead',
+    'contacts': [],
+    # Other lead fields omitted for brevity
+}
+
+SAMPLE_LEADS_RESPONSE = {
+    'has_more': False,
+    'data': [SAMPLE_LEAD_RESPONSE]
+}
+
+
 @pytest.fixture
 def api_client():
+    """Return the Close.io API client fixture."""
     return Client('fake-api-key')
-
 
 @responses.activate
 def test_list_leads(api_client):
     responses.add(
         responses.GET,
         'https://app.close.io/api/v1/lead/',
-        body=json.dumps({
-            'has_more': False,
-            'data': [
-                {
-                    'name': 'Sample Lead',
-                    'contacts': [],
-                    # Other lead fields omitted for brevity
-                }
-            ]
-        }),
+        body=json.dumps(SAMPLE_LEADS_RESPONSE),
         status=200,
         content_type='application/json'
     )
@@ -39,11 +42,7 @@ def test_fetch_lead(api_client):
     responses.add(
         responses.GET,
         'https://app.close.io/api/v1/lead/lead_abcdefghijklmnop/',
-        body=json.dumps({
-            'name': 'Sample Lead',
-            'contacts': [],
-            # Other lead fields omitted for brevity
-        }),
+        body=json.dumps(SAMPLE_LEAD_RESPONSE),
         status=200,
         content_type='application/json'
     )
@@ -84,26 +83,8 @@ def test_failed_create_lead(api_client):
 
 @responses.activate
 def test_search_for_leads(api_client):
-    responses.add(
-        responses.GET,
-        'https://app.close.io/api/v1/lead/',
-        body=json.dumps({
-            'has_more': False,
-            'data': [
-                {
-                    'name': 'Sample Lead',
-                    'contacts': [],
-                    # Other lead fields omitted for brevity
-                }
-            ]
-        }),
-        status=200,
-        content_type='application/json'
-    )
     def request_callback(request):
-        args = json.loads(request.args)
-        expected_args = {'query': 'name:sample'}
-        assert args == expected_args
+        assert request.url == 'https://app.close.io/api/v1/lead/?query=name%3Asample'
         return (200, {}, json.dumps({
             'has_more': False,
             'data': [
@@ -128,10 +109,9 @@ def test_search_for_leads(api_client):
 
 @responses.activate
 def test_retry_on_rate_limit(api_client):
-
     with responses.RequestsMock() as rsps:
 
-        # Rate limit the first request, suggesting that it can be retried in 1s.
+        # Rate limit the first request and suggest it can be retried in 1 sec.
         rsps.add(
             responses.GET,
             'https://app.close.io/api/v1/lead/lead_abcdefghijklmnop/',
@@ -151,11 +131,7 @@ def test_retry_on_rate_limit(api_client):
         rsps.add(
             responses.GET,
             'https://app.close.io/api/v1/lead/lead_abcdefghijklmnop/',
-            body=json.dumps({
-                'name': 'Sample Lead',
-                'contacts': [],
-                # Other lead fields omitted for brevity
-            }),
+            body=json.dumps(SAMPLE_LEAD_RESPONSE),
             status=200,
             content_type='application/json'
         )
