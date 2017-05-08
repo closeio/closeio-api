@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="closeio",
     packages=['closeio_api'],
-    version="0.5",
+    version="1.0",
     description="Close.io Python Library",
     long_description="Closeio Python library",
     author="Close.io Team",
