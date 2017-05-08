@@ -1,6 +1,6 @@
 ## Close.io API
 
-[![PyPI version](https://badge.fury.io/py/closeio.svg)](https://badge.fury.io/py/closeio)
+[![PyPI version](https://badge.fury.io/py/closeio.svg)](https://badge.fury.io/py/closeio) [![CircleCI](https://circleci.com/gh/closeio/closeio-api.svg?style=svg)](https://circleci.com/gh/closeio/closeio-api)
 
 A convenient Python wrapper for the [Close.io](https://close.io/) API.
 
