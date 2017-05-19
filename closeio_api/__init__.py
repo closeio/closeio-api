@@ -13,9 +13,8 @@ class APIError(Exception):
     """Raised when sending a request to the API failed."""
 
     def __init__(self, response):
-        # For compatibility purposes we can access the original string through
-        # the args property.
-        super(APIError, self).__init__(response.text)
+        message = u'({}) {}'.format(response.status_code, response.text)
+        super(APIError, self).__init__(message)
         self.response = response
 
 
