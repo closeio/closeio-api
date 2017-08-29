@@ -39,9 +39,9 @@ Check out [https://github.com/closeio/closeio-api-scripts](https://github.com/cl
 
 ### Other Languages
 
-There are API clients available in other languages too, thanks to some awesome contributors:
+There are unofficial API clients available in other languages too, thanks to some awesome contributors:
 
  - Ruby: [simple example](https://gist.github.com/philfreo/9359930) that uses [RestClient](https://github.com/rest-client/rest-client), or use [taylorbrook's gem](https://github.com/taylorbrooks/closeio)
- - PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/loopline-systems/closeio-api-wrapper or https://github.com/TheDeveloper/closeio-php-sdk
+ - PHP: [simple example](https://gist.github.com/philfreo/5406540) or https://github.com/loopline-systems/closeio-api-wrapper or https://github.com/TheDeveloper/closeio-php-sdk or [one for use in Laravel](https://github.com/gyurobenjamin/closeio-laravel-api)
  - Node.js: https://github.com/closeio/closeio-node
  - C#: https://github.com/MoreThanRewards/CloseIoDotNet
