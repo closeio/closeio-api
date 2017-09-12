@@ -79,7 +79,7 @@ class API(object):
                   debug=False, **kwargs):
         """Prepare and send a request with given parameters. Return a
         dict containing the response data or raise an exception if any
-        errors occured.
+        errors occurred.
         """
         prepped_req = self._prepare_request(method_name, endpoint, api_key,
                                             data, debug, **kwargs)
