@@ -39,7 +39,7 @@ class API(object):
         assert base_url
         self.base_url = base_url
         self.max_retries = max_retries
-        self.tz_offset = tz_offset or str(local_tz_offset())
+        self.tz_offset = str(tz_offset or local_tz_offset())
         self.verify = verify
 
         self.session = requests.Session()
@@ -48,7 +48,7 @@ class API(object):
 
         self.session.headers.update({
             'Content-Type': 'application/json',
-            'X-TZ-Offset': str(self.tz_offset)
+            'X-TZ-Offset': self.tz_offset
         })
 
     def _prepare_request(self, method_name, endpoint, api_key=None, data=None,
