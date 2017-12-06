@@ -48,7 +48,7 @@ class API(object):
 
         self.session.headers.update({
             'Content-Type': 'application/json',
-            'X-TZ-Offset': self.tz_offset
+            'X-TZ-Offset': str(self.tz_offset)
         })
 
     def _prepare_request(self, method_name, endpoint, api_key=None, data=None,
