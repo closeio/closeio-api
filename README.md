@@ -46,4 +46,4 @@ There are unofficial API clients available in other languages too, thanks to som
  - Node.js: https://github.com/closeio/closeio-node
  - C#: https://github.com/MoreThanRewards/CloseIoDotNet
  - Elixir: https://github.com/nested-tech/closex or https://github.com/taylorbrooks/ex_closeio
- - Go: https://github.com/AnalyticalFlavorSystems/closeio-go
+ - Go: https://github.com/veyo-care/closeio-golang-client or https://github.com/AnalyticalFlavorSystems/closeio-go
