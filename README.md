@@ -15,7 +15,6 @@ A convenient Python wrapper for the [Close.io](https://close.io/) API.
 
 ```python
 from closeio_api import Client
-import urllib
 
 api = Client('YOUR_API_KEY')
 
