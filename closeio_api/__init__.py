@@ -76,7 +76,7 @@ class API(object):
         return prepped_request
 
     def _dispatch(self, method_name, endpoint, api_key=None, data=None,
-                  debug=False, **kwargs):
+                  debug=False, timeout=None, **kwargs):
         """Prepare and send a request with given parameters. Return a
         dict containing the response data or raise an exception if any
         errors occurred.
@@ -86,7 +86,7 @@ class API(object):
 
         for retry_count in range(self.max_retries):
             try:
-                response = self.session.send(prepped_req, verify=self.verify)
+                response = self.session.send(prepped_req, verify=self.verify, timeout=timeout)
             except requests.exceptions.ConnectionError:
                 if retry_count + 1 == self.max_retries:
                     raise
@@ -118,7 +118,7 @@ class API(object):
             logging.exception('Error parsing rate limiting response')
             return DEFAULT_RATE_LIMIT_DELAY
 
-    def get(self, endpoint, params=None, **kwargs):
+    def get(self, endpoint, params=None, timeout=None, **kwargs):
         """Send a GET request to a given endpoint, for example:
 
         >>> api.get('lead', {'query': 'status:"Potential"'})
@@ -131,9 +131,9 @@ class API(object):
         }
         """
         kwargs.update({'params': params})
-        return self._dispatch('get', endpoint+'/', **kwargs)
+        return self._dispatch('get', endpoint+'/', timeout=timeout, **kwargs)
 
-    def post(self, endpoint, data, **kwargs):
+    def post(self, endpoint, data, timeout=None, timeout=timeout, **kwargs):
         """Send a POST request to a given endpoint, for example:
 
         >>> api.post('lead', {'name': 'Brand New Lead'})
@@ -145,7 +145,7 @@ class API(object):
         kwargs.update({'data': data})
         return self._dispatch('post', endpoint+'/', **kwargs)
 
-    def put(self, endpoint, data, **kwargs):
+    def put(self, endpoint, data, timeout=None, **kwargs):
         """Send a PUT request to a given endpoint, for example:
 
         >>> api.put('lead/SOME_LEAD_ID', {'name': 'New Name'})
@@ -155,15 +155,15 @@ class API(object):
         }
         """
         kwargs.update({'data': data})
-        return self._dispatch('put', endpoint+'/', **kwargs)
+        return self._dispatch('put', endpoint+'/', timeout=timeout, **kwargs)
 
-    def delete(self, endpoint, **kwargs):
+    def delete(self, endpoint, timeout=None, **kwargs):
         """Send a DELETE request to a given endpoint, for example:
 
         >>> api.delete('lead/SOME_LEAD_ID')
         {}
         """
-        return self._dispatch('delete', endpoint+'/', **kwargs)
+        return self._dispatch('delete', endpoint+'/', timeout=timeout, **kwargs)
 
     def _print_request(self, req):
         """Print a human-readable representation of a request."""
