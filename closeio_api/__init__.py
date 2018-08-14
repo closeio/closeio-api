@@ -133,7 +133,7 @@ class API(object):
         kwargs.update({'params': params})
         return self._dispatch('get', endpoint+'/', timeout=timeout, **kwargs)
 
-    def post(self, endpoint, data, timeout=None, timeout=timeout, **kwargs):
+    def post(self, endpoint, data, timeout=None, **kwargs):
         """Send a POST request to a given endpoint, for example:
 
         >>> api.post('lead', {'name': 'Brand New Lead'})
@@ -143,7 +143,7 @@ class API(object):
         }
         """
         kwargs.update({'data': data})
-        return self._dispatch('post', endpoint+'/', **kwargs)
+        return self._dispatch('post', endpoint+'/', timeout=timeout, **kwargs)
 
     def put(self, endpoint, data, timeout=None, **kwargs):
         """Send a PUT request to a given endpoint, for example:
