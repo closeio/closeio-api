@@ -27,7 +27,7 @@ def api_client():
 def test_list_leads(api_client):
     responses.add(
         responses.GET,
-        'https://app.close.io/api/v1/lead/',
+        'https://api.close.com/api/v1/lead/',
         body=json.dumps(SAMPLE_LEADS_RESPONSE),
         status=200,
         content_type='application/json'
@@ -41,7 +41,7 @@ def test_list_leads(api_client):
 def test_fetch_lead(api_client):
     responses.add(
         responses.GET,
-        'https://app.close.io/api/v1/lead/lead_abcdefghijklmnop/',
+        'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
         body=json.dumps(SAMPLE_LEAD_RESPONSE),
         status=200,
         content_type='application/json'
@@ -60,7 +60,7 @@ def test_create_lead(api_client):
 
     responses.add_callback(
         responses.POST,
-        'https://app.close.io/api/v1/lead/',
+        'https://api.close.com/api/v1/lead/',
         callback=request_callback,
         content_type='application/json',
     )
@@ -72,7 +72,7 @@ def test_create_lead(api_client):
 def test_failed_create_lead(api_client):
     responses.add(
         responses.POST,
-        'https://app.close.io/api/v1/lead/',
+        'https://api.close.com/api/v1/lead/',
         body='Forbidden',
         status=403,
         content_type='application/json'
@@ -84,7 +84,7 @@ def test_failed_create_lead(api_client):
 @responses.activate
 def test_search_for_leads(api_client):
     def request_callback(request):
-        assert request.url == 'https://app.close.io/api/v1/lead/?query=name%3Asample'
+        assert request.url == 'https://api.close.com/api/v1/lead/?query=name%3Asample'
         return (200, {}, json.dumps({
             'has_more': False,
             'data': [
@@ -98,7 +98,7 @@ def test_search_for_leads(api_client):
 
     responses.add_callback(
         responses.GET,
-        'https://app.close.io/api/v1/lead/',
+        'https://api.close.com/api/v1/lead/',
         callback=request_callback,
         content_type='application/json',
     )
@@ -114,7 +114,7 @@ def test_retry_on_rate_limit(api_client):
         # Rate limit the first request and suggest it can be retried in 1 sec.
         rsps.add(
             responses.GET,
-            'https://app.close.io/api/v1/lead/lead_abcdefghijklmnop/',
+            'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
             body=json.dumps({
                 "error": {
                     "rate_reset": 1,
@@ -130,7 +130,7 @@ def test_retry_on_rate_limit(api_client):
         # Respond correctly to the second request.
         rsps.add(
             responses.GET,
-            'https://app.close.io/api/v1/lead/lead_abcdefghijklmnop/',
+            'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
             body=json.dumps(SAMPLE_LEAD_RESPONSE),
             status=200,
             content_type='application/json'
@@ -147,7 +147,7 @@ def test_retry_on_rate_limit(api_client):
 def test_validation_error(api_client):
     responses.add(
         responses.POST,
-        'https://app.close.io/api/v1/contact/',
+        'https://api.close.com/api/v1/contact/',
         body=json.dumps({
             'errors': [],
             'field-errors': {

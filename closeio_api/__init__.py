@@ -180,11 +180,11 @@ class Client(API):
     def __init__(self, api_key=None, tz_offset=None, max_retries=5,
                  development=False):
         if development:
-            base_url = 'https://local.close.io:5001/api/v1/'
+            base_url = 'https://local-api.close.com:5001/api/v1/'
             # See https://github.com/kennethreitz/requests/issues/2966
             verify = False
         else:
-            base_url = 'https://app.close.io/api/v1/'
+            base_url = 'https://api.close.com/api/v1/'
             verify = True
         super(Client, self).__init__(base_url, api_key, tz_offset=tz_offset,
                                      max_retries=max_retries, verify=verify)
