@@ -4,9 +4,9 @@ setup(
     name="closeio",
     packages=['closeio_api'],
     version="1.0",
-    description="Close.io Python Library",
-    long_description="Closeio Python library",
-    author="Close.io Team",
+    description="Close API Python Client",
+    long_description="Close API Python Client",
+    author="Close Team",
     url="https://github.com/closeio/closeio-api/",
     install_requires=[
         'requests >= 2.11.1'

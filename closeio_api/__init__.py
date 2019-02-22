@@ -32,7 +32,7 @@ class ValidationError(APIError):
 
 
 class API(object):
-    """Main class interacting with the Close.io API."""
+    """Main class interacting with the Close API."""
 
     def __init__(self, base_url, api_key=None, tz_offset=None, max_retries=5,
                  verify=True):

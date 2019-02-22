@@ -20,7 +20,7 @@ SAMPLE_LEADS_RESPONSE = {
 
 @pytest.fixture
 def api_client():
-    """Return the Close.io API client fixture."""
+    """Return the Close API client fixture."""
     return Client('fake-api-key')
 
 @responses.activate
