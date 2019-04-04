@@ -2,10 +2,10 @@
 
 [![PyPI version](https://badge.fury.io/py/closeio.svg)](https://badge.fury.io/py/closeio) [![CircleCI](https://circleci.com/gh/closeio/closeio-api.svg?style=shield&circle-token=e12bb3b9bcf749c2e7a5691e8101c3e585b19742)](https://circleci.com/gh/closeio/closeio-api)
 
-A convenient Python wrapper for the [Close](https://close.io/) API.
+A convenient Python wrapper for the [Close](https://close.com/) API.
 
-- API docs: [http://developer.close.io](http://developer.close.io)
-- Support: [support@close.io](mailto:support@close.io?Subject=API%20Python%20Client)
+- API docs: [http://developer.close.com](http://developer.close.com)
+- Support: [support@close.com](mailto:support@close.com?Subject=API%20Python%20Client)
 
 ### Installation
 
