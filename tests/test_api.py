@@ -1,10 +1,9 @@
 import json
 
 import pytest
+
 import responses
-
-from closeio_api import Client, APIError, ValidationError
-
+from closeio_api import APIError, Client
 
 SAMPLE_LEAD_RESPONSE = {
     'name': 'Sample Lead',
@@ -53,7 +52,7 @@ def test_fetch_lead(api_client):
 @responses.activate
 def test_create_lead(api_client):
     def request_callback(request):
-        payload = json.loads(request.body)
+        payload = json.loads(request.body.decode('UTF-8'))
         expected_payload = {'name': 'Sample Lead'}
         assert payload == expected_payload
         return (200, {}, json.dumps(payload))
