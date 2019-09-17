@@ -5,6 +5,7 @@ workflows:
   workflow:
     jobs:
       - test-2.7
+      - test-3.5
       - test-3.6
 
 defaults: &defaults
@@ -23,6 +24,10 @@ jobs:
     <<: *defaults
     docker:
     - image: circleci/python:2.7
+  test-3.5:
+    <<: *defaults
+    docker:
+    - image: circleci/python:3.5
   test-3.6:
     <<: *defaults
     docker:
