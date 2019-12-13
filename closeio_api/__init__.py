@@ -47,7 +47,6 @@ class API(object):
             self.session.auth = (api_key, '')
 
         self.session.headers.update({
-            'Content-Type': 'application/json',
             'X-TZ-Offset': self.tz_offset
         })
 
@@ -62,8 +61,15 @@ class API(object):
             auth = None
             assert self.session.auth, 'Must specify api_key.'
 
+        headers = kwargs.pop('headers', {})
+        if data:
+            headers.update({
+                'Content-Type': 'application/json'
+            })
+
         kwargs.update({
             'auth': auth,
+            'headers': headers,
             'json': data
         })
         request = requests.Request(method_name, self.base_url + endpoint,
