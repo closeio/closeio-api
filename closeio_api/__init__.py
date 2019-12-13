@@ -61,15 +61,15 @@ class API(object):
             auth = None
             assert self.session.auth, 'Must specify api_key.'
 
-        if data and not 'Content-Type' in self.session.headers:
-            self.session.headers.update({
+        headers = kwargs.pop('headers', {})
+        if data:
+            headers.update({
                 'Content-Type': 'application/json'
             })
-        elif not data and 'Content-Type' in self.session.headers:
-            del self.session.headers['Content-Type']
 
         kwargs.update({
             'auth': auth,
+            'headers': headers,
             'json': data
         })
         request = requests.Request(method_name, self.base_url + endpoint,
