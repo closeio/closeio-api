@@ -49,7 +49,7 @@ class API(object):
             self.session.auth = (api_key, '')
 
         self.session.headers.update({
-            'User-Agent': 'python closeio v{} {}'.format(
+            'User-Agent': 'Close/{} python ({})'.format(
                 __version__,
                 requests.utils.default_user_agent()
             ),
