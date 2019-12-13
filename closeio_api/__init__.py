@@ -47,7 +47,6 @@ class API(object):
             self.session.auth = (api_key, '')
 
         self.session.headers.update({
-            'Content-Type': 'application/json',
             'X-TZ-Offset': self.tz_offset
         })
 
@@ -61,6 +60,13 @@ class API(object):
         else:
             auth = None
             assert self.session.auth, 'Must specify api_key.'
+
+        if data and not 'Content-Type' in self.session.headers:
+            self.session.headers.update({
+                'Content-Type': 'application/json'
+            })
+        elif not data and 'Content-Type' in self.session.headers:
+            del self.session.headers['Content-Type']
 
         kwargs.update({
             'auth': auth,
