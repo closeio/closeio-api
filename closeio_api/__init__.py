@@ -1,6 +1,8 @@
 import logging
 import time
 
+from random import uniform
+
 import requests
 
 from closeio_api.utils import local_tz_offset
@@ -9,7 +11,7 @@ DEFAULT_RATE_LIMIT_DELAY = 2   # Seconds
 
 # To update the package version, change this variable. This variable is also
 # read by setup.py when installing the package. 
-__version__ = '1.2'
+__version__ = '1.3'
 
 class APIError(Exception):
     """Raised when sending a request to the API failed."""
@@ -110,6 +112,21 @@ class API(object):
                     logging.debug('Request was rate limited, sleeping %d seconds', sleep_time)
                     time.sleep(sleep_time)
                     continue
+                
+                # Retry 503 errors or 502 or 504 erors on GET requests. 
+                elif response.status_code == 503 or (
+                    method_name == 'get' and response.status_code in (502, 504)
+                ):
+                    sleep_time = self._get_randomized_sleep_time_for_error(
+                        response.status_code, retry_count
+                    )
+                    logging.debug(
+                        'Request hit a {}, sleeping for {} seconds'.format(
+                            response.status_code, sleep_time
+                        )
+                    )
+                    time.sleep(sleep_time)
+                    continue
 
                 # Break out of the retry loop if the request was successful.
                 break
@@ -122,7 +139,9 @@ class API(object):
             raise APIError(response)
 
     def _get_rate_limit_sleep_time(self, response):
-        """Get rate limit window expiration time from response."""
+        """Get rate limit window expiration time from response if the response
+        status code is 429. 
+        """
         try:
             data = response.json()
             return float(data['error']['rate_reset'])
@@ -130,6 +149,20 @@ class API(object):
             logging.exception('Error parsing rate limiting response')
             return DEFAULT_RATE_LIMIT_DELAY
 
+    def _get_randomized_sleep_time_for_error(self, status_code, retries):
+        """Get sleep time for a given status code before we can try the
+        request again.
+        
+        Each time we retry, we want to increase the time before we try again. 
+        """
+        if status_code == 503:
+            return uniform(2, 4) * (retries + 1)
+        
+        elif status_code in (502, 504):
+            return uniform(60, 90) * (retries + 1)
+        
+        return DEFAULT_RATE_LIMIT_DELAY
+        
     def get(self, endpoint, params=None, timeout=None, **kwargs):
         """Send a GET request to a given endpoint, for example:
 
