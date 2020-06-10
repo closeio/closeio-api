@@ -152,12 +152,12 @@ class API(object):
     def _get_randomized_sleep_time_for_error(self, status_code, retries):
         """Get sleep time for a given status code before we can try the
         request again.
+        
+        Each time we retry, we want to increase the time before we try again. 
         """
         if status_code == 503:
             return uniform(2, 4) * (retries + 1)
         
-        # if it's a 502 or 504 error, we want back off more each time
-        # before we try again.  
         elif status_code in (502, 504):
             return uniform(60, 90) * (retries + 1)
         
