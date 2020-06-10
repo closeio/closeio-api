@@ -1,7 +1,7 @@
 import logging
 import time
 
-from random import randint
+from random import uniform
 
 import requests
 
@@ -154,12 +154,12 @@ class API(object):
         request again.
         """
         if status_code == 503:
-            return randint(2, 4)
+            return uniform(2, 4) * (retries + 1)
         
         # if it's a 502 or 504 error, we want back off more each time
         # before we try again.  
         elif status_code in (502, 504):
-            return randint(60, 90) * (retries + 1)
+            return uniform(60, 90) * (retries + 1)
         
         return DEFAULT_RATE_LIMIT_DELAY
         
