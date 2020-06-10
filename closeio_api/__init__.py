@@ -115,13 +115,13 @@ class API(object):
                 
                 # Retry 503 errors or 502 or 504 erors on GET requests. 
                 elif response.status_code == 503 or (
-                    method_name == "get" and response.status_code in (502, 504)
+                    method_name == 'get' and response.status_code in (502, 504)
                 ):
                     sleep_time = self._get_randomized_sleep_time_for_error(
                         response.status_code, retry_count
                     )
                     logging.debug(
-                        "Request hit a {}, sleeping for {} seconds".format(
+                        'Request hit a {}, sleeping for {} seconds'.format(
                             response.status_code, sleep_time
                         )
                     )
