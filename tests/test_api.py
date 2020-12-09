@@ -163,3 +163,13 @@ def test_validation_error(api_client):
     err = excinfo.value
     assert err.errors == []
     assert err.field_errors['lead'] == 'This field is required.'
+
+@responses.activate
+def test_204_responses(api_client):
+    responses.add(
+        responses.DELETE,
+        "https://api.close.com/api/v1/pipeline/pipe_1234/",
+        status=204
+    )
+    resp = api_client.delete('pipeline/pipe_1234')
+    assert resp == ''

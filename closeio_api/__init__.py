@@ -132,6 +132,9 @@ class API(object):
                 break
 
         if response.ok:
+            # 204 responses have no content. 
+            if response.status_code == 204:
+                return ''
             return response.json()
         elif response.status_code == 400:
             raise ValidationError(response)
