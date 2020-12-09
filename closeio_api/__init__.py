@@ -11,7 +11,7 @@ DEFAULT_RATE_LIMIT_DELAY = 2   # Seconds
 
 # To update the package version, change this variable. This variable is also
 # read by setup.py when installing the package. 
-__version__ = '1.3'
+__version__ = '1.4'
 
 class APIError(Exception):
     """Raised when sending a request to the API failed."""
@@ -132,6 +132,9 @@ class API(object):
                 break
 
         if response.ok:
+            # 204 responses have no content. 
+            if response.status_code == 204:
+                return ''
             return response.json()
         elif response.status_code == 400:
             raise ValidationError(response)
