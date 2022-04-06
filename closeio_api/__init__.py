@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import time
 
@@ -145,12 +146,13 @@ class API(object):
         """Get rate limit window expiration time from response if the response
         status code is 429. 
         """
-        try:
-            data = response.json()
-            return float(data['error']['rate_reset'])
-        except (AttributeError, KeyError, ValueError):
-            logging.exception('Error parsing rate limiting response')
-            return DEFAULT_RATE_LIMIT_DELAY
+        with contextlib.suppress(KeyError):
+            return float(response.headers["Retry-After"])
+        with contextlib.suppress(KeyError):
+            return float(response.headers["RateLimit-Reset"])
+
+        logging.exception('Error parsing rate limiting response')
+        return DEFAULT_RATE_LIMIT_DELAY
 
     def _get_randomized_sleep_time_for_error(self, status_code, retries):
         """Get sleep time for a given status code before we can try the
