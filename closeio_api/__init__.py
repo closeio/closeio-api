@@ -10,8 +10,8 @@ from closeio_api.utils import local_tz_offset
 DEFAULT_RATE_LIMIT_DELAY = 2   # Seconds
 
 # To update the package version, change this variable. This variable is also
-# read by setup.py when installing the package. 
-__version__ = '1.4'
+# read by setup.py when installing the package.
+__version__ = '2.0'
 
 class APIError(Exception):
     """Raised when sending a request to the API failed."""
