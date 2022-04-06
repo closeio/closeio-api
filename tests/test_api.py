@@ -114,16 +114,10 @@ def test_retry_on_rate_limit(api_client):
         rsps.add(
             responses.GET,
             'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
-            body=json.dumps({
-                "error": {
-                    "rate_reset": 1,
-                    "message": "API call count exceeded for this 15 second window",
-                    "rate_limit": 600,
-                    "rate_window": 15
-                }
-            }),
+            body=json.dumps({}),
             status=429,
-            content_type='application/json'
+            content_type='application/json',
+            headers={"Retry-After": "1", "RateLimit-Reset": "1"}
         )
 
         # Respond correctly to the second request.

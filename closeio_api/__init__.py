@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import time
 
@@ -10,8 +11,8 @@ from closeio_api.utils import local_tz_offset
 DEFAULT_RATE_LIMIT_DELAY = 2   # Seconds
 
 # To update the package version, change this variable. This variable is also
-# read by setup.py when installing the package. 
-__version__ = '1.4'
+# read by setup.py when installing the package.
+__version__ = '2.0'
 
 class APIError(Exception):
     """Raised when sending a request to the API failed."""
@@ -145,12 +146,13 @@ class API(object):
         """Get rate limit window expiration time from response if the response
         status code is 429. 
         """
-        try:
-            data = response.json()
-            return float(data['error']['rate_reset'])
-        except (AttributeError, KeyError, ValueError):
-            logging.exception('Error parsing rate limiting response')
-            return DEFAULT_RATE_LIMIT_DELAY
+        with contextlib.suppress(KeyError):
+            return float(response.headers["Retry-After"])
+        with contextlib.suppress(KeyError):
+            return float(response.headers["RateLimit-Reset"])
+
+        logging.exception('Error parsing rate limiting response')
+        return DEFAULT_RATE_LIMIT_DELAY
 
     def _get_randomized_sleep_time_for_error(self, status_code, retries):
         """Get sleep time for a given status code before we can try the
