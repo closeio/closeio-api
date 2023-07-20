@@ -107,7 +107,20 @@ def test_search_for_leads(api_client):
     assert resp['data'][0]['name'] == 'Sample Lead'
 
 @responses.activate
-def test_retry_on_rate_limit(api_client):
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {"RateLimit-Reset": "1"},
+        {"Retry-After": "1"},
+        {"RateLimit": "limit=100, remaining=0, reset=1"},
+        {
+            "Retry-After": "1",
+            "RateLimit-Reset": "1",
+            "RateLimit": "limit=100, remaining=0, reset=1",
+        },
+    ]
+)
+def test_retry_on_rate_limit(api_client, headers):
     with responses.RequestsMock() as rsps:
 
         # Rate limit the first request and suggest it can be retried in 1 sec.
@@ -117,7 +130,7 @@ def test_retry_on_rate_limit(api_client):
             body=json.dumps({}),
             status=429,
             content_type='application/json',
-            headers={"Retry-After": "1", "RateLimit-Reset": "1"}
+            headers=headers,
         )
 
         # Respond correctly to the second request.
