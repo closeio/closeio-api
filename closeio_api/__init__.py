@@ -1,5 +1,6 @@
 import contextlib
 import logging
+import re
 import time
 
 from random import uniform
@@ -147,7 +148,19 @@ class API(object):
         status code is 429. 
         """
         with contextlib.suppress(KeyError):
+            rate_limit = response.headers["RateLimit"]
+            # we don't actually need all these values, but per the RFC:
+            # "Malformed RateLimit header fields MUST be ignored."
+            match = re.match(
+                r"limit=(\d+), remaining=(\d+), reset=(\d+)", rate_limit
+            )
+            if match:
+                limit, remaining, reset = match.groups()
+                return float(reset)
+
+        with contextlib.suppress(KeyError):
             return float(response.headers["Retry-After"])
+
         with contextlib.suppress(KeyError):
             return float(response.headers["RateLimit-Reset"])
 
