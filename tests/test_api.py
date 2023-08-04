@@ -123,33 +123,33 @@ def test_search_for_leads(api_client):
     ]
 )
 def test_retry_on_rate_limit(api_client, headers):
-    with responses.RequestsMock() as rsps:
+    with mock.patch('time.sleep'):
+        with responses.RequestsMock() as rsps:
+            # Rate limit the first request and suggest it can be retried in 1 sec.
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
+                body=json.dumps({}),
+                status=429,
+                content_type='application/json',
+                headers=headers,
+            )
 
-        # Rate limit the first request and suggest it can be retried in 1 sec.
-        rsps.add(
-            responses.GET,
-            'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
-            body=json.dumps({}),
-            status=429,
-            content_type='application/json',
-            headers=headers,
-        )
+            # Respond correctly to the second request.
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
+                body=json.dumps(SAMPLE_LEAD_RESPONSE),
+                status=200,
+                content_type='application/json'
+            )
 
-        # Respond correctly to the second request.
-        rsps.add(
-            responses.GET,
-            'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
-            body=json.dumps(SAMPLE_LEAD_RESPONSE),
-            status=200,
-            content_type='application/json'
-        )
+            resp = api_client.get('lead/lead_abcdefghijklmnop')
+            assert resp['name'] == 'Sample Lead'
 
-        resp = api_client.get('lead/lead_abcdefghijklmnop')
-        assert resp['name'] == 'Sample Lead'
-
-        # Make sure two calls were made to the API (one rate limited and one
-        # successful).
-        assert len(rsps.calls) == 2
+            # Make sure two calls were made to the API (one rate limited and one
+            # successful).
+            assert len(rsps.calls) == 2
 
 
 @responses.activate
