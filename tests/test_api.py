@@ -3,7 +3,9 @@ import json
 import pytest
 
 import responses
+import requests
 from closeio_api import APIError, Client
+from unittest import mock
 
 SAMPLE_LEAD_RESPONSE = {
     'name': 'Sample Lead',
@@ -121,33 +123,101 @@ def test_search_for_leads(api_client):
     ]
 )
 def test_retry_on_rate_limit(api_client, headers):
-    with responses.RequestsMock() as rsps:
+    with mock.patch('time.sleep'):
+        with responses.RequestsMock() as rsps:
+            # Rate limit the first request and suggest it can be retried in 1 sec.
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
+                body=json.dumps({}),
+                status=429,
+                content_type='application/json',
+                headers=headers,
+            )
 
-        # Rate limit the first request and suggest it can be retried in 1 sec.
-        rsps.add(
-            responses.GET,
-            'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
-            body=json.dumps({}),
-            status=429,
-            content_type='application/json',
-            headers=headers,
-        )
+            # Respond correctly to the second request.
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
+                body=json.dumps(SAMPLE_LEAD_RESPONSE),
+                status=200,
+                content_type='application/json'
+            )
 
-        # Respond correctly to the second request.
-        rsps.add(
-            responses.GET,
-            'https://api.close.com/api/v1/lead/lead_abcdefghijklmnop/',
-            body=json.dumps(SAMPLE_LEAD_RESPONSE),
-            status=200,
-            content_type='application/json'
-        )
+            resp = api_client.get('lead/lead_abcdefghijklmnop')
+            assert resp['name'] == 'Sample Lead'
 
-        resp = api_client.get('lead/lead_abcdefghijklmnop')
-        assert resp['name'] == 'Sample Lead'
+            # Make sure two calls were made to the API (one rate limited and one
+            # successful).
+            assert len(rsps.calls) == 2
 
-        # Make sure two calls were made to the API (one rate limited and one
-        # successful).
-        assert len(rsps.calls) == 2
+
+@responses.activate
+def test_retry_on_connection_error(api_client):
+    with mock.patch('time.sleep'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/',
+                body=requests.ConnectionError()
+            )
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/',
+                body=json.dumps(SAMPLE_LEADS_RESPONSE),
+                status=200,
+                content_type='application/json'
+            )
+
+            resp = api_client.get('lead')
+            assert resp['data'][0]['name'] == 'Sample Lead'
+            # Make sure two calls were made to the API (one connection error and one successful).
+            assert len(rsps.calls) == 2
+
+@responses.activate
+def test_max_retry_connection_error(api_client):
+    # retrying 5 times is a bit slow - skip the waiting
+    with mock.patch('time.sleep'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/',
+                body=requests.ConnectionError()
+            )
+
+            with pytest.raises(requests.exceptions.ConnectionError):
+                api_client.get('lead')
+
+            # Make sure max calls were made
+            assert len(rsps.calls) == 5
+
+@responses.activate
+def test_raises_api_error_on_max_retry(api_client):
+    # retrying 5 times is a bit slow - skip the waiting
+    with mock.patch('time.sleep'):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/',
+                status=503,
+            )
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/',
+                status=502,
+            )
+            rsps.add(
+                responses.GET,
+                'https://api.close.com/api/v1/lead/',
+                status=504,
+            )
+
+            with pytest.raises(APIError):
+                api_client.get('lead')
+
+            # Make sure max calls were made
+            assert len(rsps.calls) == 5
+
 
 @responses.activate
 def test_validation_error(api_client):
