@@ -14,6 +14,7 @@ setup(
     long_description="Close API Python Client",
     author="Close Team",
     url="https://github.com/closeio/closeio-api/",
+    python_requires='>=3.10',
     install_requires=[
         'requests >= 2.11.1'
     ],
