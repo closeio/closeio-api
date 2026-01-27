@@ -14,16 +14,18 @@ setup(
     long_description="Close API Python Client",
     author="Close Team",
     url="https://github.com/closeio/closeio-api/",
+    python_requires='>=3.10',
     install_requires=[
         'requests >= 2.11.1'
     ],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "Operating System :: OS Independent",
     ]
 )
