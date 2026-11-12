@@ -4,7 +4,12 @@ import pytest
 
 import responses
 import requests
-from closeio_api import APIError, Client
+from closeio_api import (
+    DEFAULT_RATE_LIMIT_DELAY,
+    APIError,
+    Client,
+    RateLimitError,
+)
 from unittest import mock
 
 SAMPLE_LEAD_RESPONSE = {
@@ -217,6 +222,44 @@ def test_raises_api_error_on_max_retry(api_client):
 
             # Make sure max calls were made
             assert len(rsps.calls) == 5
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "headers, expected_retry_after",
+    [
+        ({"RateLimit": "limit=100, remaining=0, reset=3"}, 3.0),
+        ({"Retry-After": "4"}, 4.0),
+        ({"RateLimit-Reset": "5"}, 5.0),
+        ({}, DEFAULT_RATE_LIMIT_DELAY),
+    ]
+)
+def test_rate_limit_error_on_max_retry(api_client, headers, expected_retry_after):
+    responses.add(
+        responses.GET,
+        'https://api.close.com/api/v1/lead/',
+        body=json.dumps({'error': 'Too many requests'}),
+        status=429,
+        content_type='application/json',
+        headers=headers,
+    )
+
+    with mock.patch('time.sleep') as mock_sleep:
+        with pytest.raises(RateLimitError) as excinfo:
+            api_client.get('lead')
+
+    err = excinfo.value
+    assert err.retry_after == expected_retry_after
+    assert err.response.status_code == 429
+
+    # Code that catches the generic error must keep working.
+    assert isinstance(err, APIError) is True
+    assert str(err) == json.dumps({'error': 'Too many requests'})
+
+    # The client must not sleep after the last attempt, because the caller
+    # gets the wait time from the exception.
+    assert len(responses.calls) == 5
+    assert mock_sleep.call_count == 4
 
 
 @responses.activate

@@ -37,6 +37,15 @@ class ValidationError(APIError):
         self.field_errors = data.get('field-errors', {})
 
 
+class RateLimitError(APIError):
+    """Raised when the API still rate limits a request after all retries."""
+
+    def __init__(self, response, retry_after):
+        super(RateLimitError, self).__init__(response)
+        # Number of seconds to wait before sending the request again.
+        self.retry_after = retry_after
+
+
 class API(object):
     """Main class interacting with the Close API."""
 
@@ -111,6 +120,13 @@ class API(object):
                 # Check if request was rate limited.
                 if response.status_code == 429:
                     sleep_time = self._get_rate_limit_sleep_time(response)
+
+                    # Don't sleep after the last attempt. The wait time would
+                    # be wasted and would make the exception's retry time
+                    # out of date.
+                    if retry_count + 1 == self.max_retries:
+                        raise RateLimitError(response, retry_after=sleep_time)
+
                     logging.debug('Request was rate limited, sleeping %d seconds', sleep_time)
                     time.sleep(sleep_time)
                     continue
